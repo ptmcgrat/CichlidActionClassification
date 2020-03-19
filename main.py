@@ -16,7 +16,7 @@ import time
 from opts import parse_opts
 from resnet import resnet18
 from transforms import (
-    Compose, Normalize, Scale, CenterCrop, 
+    Compose, Normalize, Scale, CenterCrop,
     RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
     ClassLabel, VideoID,TargetCompose)
@@ -171,8 +171,8 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
 
 
 
-if __name__ == '__main__':
-    
+
+def main():
     opt = parse_opts()
     if opt.root_path != '':
         opt.video_path = os.path.join(opt.root_path, opt.video_path)
@@ -186,12 +186,9 @@ if __name__ == '__main__':
     #    json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-    model = resnet18(
-                num_classes=opt.n_classes,
-                shortcut_type=opt.resnet_shortcut,
-                sample_size=opt.sample_size,
-                sample_duration=opt.sample_duration,
-                t_stride=opt.t_stride)
+    model = torchvision.models.video.r3d_18(pretrained=False, progress=True)
+    model.fc = nn.Linear(in_features=512, out_features=10, bias=True)
+    
     if not opt.no_cuda:
         model = model.cuda()
         model = nn.DataParallel(model, device_ids=None)
@@ -318,3 +315,5 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True)
         test.test(test_loader, model, opt, test_data.class_names)
+if __name__ == '__main__':
+    main()

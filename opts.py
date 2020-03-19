@@ -5,12 +5,12 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--root_path',
-        default='/data/home/llong35/data/11_07_2019',
+        default='/data/home/llong35/data/03_18_2020',
         type=str,
         help='Root directory path of data')
     parser.add_argument(
         '--video_path',
-        default='annotate_video_jpg',
+        default='annotated_videos',
         type=str,
         help='Directory path of Videos')
     parser.add_argument(
@@ -28,11 +28,6 @@ def parse_opts():
         default=1,
         type=int,
         help='Stride for first convolution. Larger stride decreases memory and accuracy')
-    """parser.add_argument(
-        '--temporal_crop',
-        default='random',
-        type=str,
-        help='(random | center)')"""
     parser.add_argument(
         '--annotation_path',
         default='cichlids_patrick.json',
@@ -40,7 +35,7 @@ def parse_opts():
         help='Annotation file path')
     parser.add_argument(
         '--result_path',
-        default='results_3_17',
+        default='results_3_18',
         type=str,
         help='Result directory path')
     parser.add_argument(
@@ -84,7 +79,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--batch_size', default=6, type=int, help='Batch Size')
+        '--batch_size', default=2, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
         default=100,
