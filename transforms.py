@@ -10,6 +10,7 @@ try:
     import accimage
 except ImportError:
     accimage = None
+    
 
 
 class Compose(object):
@@ -167,6 +168,24 @@ class Scale(object):
         pass
 
 
+
+class RandomHorizontalFlip(object):
+    """Horizontally flip the given PIL.Image randomly with a probability of 0.5."""
+
+    def __call__(self, img):
+        """
+        Args:
+            img (PIL.Image): Image to be flipped.
+        Returns:
+            PIL.Image: Randomly flipped image.
+        """
+        if self.p < 0.5:
+            return img.transpose(Image.FLIP_LEFT_RIGHT)
+        return img
+
+    def randomize_parameters(self):
+        self.p = random.random()
+        
 class CenterCrop(object):
     """Crops the given PIL.Image at the center.
     Args:
@@ -197,23 +216,6 @@ class CenterCrop(object):
     def randomize_parameters(self):
         pass
 
-
-class RandomHorizontalFlip(object):
-    """Horizontally flip the given PIL.Image randomly with a probability of 0.5."""
-
-    def __call__(self, img):
-        """
-        Args:
-            img (PIL.Image): Image to be flipped.
-        Returns:
-            PIL.Image: Randomly flipped image.
-        """
-        if self.p < 0.5:
-            return img.transpose(Image.FLIP_LEFT_RIGHT)
-        return img
-
-    def randomize_parameters(self):
-        self.p = random.random()
 
 class MultiScaleRandomCenterCrop(object):
     def __init__(self, size):
@@ -305,8 +307,9 @@ class TemporalCenterRandomCrop(object):
         size (int): Desired output size of the crop.
     """
 
-    def __init__(self, size):
+    def __init__(self, size,interval=1):
         self.size = size
+        self.interval = interval
 
     def __call__(self, frame_indices):
         """
@@ -315,12 +318,12 @@ class TemporalCenterRandomCrop(object):
         Returns:
             list: Cropped frame indices.
         """
-        spacing = int((len(frame_indices) - self.size)/2) # i.e. if 120 and 90: = 30 
+        spacing = int((len(frame_indices) - self.size*self.interval)/2) # i.e. if 120 and 90: = 30 
         offset = random.randint(-1*int(spacing/2) + 1, int(spacing/2) - 1) # i.e if 120 and 90, -14 to 14
-        begin_index = int(len(frame_indices)/2) - int(self.size/2) + offset # i.e. 120: 60 - 45 + offset (-1 to 29)
-        end_index = begin_index + self.size
+        begin_index = int(len(frame_indices)/2) - int(self.size*self.interval/2) + offset # i.e. 120: 60 - 45 + offset (-1 to 29)
+        end_index = begin_index + self.size*self.interval
 
-        out = frame_indices[begin_index:end_index]
+        out = frame_indices[begin_index:end_index:self.interval]
         for index in out:
             if len(out) >= self.size:
                 break

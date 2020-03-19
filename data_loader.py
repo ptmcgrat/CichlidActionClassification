@@ -6,6 +6,7 @@ import math
 import functools
 import json
 import copy
+from skvideo import io as vp
 
 from utils import load_value_file
 
@@ -90,85 +91,27 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     dataset = []
     for i in range(len(video_names)):
         #print(video_names[i])
-        if i % 1000 == 0:
+        if i % 10 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
-        video_path = os.path.join(root_path, video_names[i])
+        video_path = os.path.join(root_path, video_names[i]+'.mp4')
         if not os.path.exists(video_path):
-            continue
+            raise(video_path+'not exist')
 
-        n_frames_file_path = os.path.join(video_path, 'n_frames')
-        n_frames = int(load_value_file(n_frames_file_path))
-        if n_frames <= 0:
-            continue
 
-        begin_t = 1
-        end_t = n_frames
         sample = {
             'video': video_path,
-            'segment': [begin_t, end_t],
-            'n_frames': n_frames,
-            'video_id': video_names[i].split('/')[1]
+            'video_id': video_names[i].split('/')[1],
         }
         if len(annotations) != 0:
             sample['label'] = class_to_idx[annotations[i]['label']]
         else:
             sample['label'] = -1
 
-        if n_samples_for_each_video == 1:
-            sample['frame_indices'] = list(range(1, n_frames + 1))
-            dataset.append(sample)
-        else:
-            if n_samples_for_each_video > 1:
-                step = max(1,
-                           math.ceil((n_frames - 1 - sample_duration) /
-                                     (n_samples_for_each_video - 1)))
-            else:
-                step = sample_duration
-            for j in range(1, n_frames, step):
-                sample_j = copy.deepcopy(sample)
-                sample_j['frame_indices'] = list(
-                    range(j, min(n_frames + 1, j + sample_duration)))
-                dataset.append(sample_j)
-
+        dataset.append(sample)
     return dataset, idx_to_class
 
-def get_training_set(opt, spatial_transforms, temporal_transform,
-                     target_transform, annotationDict):
-    training_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'training',
-    spatial_transforms=spatial_transforms,
-    temporal_transform=temporal_transform,
-    target_transform=target_transform, annotationDict = annotationDict)
-    return training_data
 
-def get_validation_set(opt, spatial_transforms, temporal_transform,
-                       target_transform, annotationDict):
-    validation_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'validation',
-    opt.n_val_samples,
-    spatial_transforms,
-    temporal_transform,
-    target_transform,
-    sample_duration=opt.sample_duration,annotationDict = annotationDict)
-    return validation_data
-
-def get_test_set(opt, spatial_transforms, temporal_transform,
-                       target_transform, annotationDict):
-    test_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'test',
-    opt.n_val_samples,
-    spatial_transforms,
-    temporal_transform,
-    target_transform,
-    sample_duration=opt.sample_duration,annotationDict = annotationDict)
-    return test_data
 
 
 class cichlids(data.Dataset):
@@ -216,15 +159,24 @@ class cichlids(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-        
         path = self.data[index]['video']
-        clip_name = path.rstrip().split('/')[-1]
-        frame_indices = self.data[index]['frame_indices']
+        clip_name = path.rstrip().split('/')[-1].split('.')[0]
+        clip_numpy = vp.vread(path)
+        n_frames = clip_numpy.shape[0]
+        frame_indices = [x for x in range(n_frames)]
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
-        clip = self.loader(path, frame_indices)
+        clip = [Image.fromarray(clip_numpy[i]) for i in frame_indices]
+        
+#         path = self.data[index]['video']
+#         
+#         frame_indices = self.data[index]['frame_indices']
+
+#         clip = self.loader(path, frame_indices)
+        
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
+            self.spatial_transforms[self.annotationDict[clip_name]](clip[0])
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
@@ -235,3 +187,77 @@ class cichlids(data.Dataset):
 
     def __len__(self):
         return len(self.data)
+
+
+def get_training_set(opt, spatial_transforms, temporal_transform,
+                     target_transform, annotationDict):
+    training_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'training',
+    spatial_transforms=spatial_transforms,
+    temporal_transform=temporal_transform,
+    target_transform=target_transform, annotationDict = annotationDict)
+    return training_data
+
+def get_validation_set(opt, spatial_transforms, temporal_transform,
+                       target_transform, annotationDict):
+    validation_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'validation',
+    opt.n_val_samples,
+    spatial_transforms,
+    temporal_transform,
+    target_transform,
+    sample_duration=opt.sample_duration,annotationDict = annotationDict)
+    return validation_data
+
+def get_test_set(opt, spatial_transforms, temporal_transform,
+                       target_transform, annotationDict):
+    test_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'test',
+    opt.n_val_samples,
+    spatial_transforms,
+    temporal_transform,
+    target_transform,
+    sample_duration=opt.sample_duration,annotationDict = annotationDict)
+    return test_data
+#     
+# from opts import parse_opts
+# import pandas as pd
+# from transforms import (
+#     Compose, Normalize, Scale, CenterCrop, 
+#     RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+#     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
+#     ClassLabel, VideoID,TargetCompose)
+# opt = parse_opts()
+# if opt.root_path != '':
+#     opt.video_path = os.path.join(opt.root_path, opt.video_path)
+#     opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
+#     opt.result_path = os.path.join(opt.root_path, opt.result_path)
+
+# opt.arch = 'resnet-{}'.format(opt.model_depth)
+# print(opt)
+# crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
+# spatial_transforms = {}
+# with open(opt.mean_file) as f:
+#     for i,line in enumerate(f):
+#         if i==0:
+#             continue
+#         tokens = line.rstrip().split(',')
+#         norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+#         spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
+# annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
+# keys = annotateData[annotateData.Dataset=='Train']['Location']
+# values = annotateData[annotateData.Dataset=='Train']['MeanID']
+# 
+# annotationDictionary = dict(zip(keys, values))
+# 
+# temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
+# target_transform = ClassLabel()
+# training_data = get_training_set(opt, spatial_transforms,
+#                                          temporal_transform, target_transform, annotationDictionary)
+# training_data.__getitem__(0)
