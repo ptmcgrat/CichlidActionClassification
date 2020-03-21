@@ -14,10 +14,9 @@ import time
 
 
 from opts import parse_opts
-from resnet import resnet18
 from transforms import (
     Compose, Normalize, Scale, CenterCrop,
-    RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+    RandomHorizontalFlip,RandomVerticalFlip, FixedScaleRandomCenterCrop, 
     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
     ClassLabel, VideoID,TargetCompose)
 from data_loader import get_training_set, get_validation_set, get_test_set
@@ -178,12 +177,13 @@ def main():
         opt.video_path = os.path.join(opt.root_path, opt.video_path)
         opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
         opt.result_path = os.path.join(opt.root_path, opt.result_path)
+        if not os.path.exists(opt.result_path):
+            os.mkdir(opt.result_path)
         if opt.resume_path:
             opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
-    opt.arch = 'resnet-{}'.format(opt.model_depth)
     print(opt)
-    #with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
-    #    json.dump(vars(opt), opt_file)
+    with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
+       json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
     model = torchvision.models.video.r3d_18(pretrained=False, progress=True)
@@ -199,7 +199,7 @@ def main():
     if not opt.no_cuda:
         criterion = criterion.cuda()
     if not opt.no_train:
-        crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
+        crop_method = FixedScaleRandomCenterCrop(opt.sample_size,2)
         spatial_transforms = {}
         with open(opt.mean_file) as f:
             for i,line in enumerate(f):
@@ -207,10 +207,10 @@ def main():
                     continue
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
+                spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(),RandomVerticalFlip(), ToTensor(opt.norm_value), norm_method])
         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-        keys = annotateData[annotateData.Dataset=='Train']['Location']
-        values = annotateData[annotateData.Dataset=='Train']['MeanID']
+        keys = annotateData['Location']
+        values = annotateData['MeanID']
 
         annotationDictionary = dict(zip(keys, values))
 
@@ -252,13 +252,13 @@ def main():
                     continue
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size),ToTensor(opt.norm_value), norm_method])
+                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
 
-        annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-        keys = annotateData[annotateData.Dataset=='Test']['Location']
-        values = annotateData[annotateData.Dataset=='Test']['MeanID']
-
-        annotationDictionary = dict(zip(keys, values))
+#         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
+#         keys = annotateData[annotateData.Dataset=='Test']['Location']
+#         values = annotateData[annotateData.Dataset=='Test']['MeanID']
+# 
+#         annotationDictionary = dict(zip(keys, values))
         
 
         temporal_transform = TemporalCenterCrop(opt.sample_duration)

@@ -1,11 +1,12 @@
 import argparse
+import os
 
 
 def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--root_path',
-        default='/data/home/llong35/data/03_18_2020',
+        default=os.getcwd(),
         type=str,
         help='Root directory path of data')
     parser.add_argument(
@@ -30,12 +31,12 @@ def parse_opts():
         help='Stride for first convolution. Larger stride decreases memory and accuracy')
     parser.add_argument(
         '--annotation_path',
-        default='cichlids_patrick.json',
+        default='cichlids.json',
         type=str,
         help='Annotation file path')
     parser.add_argument(
         '--result_path',
-        default='results_3_18',
+        default='results',
         type=str,
         help='Result directory path')
     parser.add_argument(
@@ -45,7 +46,7 @@ def parse_opts():
     )
     parser.add_argument(
         '--sample_size',
-        default=160,
+        default=60,
         type=int,
         help='Height and width of inputs')
     parser.add_argument(
@@ -79,7 +80,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--batch_size', default=2, type=int, help='Batch Size')
+        '--batch_size', default=14, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
         default=100,
@@ -137,7 +138,7 @@ def parse_opts():
     parser.set_defaults(no_cuda=False)
     parser.add_argument(
         '--n_threads',
-        default=2,
+        default=14,
         type=int,
         help='Number of threads for multi-thread loading')
     parser.add_argument(
@@ -156,16 +157,16 @@ def parse_opts():
         type=int,
         help=
         'If 1, range of inputs is [0-255]. If 255, range of inputs is [0-1].')
-    parser.add_argument(
-        '--model_depth',
-        default=18,
-        type=int,
-        help='Depth of resnet (10 | 18 | 34 | 50 | 101)')
-    parser.add_argument(
-        '--resnet_shortcut',
-        default='B',
-        type=str,
-        help='Shortcut type of resnet (A | B)')
+#     parser.add_argument(
+#         '--model_depth',
+#         default=18,
+#         type=int,
+#         help='Depth of resnet (10 | 18 | 34 | 50 | 101)')
+#     parser.add_argument(
+#         '--resnet_shortcut',
+#         default='B',
+#         type=str,
+#         help='Shortcut type of resnet (A | B)')
 
 
     parser.add_argument(

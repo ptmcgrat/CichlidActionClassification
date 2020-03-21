@@ -82,6 +82,7 @@ def get_video_names_and_annotations(data, subset):
 
 def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                  sample_duration):
+    
     data = load_annotation_data(annotation_path)
     video_names, annotations = get_video_names_and_annotations(data, subset)
     class_to_idx = get_class_labels(data)
@@ -161,22 +162,24 @@ class cichlids(data.Dataset):
         """
         path = self.data[index]['video']
         clip_name = path.rstrip().split('/')[-1].split('.')[0]
-        clip_numpy = vp.vread(path)
+        try:
+            clip_numpy = vp.vread(path)
+        except:
+            print(path)
+            raise
         n_frames = clip_numpy.shape[0]
         frame_indices = [x for x in range(n_frames)]
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
-        clip = [Image.fromarray(clip_numpy[i]) for i in frame_indices]
-        
+#         clip = [Image.fromarray(clip_numpy[i]) for i in frame_indices]
+        clip = [clip_numpy[i] for i in frame_indices]
 #         path = self.data[index]['video']
 #         
 #         frame_indices = self.data[index]['frame_indices']
 
 #         clip = self.loader(path, frame_indices)
-        
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
-            self.spatial_transforms[self.annotationDict[clip_name]](clip[0])
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
@@ -225,12 +228,12 @@ def get_test_set(opt, spatial_transforms, temporal_transform,
     target_transform,
     sample_duration=opt.sample_duration,annotationDict = annotationDict)
     return test_data
-#     
+    
 # from opts import parse_opts
 # import pandas as pd
 # from transforms import (
 #     Compose, Normalize, Scale, CenterCrop, 
-#     RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+#     RandomHorizontalFlip, FixedScaleRandomCenterCrop, 
 #     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
 #     ClassLabel, VideoID,TargetCompose)
 # opt = parse_opts()
@@ -238,10 +241,9 @@ def get_test_set(opt, spatial_transforms, temporal_transform,
 #     opt.video_path = os.path.join(opt.root_path, opt.video_path)
 #     opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
 #     opt.result_path = os.path.join(opt.root_path, opt.result_path)
-
-# opt.arch = 'resnet-{}'.format(opt.model_depth)
+# 
 # print(opt)
-# crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
+# crop_method = FixedScaleRandomCenterCrop(opt.sample_size,2)
 # spatial_transforms = {}
 # with open(opt.mean_file) as f:
 #     for i,line in enumerate(f):
@@ -260,4 +262,5 @@ def get_test_set(opt, spatial_transforms, temporal_transform,
 # target_transform = ClassLabel()
 # training_data = get_training_set(opt, spatial_transforms,
 #                                          temporal_transform, target_transform, annotationDictionary)
+# pdb.set_trace()
 # training_data.__getitem__(0)

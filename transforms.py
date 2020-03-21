@@ -55,7 +55,7 @@ class ToTensor(object):
         """
         if isinstance(pic, np.ndarray):
             # handle numpy array
-            img = torch.from_numpy(pic.transpose((2, 0, 1)))
+            img = torch.from_numpy(pic.copy().transpose((2, 0, 1)))
             # backward compatibility
             return img.float().div(self.norm_value)
 
@@ -180,12 +180,29 @@ class RandomHorizontalFlip(object):
             PIL.Image: Randomly flipped image.
         """
         if self.p < 0.5:
-            return img.transpose(Image.FLIP_LEFT_RIGHT)
+            return np.flip(img, axis = 1)
         return img
 
     def randomize_parameters(self):
         self.p = random.random()
-        
+
+class RandomVerticalFlip(object):
+    """Horizontally flip the given PIL.Image randomly with a probability of 0.5."""
+
+    def __call__(self, img):
+        """
+        Args:
+            img (PIL.Image): Image to be flipped.
+        Returns:
+            PIL.Image: Randomly flipped image.
+        """
+        if self.p < 0.5:
+            return np.flip(img, axis = 0)
+        return img
+
+    def randomize_parameters(self):
+        self.p = random.random()
+
 class CenterCrop(object):
     """Crops the given PIL.Image at the center.
     Args:
@@ -194,43 +211,38 @@ class CenterCrop(object):
             made.
     """
 
-    def __init__(self, size):
-        if isinstance(size, numbers.Number):
-            self.size = (int(size), int(size))
-        else:
-            self.size = size
+    def __init__(self, size,spacing):
+        self.size = size
+        self.spacing = spacing
 
     def __call__(self, img):
-        """
-        Args:
-            img (PIL.Image): Image to be cropped.
-        Returns:
-            PIL.Image: Cropped image.
-        """
-        w, h = img.size
-        th, tw = self.size
-        x1 = int(round((w - tw) / 2.))
-        y1 = int(round((h - th) / 2.))
-        return img.crop((x1, y1, x1 + tw, y1 + th))
+        w, h = img.shape[0:2]
+        th, tw = self.size, self.size
+        assert w > tw and h > th
+        offset_x = (w-tw*self.spacing-1)//2
+        offset_y = (w-tw*self.spacing-1)//2
+        
+        return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + th*self.spacing:self.spacing]
 
     def randomize_parameters(self):
         pass
 
 
-class MultiScaleRandomCenterCrop(object):
-    def __init__(self, size):
+class FixedScaleRandomCenterCrop(object):
+    def __init__(self, size,spacing):
         self.size = size
+        self.spacing = spacing
 
     def __call__(self, img):
-        w, h = img.size
+        w, h = img.shape[0:2]
         th, tw = self.size, self.size
         assert w > tw and h > th
         random.seed(self.seed_x)
-        offset_x = random.randint(0,w-tw-1)
+        offset_x = random.randint(0,w-tw*self.spacing-1)
         random.seed(self.seed_y)
-        offset_y = random.randint(0,h-th-1)
+        offset_y = random.randint(0,h-th*self.spacing-1)
         
-        return img.crop((offset_x, offset_y, offset_x + tw, offset_y + th))
+        return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + th*self.spacing:self.spacing]
 
     def randomize_parameters(self):
         self.seed_x = random.randint(0,1000)
