@@ -285,8 +285,9 @@ class TemporalCenterCrop(object):
         size (int): Desired output size of the crop.
     """
 
-    def __init__(self, size):
+    def __init__(self, size,interval=1):
         self.size = size
+        self.interval = interval
 
     def __call__(self, frame_indices):
         """
@@ -297,10 +298,10 @@ class TemporalCenterCrop(object):
         """
 
         center_index = len(frame_indices) // 2
-        begin_index = max(0, center_index - (self.size // 2))
-        end_index = min(begin_index + self.size, len(frame_indices))
+        begin_index = max(0, center_index - (self.size*self.interval // 2))
+        end_index = begin_index + self.size*self.interval
 
-        out = frame_indices[begin_index:end_index]
+        out = frame_indices[begin_index:end_index:self.interval]
 
         for index in out:
             if len(out) >= self.size:
