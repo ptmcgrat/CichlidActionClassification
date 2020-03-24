@@ -94,6 +94,12 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     if epoch % opt.checkpoint == 0:
         save_file_path = os.path.join(opt.result_path,
                                       'save_{}.pth'.format(epoch))
+        states = {
+            'epoch': epoch + 1,
+            'state_dict': model.state_dict(),
+            'optimizer': optimizer.state_dict(),
+        }
+        torch.save(states, save_file_path)
 
 def val_epoch(epoch, data_loader, model, criterion, opt, logger):
     print('validation at epoch {}'.format(epoch))
@@ -168,7 +174,53 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
 
     return losses.avg
 
+def test_epoch(epoch, data_loader, model, criterion, opt, logger):
+    print('test at epoch {}'.format(epoch))
+    
+    model.eval()
 
+    batch_time = AverageMeter()
+    data_time = AverageMeter()
+    losses = AverageMeter()
+    accuracies = AverageMeter()
+
+    end_time = time.time()
+
+    for i, (inputs, targets, paths) in enumerate(data_loader):
+        data_time.update(time.time() - end_time)
+
+        if not opt.no_cuda:
+            targets = targets.cuda(async=True)
+        with torch.no_grad():
+            
+            inputs = Variable(inputs)
+            targets = Variable(targets)
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            acc = calculate_accuracy(outputs, targets)
+            losses.update(loss.item(), inputs.size(0))
+            accuracies.update(acc, inputs.size(0))
+
+            batch_time.update(time.time() - end_time)
+            end_time = time.time()
+
+            print('Epoch: [{0}][{1}/{2}]\t'
+                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                  'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
+                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                  'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
+                      epoch,
+                      i + 1,
+                      len(data_loader),
+                      batch_time=batch_time,
+                      data_time=data_time,
+                      loss=losses,
+                      acc=accuracies))
+
+    
+    logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
+
+    return losses.avg
 
 
 def main():
@@ -254,15 +306,9 @@ def main():
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
 
-#         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-#         keys = annotateData[annotateData.Dataset=='Test']['Location']
-#         values = annotateData[annotateData.Dataset=='Test']['MeanID']
-# 
-#         annotationDictionary = dict(zip(keys, values))
         
 
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
-        #temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = ClassLabel()
         validation_data = get_validation_set(
             opt, spatial_transforms, temporal_transform, target_transform, annotationDictionary)
@@ -275,6 +321,19 @@ def main():
         val_logger = Logger(
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
+    if not opt.no_test:
+        temporal_transform = TemporalCenterCrop(opt.sample_duration)
+        target_transform = ClassLabel()
+        test_data = get_test_set(
+            opt, spatial_transforms, temporal_transform, target_transform, annotationDictionary)
+        test_loader = torch.utils.data.DataLoader(
+            test_data,
+            batch_size=opt.batch_size,
+            shuffle=False,
+            num_workers=opt.n_threads,
+            pin_memory=True)
+        test_logger = Logger(
+            os.path.join(opt.result_path, 'test.log'), ['epoch', 'loss', 'acc'])
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path)
@@ -296,24 +355,8 @@ def main():
 
         if not opt.no_train and not opt.no_val:
             scheduler.step(validation_loss)
-
-    if opt.test:
-        spatial_transform = Compose([
-            Scale(int(opt.sample_size / opt.scale_in_test)),
-            CornerCrop(opt.sample_size, opt.crop_position_in_test),
-            ToTensor(opt.norm_value), norm_method
-        ])
-        temporal_transform = LoopPadding(opt.sample_duration)
-        target_transform = VideoID()
-
-        test_data = get_test_set(opt, spatial_transform, temporal_transform,
-                                 target_transform)
-        test_loader = torch.utils.data.DataLoader(
-            test_data,
-            batch_size=opt.batch_size,
-            shuffle=False,
-            num_workers=opt.n_threads,
-            pin_memory=True)
-        test.test(test_loader, model, opt, test_data.class_names)
+        if not opt.no_test:
+            test_epoch(i, test_loader, model, criterion, opt,
+                                        test_logger)
 if __name__ == '__main__':
     main()

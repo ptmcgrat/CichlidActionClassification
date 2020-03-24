@@ -67,7 +67,7 @@ def split_train_validation_test(result_path,video_path,train_ratio,validation_ra
     
     
     
-def prepare_data_directories(excel_file,master_directory,data_folder):
+def prepare_data_subset_directories(excel_file,master_directory,data_folder):
     # for each training, create a new folder for training results watching
     df = pd.read_excel(excel_file)
     for index, row in df.iterrows():
@@ -80,12 +80,13 @@ def prepare_data_directories(excel_file,master_directory,data_folder):
         call(['ln','-s',data_folder,directory+'/'])
         split_train_validation_test(directory,data_folder,train_ratio,val_ratio)
 
+
 def main():
     
     excel_file = '/data/home/llong35/files_for_3D_resnet/training_percentage.xlsx'
     master_directory = '/data/home/llong35/data/transfer_test'
     data_folder = '/data/home/llong35/data/annotated_videos'
-    prepare_data_directories(excel_file,master_directory,data_folder)
+    prepare_data_subset_directories(excel_file,master_directory,data_folder)
 
 if __name__ == '__main__':
     main()
