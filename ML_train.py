@@ -9,9 +9,24 @@ parser.add_argument('--ML_videos_directory',
                     default = '/data/home/llong35/data/all_videos',
                     required = True, 
                     help = 'Name of directory to hold videos to annotate for machine learning purposes')
-parser.add_argument('--ML_labels', type = str, required = True, help = 'labels given to each ML video')
-parser.add_argument('--purpose', type = str, required = True, help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
-parser.add_argument('--Log', type = str, required = True, help = 'Log file to keep track of versions + parameters used')
+                    
+parser.add_argument('--ML_labels',
+                    type = str, 
+                    default = '/data/home/llong35/data/all_videos',
+                    required = True, 
+                    help = 'labels given to each ML video')
+                    
+parser.add_argument('--purpose', 
+                    type = str, 
+                    default = '/data/home/llong35/data/all_videos',
+                    required = True, 
+                    help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
+                    
+parser.add_argument('--Log', 
+                    type = str, 
+                    default = '/data/home/llong35/data/all_videos',
+                    required = True, 
+                    help = 'Log file to keep track of versions + parameters used')
 
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory', 
@@ -21,16 +36,44 @@ parser.add_argument('--Clips_temp_directory',
                     help = 'Location for temp files to be stored')
 
 # Output data
-parser.add_argument('--Log_directory', type = str, required = True, help = 'directory to store sample prepare logs')
-parser.add_argument('--Model_directory', type = str, required = True, help = 'directory to store models')
-parser.add_argument('--Performance_directory', type = str, required = True, help = 'directory to store accuracy and loss change across training or fineturing')
-parser.add_argument('--Prediction_File', type = str, help = 'label for new animal clips')
+parser.add_argument('--Log_directory', 
+                    type = str, 
+                    required = True, 
+                    default = '/data/home/llong35/data/all_videos',
+                    help = 'directory to store sample prepare logs')
+                    
+parser.add_argument('--Model_directory', 
+                    type = str, 
+                    required = True, 
+                    default = '/data/home/llong35/data/all_videos',
+                    help = 'directory to store models')
+                    
+parser.add_argument('--Performance_directory', 
+                    type = str, 
+                    default = '/data/home/llong35/data/all_videos',
+                    required = True, 
+                    help = 'directory to store accuracy and loss change across training or fineturing')
+                    
+parser.add_argument('--Prediction_File', 
+                    type = str, 
+                    help = 'label for new animal clips')
 
 
 # Parameters for the dataloader
-parser.add_argument('--sample_duration',default=96,type=int,help='Temporal duration of inputs')
-parser.add_argument('--sample_size',default=60,type=int,help='Height and width of inputs')
-parser.add_argument('--n_threads',default=3,type=int,help='Number of threads for multi-thread loading')
+parser.add_argument('--sample_duration',
+                    default=96,
+                    type=int,
+                    help='Temporal duration of inputs')
+                    
+parser.add_argument('--sample_size',
+                    default=60,
+                    type=int,
+                    help='Height and width of inputs')
+                    
+parser.add_argument('--n_threads',
+                    default=3,
+                    type=int,
+                    help='Number of threads for multi-thread loading')
 
 
 # Parameters for the optimizer
