@@ -12,7 +12,7 @@ class DP_worker():
             if not file_name.endswith('.mp4'):
                 continue
             location = file_name.split('.')[0]
-            video_file_path = os.path.join(ML_video_dir,location)
+            video_file_path = os.path.join(ML_video_dir,location+'.mp4')
             target_folder = os.path.join(self.args.Clips_temp_directory,location)
             if not os.path.exists(target_folder):
                 os.makedirs(target_folder)
