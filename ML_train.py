@@ -1,4 +1,6 @@
 import argparse, subprocess, datetime, os, pdb, sys
+from Utils.CichlidActionRecognition import ML_model
+
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
 # Input data
@@ -7,8 +9,11 @@ parser.add_argument('--ML_labels', type = str, required = True, help = 'labels g
 parser.add_argument('--purpose', type = str, required = True, help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
 parser.add_argument('--Log', type = str, required = True, help = 'Log file to keep track of versions + parameters used')
 
+# Temp directories that wlil be deleted at the end of the analysis
+parser.add_argument('--Clips_temp_directory', type = str, required = True, help = 'Location for temp files to be stored')
 
 # Output data
+parser.add_argument('--Log_directory', type = str, required = True, help = 'directory to store sample prepare logs')
 parser.add_argument('--Model_directory', type = str, required = True, help = 'directory to store models')
 parser.add_argument('--Performance_directory', type = str, required = True, help = 'directory to store accuracy and loss change across training or fineturing')
 parser.add_argument('--Prediction_File', type = str, help = 'label for new animal clips')
@@ -55,6 +60,7 @@ parser.add_argument('--n_epochs',default=20,type=int,help='Number of total epoch
 
 
 args = parser.parse_args()
+ML_model(args)
 
 # Validate data
 # def check_args(args):
@@ -130,16 +136,4 @@ args = parser.parse_args()
 # 
 # print(HMM_command)
 # subprocess.run(HMM_command)
-# 
-# cluster_args = {}
-# for key, value in vars(args).items():
-#     if 'HMM' not in key or 'filename' in key:
-#         if key != 'Log':
-#             if value is not None:
-#                 cluster_args[key] = value
-# 
-# 
-# cluster_command = ['python3', 'Utils/calculateClusters.py']
-# for key, value in cluster_args.items():
-#     cluster_command.extend(['--' + key, str(value)])
-# subprocess.run(cluster_command)
+#
