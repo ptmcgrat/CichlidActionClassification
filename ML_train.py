@@ -4,13 +4,21 @@ from Utils.CichlidActionRecognition import ML_model
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
 # Input data
-parser.add_argument('--ML_videos_directory', type = str, required = True, help = 'Name of directory to hold videos to annotate for machine learning purposes')
+parser.add_argument('--ML_videos_directory',
+                    type = str, 
+                    default = '/data/home/llong35/data/all_videos',
+                    required = True, 
+                    help = 'Name of directory to hold videos to annotate for machine learning purposes')
 parser.add_argument('--ML_labels', type = str, required = True, help = 'labels given to each ML video')
 parser.add_argument('--purpose', type = str, required = True, help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
 parser.add_argument('--Log', type = str, required = True, help = 'Log file to keep track of versions + parameters used')
 
 # Temp directories that wlil be deleted at the end of the analysis
-parser.add_argument('--Clips_temp_directory', type = str, required = True, help = 'Location for temp files to be stored')
+parser.add_argument('--Clips_temp_directory', 
+                    default='/data/home/llong35/data/temp',
+                    type = str, 
+                    required = True, 
+                    help = 'Location for temp files to be stored')
 
 # Output data
 parser.add_argument('--Log_directory', type = str, required = True, help = 'directory to store sample prepare logs')
@@ -60,7 +68,7 @@ parser.add_argument('--n_epochs',default=20,type=int,help='Number of total epoch
 
 
 args = parser.parse_args()
-ML_model(args)
+w = ML_model(args)
 
 # Validate data
 # def check_args(args):
