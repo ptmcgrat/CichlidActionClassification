@@ -64,7 +64,7 @@ parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epoc
 #Parameters specific for finetuning for other animals
 parser.add_argument('--resume_path',default='',type=str,help='Save data (.pth) of previous training')
 parser.add_argument('--new_animals',type=str,help='new animals to apply the machine learning model')
-parser.add_argument('--n_epochs',default=20,type=int,help='Number of total epochs to run')
+parser.add_argument('--finetuning_epochs',default=20,type=int,help='Number of total epochs to run')
 
 
 args = parser.parse_args()
