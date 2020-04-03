@@ -25,7 +25,7 @@ class DP_worker():
             break
         
         #count number of frames and calculate mean
-        with open(os.path.join(self.Log_directory + 'MeansAll.csv'), 'w') as f:
+        with open(os.path.join(self.arg.Log_directory + 'MeansAll.csv'), 'w') as f:
             print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
             for video in os.listdir(videos_temp):
                 video_folder = os.path.join(videos_temp,video)
