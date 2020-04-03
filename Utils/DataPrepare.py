@@ -16,7 +16,7 @@ class DP_worker():
             target_folder = os.path.join(self.args.Clips_temp_directory,location)
             if not os.path.exists(target_folder):
                 os.makedirs(target_folder)
-            cmd = 'ffmpeg -i \"{}\" \"{}/image_%05d.jpg\"'.format(video_file_path, target_folder)
+            cmd = 'ffmpeg -i {} {}/image_%05d.jpg'.format(video_file_path, target_folder)
             subprocess.call(cmd)
             break
             
