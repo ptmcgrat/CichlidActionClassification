@@ -7,51 +7,51 @@ parser = argparse.ArgumentParser(description='This script takes video clips and 
 parser.add_argument('--ML_videos_directory',
                     type = str, 
                     default = '/data/home/llong35/data/all_videos',
-                    required = True, 
+                    required = False, 
                     help = 'Name of directory to hold videos to annotate for machine learning purposes')
                     
 parser.add_argument('--ML_labels',
                     type = str, 
                     default = '/data/home/llong35/data/all_videos',
-                    required = True, 
+                    required = False, 
                     help = 'labels given to each ML video')
                     
 parser.add_argument('--purpose', 
                     type = str, 
                     default = '/data/home/llong35/data/all_videos',
-                    required = True, 
+                    required = False, 
                     help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
                     
 parser.add_argument('--Log', 
                     type = str, 
                     default = '/data/home/llong35/data/all_videos',
-                    required = True, 
+                    required = False, 
                     help = 'Log file to keep track of versions + parameters used')
 
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory', 
                     default='/data/home/llong35/data/temp',
                     type = str, 
-                    required = True, 
+                    required = False, 
                     help = 'Location for temp files to be stored')
 
 # Output data
 parser.add_argument('--Log_directory', 
                     type = str, 
-                    required = True, 
+                    required = False, 
                     default = '/data/home/llong35/data/all_videos',
                     help = 'directory to store sample prepare logs')
                     
 parser.add_argument('--Model_directory', 
                     type = str, 
-                    required = True, 
+                    required = False, 
                     default = '/data/home/llong35/data/all_videos',
                     help = 'directory to store models')
                     
 parser.add_argument('--Performance_directory', 
                     type = str, 
                     default = '/data/home/llong35/data/all_videos',
-                    required = True, 
+                    required = False, 
                     help = 'directory to store accuracy and loss change across training or fineturing')
                     
 parser.add_argument('--Prediction_File', 
