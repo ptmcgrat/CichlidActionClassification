@@ -39,7 +39,7 @@ parser.add_argument('--Clips_temp_directory',
 parser.add_argument('--Log_directory', 
                     type = str, 
                     required = False, 
-                    default = '/data/home/llong35/data/all_videos',
+                    default = '/data/home/llong35/data/04_03_2020',
                     help = 'directory to store sample prepare logs')
                     
 parser.add_argument('--Model_directory', 

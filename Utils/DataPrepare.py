@@ -11,18 +11,18 @@ class DP_worker():
         
         ML_video_dir = self.args.ML_videos_directory
         videos_temp = self.args.Clips_temp_directory
-        for file_name in os.listdir(ML_video_dir):
-            if not file_name.endswith('.mp4'):
-                continue
-            location = file_name.split('.')[0]
-            video_file_path = os.path.join(ML_video_dir,location+'.mp4')
-            target_folder = os.path.join(self.args.Clips_temp_directory,location)
-            if not os.path.exists(target_folder):
-                os.makedirs(target_folder)
-#             cmd = 'ffmpeg -i {} {}/image_%05d.jpg'.format(video_file_path, target_folder)
-            cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
-            subprocess.run(cmd)
-            break
+#         for file_name in os.listdir(ML_video_dir):
+#             if not file_name.endswith('.mp4'):
+#                 continue
+#             location = file_name.split('.')[0]
+#             video_file_path = os.path.join(ML_video_dir,location+'.mp4')
+#             target_folder = os.path.join(self.args.Clips_temp_directory,location)
+#             if not os.path.exists(target_folder):
+#                 os.makedirs(target_folder)
+# #             cmd = 'ffmpeg -i {} {}/image_%05d.jpg'.format(video_file_path, target_folder)
+#             cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
+#             subprocess.run(cmd)
+#             break
         
         #count number of frames and calculate mean
         with open(os.path.join(self.args.Log_directory + 'MeansAll.csv'), 'w') as f:
