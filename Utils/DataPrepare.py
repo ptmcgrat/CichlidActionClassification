@@ -1,11 +1,14 @@
 import os
 import subprocess
+from skimage import io
 class DP_worker():
     def __init__(self, args):
         self.args = args
+        self.means = {}
     
     def work(self):
         #convert to jpegs
+        
         ML_video_dir = self.args.ML_videos_directory
         videos_temp = self.args.Clips_temp_directory
         for file_name in os.listdir(ML_video_dir):
@@ -21,22 +24,33 @@ class DP_worker():
             subprocess.run(cmd)
             break
         
-        #count number of frames
-        for video in os.listdir(videos_temp):
-            video_folder = os.path.join(videos_temp,video)
-            image_indices = []
-            for image_file_name in os.listdir(video_folder):
-                if 'image' not in image_file_name:
-                    continue
-                image_indices.append(int(image_file_name[6:11]))
-            image_indices.sort(reverse=True)
-            n_frames = image_indices[0]
-            with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
-                dst_file.write(str(n_frames))
-            break
+        #count number of frames and calculate mean
+        with open(os.path.join(self.Log_directory + 'MeansAll.csv'), 'w') as f:
+            print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
+            for video in os.listdir(videos_temp):
+                video_folder = os.path.join(videos_temp,video)
+                image_indices = []
+                frames = []
+                for image_file_name in os.listdir(video_folder):
+                    image_file_path = os.path.join(video_folder,image_file_name)
+                    if 'image' not in image_file_name:
+                        continue
+                    image_indices.append(int(image_file_name[6:11]))
+                    frames.append(image_file_path)
+                image_indices.sort(reverse=True)
+                n_frames = image_indices[0]
+                with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
+                    dst_file.write(str(n_frames))
+                img = io.imread(frames[0])
+                mean = img.mean(axis = (0,1))
+                std = img.std(axis = (0,1))
+                print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
+                break
         
             
         #calculate means
+        
+            
         
         
         
