@@ -1,5 +1,5 @@
 from Utils.DataPrepare import DP_worker
-class ML_model(args):
+class ML_model():
     def __init__(self, args):
         self.args = args
         #prepare the data is the data is not prepared

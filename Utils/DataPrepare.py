@@ -1,6 +1,6 @@
 import os
 import subprocess
-class DP_worker(args):
+class DP_worker():
     def __init__(self, args):
         self.args = args
     
