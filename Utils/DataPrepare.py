@@ -1,10 +1,16 @@
 import os
 import subprocess
+
 from skimage import io
+import pandas as pd
+
+import pdb
 class DP_worker():
     def __init__(self, args):
         self.args = args
         self.means = {}
+        self.annotation = pd.read_csv(args.ML_labels)
+        
     
     def work(self):
         #convert to jpegs
@@ -45,10 +51,12 @@ class DP_worker():
                 mean = img.mean(axis = (0,1))
                 std = img.std(axis = (0,1))
                 print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
+        dt = pd.read_csv(os.path.join(self.args.Log_directory,'MeansAll.csv'), sep = ',')
+        pdb.set_trace()
+        dt['MeanID'] = dt.apply(lambda row: self.annotation.loc[self.annotation.Location==row.Clip].MeanID, axis = 1)
+        print(dt)
                 break
         
-            
-        #calculate means
         
             
         
