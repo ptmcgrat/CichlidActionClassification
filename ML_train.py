@@ -6,7 +6,13 @@ parser = argparse.ArgumentParser(description='This script takes video clips and 
 # Input data
 parser.add_argument('--ML_videos_directory',
                     type = str, 
-                    default = '/data/home/llong35/data/all_videos',
+                    default = '/data/home/llong35/data/labeled_videos',
+                    required = False, 
+                    help = 'Name of directory to hold videos to annotate for machine learning purposes')
+
+parser.add_argument('--Unlabeled_videos_directory',
+                    type = str, 
+                    default = '/data/home/llong35/data/unlabled_videos/MC16_2/clips/AllClips',
                     required = False, 
                     help = 'Name of directory to hold videos to annotate for machine learning purposes')
                     
@@ -111,6 +117,11 @@ parser.add_argument('--finetuning_epochs',default=20,type=int,help='Number of to
 
 
 args = parser.parse_args()
+def check_args(args):
+    if os.path.exists(args.Log_directory):
+        os.mkdirs(args.Log_directory)
+
+check_args(args)
 w = ML_model(args)
 
 # Validate data
