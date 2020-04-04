@@ -118,7 +118,7 @@ parser.add_argument('--finetuning_epochs',default=20,type=int,help='Number of to
 
 args = parser.parse_args()
 def check_args(args):
-    if os.path.exists(args.Log_directory):
+    if not os.path.exists(args.Log_directory):
         os.makedirs(args.Log_directory)
 
 check_args(args)
