@@ -27,7 +27,7 @@ class DP_worker():
             meansalll_file = os.path.join(self.args.Log_directory,'target_MeansAll.csv')
             means_file = os.path.join(self.args.Log_directory,'target_Means.csv')
 #             annotation_f=open(annotation_file,'w')
-            print('Location,MeanID', file = annotation_f)
+#             print('Location,MeanID', file = annotation_f)
         
         videos_temp = os.path.join(self.args.Clips_temp_directory,domain)
         if not os.path.exists(videos_temp):
