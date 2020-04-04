@@ -47,7 +47,6 @@ class DP_worker():
                 os.makedirs(target_folder)
             cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
             subprocess.run(cmd)
-            break
         if domain == 'target':
             annotation_f.close()
             
@@ -71,7 +70,6 @@ class DP_worker():
                 mean = img.mean(axis = (0,1))
                 std = img.std(axis = (0,1))
                 print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
-                break
         dt = pd.read_csv(meansalll_file,sep=',')
         annotation_df = pd.read_csv(annotation_file,sep=',')
         dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.Location==row.Clip].MeanID, axis = 1)
