@@ -25,7 +25,7 @@ for animal in animals_list:
     animal_folder = os.path.join(target_data_folder,animal)
     if not os.path.exists(animal_folder):
         os.makedirs(animal_folder)
-    animal_video_source = dropbox+':/'+master_path+animal+'/AllClips.tar'
+    animal_video_source = dropbox+':'+master_path+animal+'/AllClips.tar'
     cmd = ['rclone','copy',animal_video_source,animal_folder+'/']
-    print(cmd)
+    subprocess.run(cmd)
     break
