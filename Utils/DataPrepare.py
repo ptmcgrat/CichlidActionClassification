@@ -74,6 +74,7 @@ class DP_worker():
         annotation_df = pd.read_csv(annotation_file,sep=',')
         dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.Location==row.Clip].MeanID, axis = 1)
         means = dt.groupby('MeanID').mean()
+        pdb.set_trace()
         with open(means_file,'w') as f:
             print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
             for row in means.itertuples():
