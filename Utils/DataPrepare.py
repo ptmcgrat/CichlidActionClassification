@@ -119,11 +119,14 @@ class DP_worker():
         def convert_csv_to_dict(csv_path, subset):
             keys = []
             key_labels = []
+            classes = []
             with open(csv_path,'r') as input:
                 for line in input:
                     basename,class_name = line.rstrip().split(',')
                     keys.append(basename)
                     key_labels.append(class_name)
+                    if class_name not in classes:
+                        classes.append(class_name)
             database = {}
             for i in range(len(keys)):
                 key = keys[i]
@@ -131,15 +134,18 @@ class DP_worker():
                 database[key]['subset'] = subset
                 label = key_labels[i]
                 database[key]['annotations'] = {'label': label}
-            return database
-        train_database = convert_csv_to_dict(train_list, 'training')
-        val_database = convert_csv_to_dict(val_list, 'validation')
-        test_database = convert_csv_to_dict(test_list, 'testing')
-        target_database = convert_csv_to_dict(target_list, 'target')
-
+            return database,classes
+        train_database,classes = convert_csv_to_dict(train_list, 'training')
+        val_database,_ = convert_csv_to_dict(val_list, 'validation')
+        test_database,_ = convert_csv_to_dict(test_list, 'testing')
+        target_database,_ = convert_csv_to_dict(target_list, 'target')
+        
+        assert len(classes)==10
+        
         dst_data = {}
     
         dst_data['database'] = {}
+        dst_data['labels'] = classes
         dst_data['database'].update(train_database)
         dst_data['database'].update(val_database)
         dst_data['database'].update(test_database)
@@ -153,8 +159,8 @@ class DP_worker():
     
     def work(self):
         #convert to jpegs
-        self.prepare_domain('source')
-#         self.prepare_domain('target')
+#         self.prepare_domain('source')
+        self.prepare_domain('target')
 #         self.prepare_json()
 #         
         
