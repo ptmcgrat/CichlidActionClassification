@@ -30,6 +30,8 @@ class DP_worker():
             print('Location,MeanID', file = annotation_f)
         
         videos_temp = os.path.join(self.args.Clips_temp_directory,domain)
+        if not os.path.exists(videos_temp):
+            os.makedirs(videos_temp)
         
 #         for file_name in os.listdir(video_dir):
 #             if not file_name.endswith('.mp4'):
