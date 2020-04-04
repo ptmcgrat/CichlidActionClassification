@@ -51,11 +51,12 @@ class DP_worker():
                 mean = img.mean(axis = (0,1))
                 std = img.std(axis = (0,1))
                 print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
+                break
         dt = pd.read_csv(os.path.join(self.args.Log_directory,'MeansAll.csv'), sep = ',')
         pdb.set_trace()
         dt['MeanID'] = dt.apply(lambda row: self.annotation.loc[self.annotation.Location==row.Clip].MeanID, axis = 1)
         print(dt)
-                break
+                
         
         
             
