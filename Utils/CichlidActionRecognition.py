@@ -1,7 +1,7 @@
 import os
 import json
 
-from Utils.models import DANN_model
+from Utils import DANN_model
 from Utils.DataPrepare import DP_worker
 from Utils.utils import Logger,AverageMeter, calculate_accuracy
 from Utils.transforms import (Compose, Normalize, Scale, CenterCrop, 
