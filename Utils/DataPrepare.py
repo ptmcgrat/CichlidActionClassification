@@ -1,14 +1,17 @@
 import os
 import subprocess
+import json
 
 from skimage import io
 import pandas as pd
+import numpy as np
 
 import pdb
 class DP_worker():
     def __init__(self, args):
         self.args = args
         self.means = {}
+        
         
     
     def prepare_domain(self,domain):
@@ -36,7 +39,7 @@ class DP_worker():
             else:
                 tokens = file_name.split('.')[0].split('__')
                 location = '_'.join(tokens[-5:])
-                MeanID = '_'.join(tokens[:2])
+                MeanID = ':'.join(tokens[:2])
                 print(location+','+MeanID,file=annotation_f)
             video_file_path = os.path.join(video_dir,file_name)
             target_folder = os.path.join(videos_temp,location)
@@ -77,14 +80,82 @@ class DP_worker():
             for row in means.itertuples():
                 print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
         
+        if domain == 'source':
+            train_list = os.path.join(self.args.Log_directory,'source_train_list.txt')
+            val_list = os.path.join(self.args.Log_directory,'source_val_list.txt')
+            test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
+            test_animals = ['MC16_2']
+            with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
+                for index,row in annotation_df.iterrows():
+                    animal = row.MeanID.split(':')[0]
+                    if animal in test_animals:
+                        print(row.Location+','+row.Label,file=test)
+                    else:
+                        if np.random.uniform()<0.8:
+                            print(row.Location+','+row.Label,file=train)
+                            try:
+                                self.train_count += 1
+                            except:
+                                self.train_count = 1
+                        else:
+                            print(row.Location+','+row.Label,file=val)
+        else:
+            target_list = os.path.join(self.args.Log_directory,'target_list.txt')
+            with open(target_list,'w') as target:
+                count = 0
+                for index,row in annotation_df.iterrows():
+                    count += 1
+                    print(row.Location+',target',file=target)
+                    if count == self.train_count:
+                        break
+        
+        
+    def prepare_json(self):
+        train_list = os.path.join(self.args.Log_directory,'source_train_list.txt')
+        val_list = os.path.join(self.args.Log_directory,'source_val_list.txt')
+        test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
+        target_list = os.path.join(self.args.Log_directory,'target_list.txt')
+        dst_file = os.path.join(self.args.Log_directory,'cichlids.json')
+        def convert_csv_to_dict(csv_path, subset):
+            keys = []
+            key_labels = []
+            with open(csv_path,'r') as input:
+                for line in input:
+                    basename,class_name = line.rstrip().split(',')
+                    keys.append(basename)
+                    key_labels.append(class_name)
+            database = {}
+            for i in range(len(keys)):
+                key = keys[i]
+                database[key] = {}
+                database[key]['subset'] = subset
+                label = key_labels[i]
+                database[key]['annotations'] = {'label': label}
+            return database
+        train_database = convert_csv_to_dict(train_list, 'training')
+        val_database = convert_csv_to_dict(val_list, 'validation')
+        test_database = convert_csv_to_dict(test_list, 'testing')
+        target_database = convert_csv_to_dict(target_list, 'target')
+
+        dst_data = {}
+    
+        dst_data['database'] = {}
+        dst_data['database'].update(train_database)
+        dst_data['database'].update(val_database)
+        dst_data['database'].update(test_database)
+        dst_data['database'].update(target_database)
+        
+        with open(dst_json_path, 'w') as dst_file:
+            json.dump(dst_data, dst_file)
+        
     
     
     
     def work(self):
         #convert to jpegs
-#         self.prepare_domain('source')
+        self.prepare_domain('source')
         self.prepare_domain('target')
-        
+        self.prepare_json()
         
         
             
