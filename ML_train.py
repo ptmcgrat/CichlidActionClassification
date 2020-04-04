@@ -12,7 +12,7 @@ parser.add_argument('--ML_videos_directory',
                     
 parser.add_argument('--ML_labels',
                     type = str, 
-                    default = '/data/home/llong35/data/all_videos',
+                    default = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv',
                     required = False, 
                     help = 'labels given to each ML video')
                     
