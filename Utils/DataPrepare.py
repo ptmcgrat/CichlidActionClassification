@@ -116,7 +116,7 @@ class DP_worker():
         val_list = os.path.join(self.args.Log_directory,'source_val_list.txt')
         test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
         target_list = os.path.join(self.args.Log_directory,'target_list.txt')
-        dst_file = os.path.join(self.args.Log_directory,'cichlids.json')
+        dst_json_path = os.path.join(self.args.Log_directory,'cichlids.json')
         def convert_csv_to_dict(csv_path, subset):
             keys = []
             key_labels = []
