@@ -48,7 +48,8 @@ class DP_worker():
             cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
             subprocess.run(cmd)
             break
-        annotation_f.close()
+        if domain == 'target':
+            annotation_f.close()
             
         with open(meansalll_file, 'w') as f:
             print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
