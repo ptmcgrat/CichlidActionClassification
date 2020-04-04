@@ -21,7 +21,7 @@ animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'T
 #download them to seperate folders
 master_path = 'McGrath/Apps/CichlidPiData/'
 target_data_folder = '/data/home/llong35/data/unlabled_videos'
-for animal in animal_list:
+for animal in animals_list:
     animal_folder = os.path.join(target_data_folder,animal)
     animal_video_source = dropbox+'/'+master_path+animal+'/AllClips.tar'
     cmd = ['rclone','copy',animal_video_source,animal_folder+'/']
