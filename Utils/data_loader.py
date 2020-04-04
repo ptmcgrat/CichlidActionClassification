@@ -144,31 +144,7 @@ def get_training_set(opt, spatial_transforms, temporal_transform,
     target_transform=target_transform, annotationDict = annotationDict)
     return training_data
 
-def get_validation_set(opt, spatial_transforms, temporal_transform,
-                       target_transform, annotationDict):
-    validation_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'validation',
-    opt.n_val_samples,
-    spatial_transforms,
-    temporal_transform,
-    target_transform,
-    sample_duration=opt.sample_duration,annotationDict = annotationDict)
-    return validation_data
 
-def get_test_set(opt, spatial_transforms, temporal_transform,
-                       target_transform, annotationDict):
-    test_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'test',
-    opt.n_val_samples,
-    spatial_transforms,
-    temporal_transform,
-    target_transform,
-    sample_duration=opt.sample_duration,annotationDict = annotationDict)
-    return test_data
 
 
 class cichlids(data.Dataset):
