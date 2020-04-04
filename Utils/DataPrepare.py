@@ -50,26 +50,26 @@ class DP_worker():
 #         if domain == 'target':
 #             annotation_f.close()
             
-#         with open(meansalll_file, 'w') as f:
-#             print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
-#             for video in os.listdir(videos_temp):
-#                 video_folder = os.path.join(videos_temp,video)
-#                 image_indices = []
-#                 frames = []
-#                 for image_file_name in os.listdir(video_folder):
-#                     image_file_path = os.path.join(video_folder,image_file_name)
-#                     if 'image' not in image_file_name:
-#                         continue
-#                     image_indices.append(int(image_file_name[6:11]))
-#                     frames.append(image_file_path)
-#                 image_indices.sort(reverse=True)
-#                 n_frames = image_indices[0]
-#                 with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
-#                     dst_file.write(str(n_frames))
-#                 img = io.imread(frames[0])
-#                 mean = img.mean(axis = (0,1))
-#                 std = img.std(axis = (0,1))
-#                 print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
+        with open(meansalll_file, 'w') as f:
+            print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
+            for video in os.listdir(videos_temp):
+                video_folder = os.path.join(videos_temp,video)
+                image_indices = []
+                frames = []
+                for image_file_name in os.listdir(video_folder):
+                    image_file_path = os.path.join(video_folder,image_file_name)
+                    if 'image' not in image_file_name:
+                        continue
+                    image_indices.append(int(image_file_name[6:11]))
+                    frames.append(image_file_path)
+                image_indices.sort(reverse=True)
+                n_frames = image_indices[0]
+                with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
+                    dst_file.write(str(n_frames))
+                img = io.imread(frames[0])
+                mean = img.mean(axis = (0,1))
+                std = img.std(axis = (0,1))
+                print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
         dt = pd.read_csv(meansalll_file,sep=',')
         annotation_df = pd.read_csv(annotation_file,sep=',')
         dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.Location==row.Clip].MeanID, axis = 1)
