@@ -67,22 +67,23 @@ def get_class_labels(data):
 
 def get_video_names_and_annotations(data, subset):
     video_names = []
-    annotations = []
+    labels = []
 
     for key, value in data['database'].items():
         this_subset = value['subset']
         if this_subset == subset:
             label = value['annotations']['label']
-            video_names.append('{}/{}'.format(label, key))
-            annotations.append(value['annotations'])
+            video_names.append(key)
+            labels.append(label)
+            
 
-    return video_names, annotations
+    return video_names,labels
 
 
 def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                  sample_duration):
     data = load_annotation_data(annotation_path)
-    video_names, annotations = get_video_names_and_annotations(data, subset)
+    video_names, labels = get_video_names_and_annotations(data, subset)
     class_to_idx = get_class_labels(data)
     idx_to_class = {}
     for name, label in class_to_idx.items():
@@ -92,6 +93,11 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         #print(video_names[i])
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
+        
+        if subset == 'target':
+            root_path = os.path.join(root_path,'target')
+        else:
+            root_path = os.path.join(root_path,'source')
 
         video_path = os.path.join(root_path, video_names[i])
         if not os.path.exists(video_path):
@@ -108,10 +114,13 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
             'video': video_path,
             'segment': [begin_t, end_t],
             'n_frames': n_frames,
-            'video_id': video_names[i].split('/')[1]
+            'video_id': video_names[i]
         }
-        if len(annotations) != 0:
-            sample['label'] = class_to_idx[annotations[i]['label']]
+        if len(labels) != 0:
+            if labels[i] != 'target':
+                sample['label'] = class_to_idx[labels[i]['label']]
+            else:
+                sample['label'] = -1
         else:
             sample['label'] = -1
 
