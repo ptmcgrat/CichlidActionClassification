@@ -115,7 +115,7 @@ class DP_worker():
                 count = 0
                 for clip in test_clips:
                     count += 1
-                    print(row.Location+',target',file=target)
+                    print(clip+',target',file=target)
                 
                 for index,row in annotation_df.iterrows():
                     if row.Location in test_clips:
