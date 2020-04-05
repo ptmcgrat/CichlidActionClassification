@@ -35,7 +35,7 @@ class ML_model():
         
         
     def work(self):
-        pdb.set_trace()
+        
         opt = self.args
         with open(opt.Log, 'w') as opt_file:
             json.dump(vars(opt), opt_file)
@@ -63,6 +63,7 @@ class ML_model():
         target_annotation_dict = dict(zip(target_annotateData['Location'],target_annotateData['MeanID']))
         
         # training data loader
+        pdb.set_trace()
         crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
         spatial_transforms = {}
         mean_file = os.path.join(opt.Log_directory,'source_Means.csv')
