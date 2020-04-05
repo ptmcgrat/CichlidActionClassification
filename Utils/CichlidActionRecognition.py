@@ -32,6 +32,7 @@ class ML_model():
         self.target_json_file = os.path.join(args.Log_directory,'target.json')
         #check if data preparation is done
         if not os.path.exists(self.source_json_file):
+            print('preparing data')
             dp_worker = DP_worker(args)
             dp_worker.work()
         
@@ -125,7 +126,7 @@ class ML_model():
             os.path.join(opt.Performance_directory, 'val.log'), ['epoch', 'loss', 'acc'])
 
         # test data loader
-        pdb.set_trace()
+        
         test_data = cichlids(opt.Clips_temp_directory,
                              self.source_json_file,
                              'testing',
