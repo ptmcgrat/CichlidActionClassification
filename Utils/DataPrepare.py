@@ -30,27 +30,27 @@ class DP_worker():
             print('Location,MeanID', file = annotation_f)
         
         videos_temp = os.path.join(self.args.Clips_temp_directory,domain)
-#         if not os.path.exists(videos_temp):
-#             os.makedirs(videos_temp)
-#         
-#         for file_name in os.listdir(video_dir):
-#             if not file_name.endswith('.mp4'):
-#                 continue
-#             if domain == 'source':
-#                 location = file_name.split('.')[0]
-#             else:
-#                 tokens = file_name.split('.')[0].split('__')
-#                 location = '_'.join(tokens[-5:])
-#                 MeanID = ':'.join(tokens[:2])
-#                 print(location+','+MeanID,file=annotation_f)
-#             video_file_path = os.path.join(video_dir,file_name)
-#             target_folder = os.path.join(videos_temp,location)
-#             if not os.path.exists(target_folder):
-#                 os.makedirs(target_folder)
-#             cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
+        if not os.path.exists(videos_temp):
+            os.makedirs(videos_temp)
+        
+        for file_name in os.listdir(video_dir):
+            if not file_name.endswith('.mp4'):
+                continue
+            if domain == 'source':
+                location = file_name.split('.')[0]
+            else:
+                tokens = file_name.split('.')[0].split('__')
+                location = '_'.join(tokens[-5:])
+                MeanID = ':'.join(tokens[:2])
+                print(location+','+MeanID,file=annotation_f)
+            video_file_path = os.path.join(video_dir,file_name)
+            target_folder = os.path.join(videos_temp,location)
+            if not os.path.exists(target_folder):
+                os.makedirs(target_folder)
+            cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
 #             subprocess.run(cmd)
-#         if domain == 'target':
-#             annotation_f.close()
+        if domain == 'target':
+            annotation_f.close()
 #             
 #         with open(meansalll_file, 'w') as f:
 #             print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
