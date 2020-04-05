@@ -131,7 +131,10 @@ class DP_worker():
         val_list = os.path.join(self.args.Log_directory,'source_val_list.txt')
         test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
         target_list = os.path.join(self.args.Log_directory,'target_list.txt')
-        dst_json_path = os.path.join(self.args.Log_directory,'cichlids.json')
+        
+        source_json_path = os.path.join(self.args.Log_directory,'source.json')
+        target_json_path = os.path.join(self.args.Log_directory,'target.json')
+        
         def convert_csv_to_dict(csv_path, subset):
             keys = []
             key_labels = []
@@ -153,23 +156,28 @@ class DP_worker():
             return database,classes
         train_database,classes = convert_csv_to_dict(train_list, 'training')
         val_database,_ = convert_csv_to_dict(val_list, 'validation')
-        pdb.set_trace()
         test_database,_ = convert_csv_to_dict(test_list, 'testing')
         target_database,_ = convert_csv_to_dict(target_list, 'target')
         
         assert len(classes)==10
         
         dst_data = {}
-    
-        dst_data['database'] = {}
         dst_data['labels'] = classes
-        dst_data['database'].update(test_database)
+        dst_data['database'] = {}
+        
         dst_data['database'].update(train_database)
         dst_data['database'].update(val_database)
-        dst_data['database'].update(target_database)
-        
-        with open(dst_json_path, 'w') as dst_file:
+        dst_data['database'].update(test_database)
+        with open(source_json_path, 'w') as dst_file:
             json.dump(dst_data, dst_file)
+        dst_data = {}
+        dst_data['labels'] = classes
+        dst_data['database'] = {}
+ 
+        dst_data['database'].update(target_database)
+        with open(target_json_path, 'w') as dst_file:
+            json.dump(dst_data, dst_file)
+
         
     
     

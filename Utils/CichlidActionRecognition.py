@@ -28,9 +28,10 @@ class ML_model():
     def __init__(self, args):
         self.args = args
         #prepare the data is the data is not prepared
-        self.json_file = os.path.join(args.Log_directory,'cichlids.json')
+        self.source_json_file = os.path.join(args.Log_directory,'source.json')
+        self.target_json_file = os.path.join(args.Log_directory,'target.json')
         #check if data preparation is done
-        if not os.path.exists(self.json_file):
+        if not os.path.exists(self.source_json_file):
             dp_worker = DP_worker(args)
             dp_worker.work()
         
@@ -80,7 +81,7 @@ class ML_model():
         target_transform = ClassLabel()
         
         training_data = cichlids(opt.Clips_temp_directory,
-                                 self.json_file,
+                                 self.source_json_file,
                                  'training',
                                  spatial_transforms=spatial_transforms,
                                  temporal_transform=temporal_transform,
@@ -108,7 +109,7 @@ class ML_model():
                 spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
         validation_data = cichlids(opt.Clips_temp_directory,
-                                   self.json_file,
+                                   self.source_json_file,
                                    'validation',
                                    spatial_transforms=spatial_transforms,
                                    temporal_transform=temporal_transform,
@@ -126,7 +127,7 @@ class ML_model():
         # test data loader
         pdb.set_trace()
         test_data = cichlids(opt.Clips_temp_directory,
-                             self.json_file,
+                             self.source_json_file,
                              'testing',
                              spatial_transforms=spatial_transforms,
                              temporal_transform=temporal_transform,
@@ -153,7 +154,7 @@ class ML_model():
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
         target_data = cichlids(opt.Clips_temp_directory,
-                               self.json_file,
+                               self.target_json_file,
                                'target',
                                spatial_transforms=spatial_transforms,
                                temporal_transform=temporal_transform,
