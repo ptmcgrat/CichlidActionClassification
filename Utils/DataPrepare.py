@@ -112,7 +112,7 @@ class DP_worker():
             
             
             with open(target_list,'w') as target:
-#                 count = 0
+                count = 0
 #                 for clip in test_clips:
 #                     count += 1
 #                     print(clip+',target',file=target)
