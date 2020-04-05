@@ -356,7 +356,7 @@ class ML_model():
                 acc = calculate_accuracy(outputs, targets)
                 #########  temp line, needs to be removed##################################
                 for j in range(len(targets)):
-                    confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
+                    confidence_for_each_validation[int(targets[j])] = [x.item() for x in outputs[j]]
             
                 rows = [int(x) for x in targets]
                 columns = [int(x) for x in np.argmax(outputs.cpu(),1)]
