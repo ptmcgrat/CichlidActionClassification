@@ -24,13 +24,13 @@ parser.add_argument('--ML_labels',
                     
 parser.add_argument('--purpose', 
                     type = str, 
-                    default = '/data/home/llong35/data/all_videos',
+                    default = 'train',
                     required = False, 
                     help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
                     
 parser.add_argument('--Log', 
                     type = str, 
-                    default = '/data/home/llong35/data/',
+                    default = '/data/home/llong35/data/04_03_2020/log',
                     required = False, 
                     help = 'Log file to keep track of versions + parameters used')
 
@@ -51,12 +51,12 @@ parser.add_argument('--Log_directory',
 parser.add_argument('--Model_directory', 
                     type = str, 
                     required = False, 
-                    default = '/data/home/llong35/data/all_videos',
+                    default = '/data/home/llong35/data/04_03_2020',
                     help = 'directory to store models')
                     
 parser.add_argument('--Performance_directory', 
                     type = str, 
-                    default = '/data/home/llong35/data/all_videos',
+                    default = '/data/home/llong35/data/04_03_2020',
                     required = False, 
                     help = 'directory to store accuracy and loss change across training or fineturing')
                     
@@ -72,7 +72,7 @@ parser.add_argument('--sample_duration',
                     help='Temporal duration of inputs')
                     
 parser.add_argument('--sample_size',
-                    default=60,
+                    default=120,
                     type=int,
                     help='Height and width of inputs')
                     
@@ -86,7 +86,7 @@ parser.add_argument('--n_threads',
 parser.add_argument('--learning_rate',default=0.1,type=float,help='Initial learning rate (divided by 10 while training by lr scheduler)')
 parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
 parser.add_argument('--dampening', default=0.9, type=float, help='dampening of SGD')
-parser.add_argument('--weight_decay', default=1e-23, type=float, help='Weight Decay')
+parser.add_argument('--weight_decay', default=1e-25, type=float, help='Weight Decay')
 parser.add_argument('--nesterov', action='store_true', help='Nesterov momentum')
 parser.set_defaults(nesterov=False)
 parser.add_argument('--optimizer',default='sgd',type=str,help='Currently only support SGD')
