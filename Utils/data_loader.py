@@ -142,20 +142,6 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
 
     return dataset, idx_to_class
 
-def get_training_set(opt, spatial_transforms, temporal_transform,
-                     target_transform, annotationDict):
-    training_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'training',
-    spatial_transforms=spatial_transforms,
-    temporal_transform=temporal_transform,
-    target_transform=target_transform, annotationDict = annotationDict)
-    return training_data
-
-
-
-
 class cichlids(data.Dataset):
     """
     Args:

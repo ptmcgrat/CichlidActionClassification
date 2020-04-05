@@ -141,7 +141,7 @@ class ML_model():
             os.path.join(opt.Performance_directory, 'test.log'), ['epoch', 'loss', 'acc'])
         
         # target data loader
-        pdb.set_trace()
+        
         spatial_transforms = {}
         mean_file = os.path.join(opt.Log_directory,'target_Means.csv')
         with open(mean_file) as f:
@@ -178,6 +178,8 @@ class ML_model():
             nesterov=opt.nesterov)
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
+        pdb.set_trace()
+        
         i=0
         previous_domain_accuracy=0.5
         domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
