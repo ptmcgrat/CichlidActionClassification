@@ -178,7 +178,6 @@ class ML_model():
             nesterov=opt.nesterov)
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
-        pdb.set_trace()
         
         i=0
         previous_domain_accuracy=0.5
