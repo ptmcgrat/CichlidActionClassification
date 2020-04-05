@@ -30,7 +30,7 @@ parser.add_argument('--purpose',
                     
 parser.add_argument('--Log', 
                     type = str, 
-                    default = '/data/home/llong35/data/all_videos',
+                    default = '/data/home/llong35/data/',
                     required = False, 
                     help = 'Log file to keep track of versions + parameters used')
 
@@ -123,6 +123,7 @@ def check_args(args):
 
 check_args(args)
 w = ML_model(args)
+w.work()
 
 # Validate data
 # def check_args(args):

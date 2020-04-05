@@ -1,5 +1,16 @@
 import os
+import sys
 import json
+import numpy as np
+import torch
+import torchvision
+from torch import nn
+from torch import optim
+from torch.optim import lr_scheduler
+from torch.autograd import Variable
+import pdb
+import pandas as pd
+import time
 
 from Utils import DANN_model
 from Utils.DataPrepare import DP_worker
@@ -24,6 +35,7 @@ class ML_model():
         
         
     def work(self):
+        pdb.set_trace()
         opts = self.args
         with open(opts.Log, 'w') as opt_file:
             json.dump(vars(opt), opt_file)
@@ -41,23 +53,66 @@ class ML_model():
         if not opt.no_cuda:
             criterion = criterion.cuda()
             domain_criterion.cuda()
+
+
+        source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
+        source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
+        
+        target_annotateFile = os.path.join(opts.Log_directory,'target_domain_annotation.csv')
+        target_annotateData = pd.read_csv(target_annotateFile, sep = ',', header = 0)
+        target_annotation_dict = dict(zip(target_annotateData['Location'],target_annotateData['MeanID']))
+        
+        # training data loader
         if not opt.no_train:
-            crop_method = FixedScaleRandomCenterCrop(opt.sample_size,opt.sample_spacing)
-            
             crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
-        spatial_transforms = {}
-        with open(opt.mean_file) as f:
-            for i,line in enumerate(f):
-                if i==0:
-                    continue
-                tokens = line.rstrip().split(',')
-                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
-        
-        
+            spatial_transforms = {}
+            mean_file = os.path.join(opts.Log_directory,'source_Means.csv')
+            with open(mean_file) as f:
+                for i,line in enumerate(f):
+                    if i==0:
+                        continue
+                    tokens = line.rstrip().split(',')
+                    norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                    spatial_transforms[tokens[0]] = Compose([crop_method, RandomVerticalFlip(),RandomHorizontalFlip(), ToTensor(1), norm_method])
+            temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
+            target_transform = ClassLabel()
+            training_data = cichlids(opt.Clips_temp_directory,
+                                     self.json_file
+                                    'training',
+                                     spatial_transforms=spatial_transforms,
+                                     temporal_transform=temporal_transform,
+                                     target_transform=target_transform, 
+                                     annotationDict =source_annotation_dict)
+                                     
+            train_loader = torch.utils.data.DataLoader(
+            training_data,
+            batch_size=opt.batch_size,
+            shuffle=True,
+            num_workers=opt.n_threads,
+            pin_memory=True)
+            train_logger = Logger(os.path.join(opt.Performance_directory, 'train.log'),
+            ['epoch', 'loss','domain_loss', 'train_label_acc','train_domain_acc','target_domain_acc', 'lr','alpha'])
+        if opt.nesterov:
+            dampening = 0
+        else:
+            dampening = opt.dampening
+        optimizer = optim.SGD(
+            parameters,
+            lr=opt.learning_rate,
+            momentum=opt.momentum,
+            dampening=dampening,
+            weight_decay=opt.weight_decay,
+            nesterov=opt.nesterov)
+        scheduler = lr_scheduler.ReduceLROnPlateau(
+            optimizer, 'min', patience=opt.lr_patience)
+        i=0
+        previous_domain_accuracy=0.5
+        domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
+                        train_logger,previous_domain_accuracy)
+    
         
     def _train_epoch(self, epoch, train_loader,target_loader, model, criterion, domain_criterion,optimizer, opt,
-                epoch_logger, batch_logger,previous_domain_accuracy):
+                epoch_logger,previous_domain_accuracy):
         print('train at epoch {}'.format(epoch))
     
         len_train = len(train_loader)

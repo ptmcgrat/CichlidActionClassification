@@ -178,6 +178,7 @@ class cichlids(data.Dataset):
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration)
+        self.subset = subset
 
         self.spatial_transforms = spatial_transforms
         self.temporal_transform = temporal_transform
@@ -192,7 +193,7 @@ class cichlids(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-
+#         if self.subset == 'target'
         path = self.data[index]['video']
         clip_name = path.rstrip().split('/')[-1]
         frame_indices = self.data[index]['frame_indices']
