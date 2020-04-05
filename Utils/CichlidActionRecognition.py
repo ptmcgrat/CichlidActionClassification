@@ -16,9 +16,9 @@ from Utils import DANN_model
 from Utils.DataPrepare import DP_worker
 from Utils.utils import Logger,AverageMeter, calculate_accuracy
 from Utils.transforms import (Compose, Normalize, Scale, CenterCrop, 
-                             RandomHorizontalFlip, FixedScaleRandomCenterCrop, 
-                             ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
-                             ClassLabel, VideoID,TargetCompose)
+                              RandomHorizontalFlip, FixedScaleRandomCenterCrop, MultiScaleRandomCenterCrop,
+                              ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
+                              ClassLabel, VideoID,TargetCompose)
 
 from Utils.data_loader import cichlids
 
@@ -64,7 +64,7 @@ class ML_model():
         
         # training data loader
         pdb.set_trace()
-        crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
+        crop_method = MultiScaleRandomCenterCrop([0.99,0.97,0.95,0.93,0.91],opt.sample_size)
         spatial_transforms = {}
         mean_file = os.path.join(opt.Log_directory,'source_Means.csv')
         with open(mean_file) as f:
