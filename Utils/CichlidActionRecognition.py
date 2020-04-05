@@ -115,14 +115,14 @@ class ML_model():
                                    target_transform=target_transform, 
                                    annotationDict =source_annotation_dict)
                                      
-        validation_loader = torch.utils.data.DataLoader(validation_data,
+        val_loader = torch.utils.data.DataLoader(validation_data,
                                                         batch_size=opt.batch_size,
                                                         shuffle=True,
                                                         num_workers=opt.n_threads,
                                                         pin_memory=True)
         val_logger = Logger(
             os.path.join(opt.Performance_directory, 'val.log'), ['epoch', 'loss', 'acc'])
-        
+
         # test data loader
         test_data = cichlids(opt.Clips_temp_directory,
                              self.json_file,
@@ -179,8 +179,21 @@ class ML_model():
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
         
-        i=0
         previous_domain_accuracy=0.5
+        for i in range(opt.n_epochs + 1):
+            domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
+                        train_logger,previous_domain_accuracy)
+            previous_domain_accuracy = domain_average_acc
+            
+            validation_loss = self._val_epoch(i, val_loader, model, criterion, opt,val_logger)
+            
+            scheduler.step(training_loss)
+            test_loss = self._test_epoch(i, test_loader, model, criterion, opt,test_logger)
+            
+        if not opt.no_train and not opt.no_val:
+            scheduler.step(training_loss)
+        i=0
+        
         pdb.set_trace()
         domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
                         train_logger,previous_domain_accuracy)
@@ -218,20 +231,24 @@ class ML_model():
         
             data_time.update(time.time() - end_time)
             batch_size = inputs.size(0)
-            if not opt.no_cuda:
-                targets = targets.cuda(async=True)
-
+            targets = targets.cuda(async=True)
 
             inputs = Variable(inputs)
             targets = Variable(targets)
+            
             train_output_label,train_output_domain = model(inputs, alpha=alpha)
             train_label_loss = criterion(train_output_label, targets)
             train_label_acc = calculate_accuracy(train_output_label, targets)
+            
             train_domain_targets = torch.zeros(batch_size).long().cuda()
             train_domain_loss = domain_criterion(train_output_domain,train_domain_targets)
             train_domain_acc = calculate_accuracy(train_output_domain,train_domain_targets)
+            
+            train_label_accuracies.update(train_label_acc, batch_size)
+            train_domain_accuracies.update(train_domain_acc, batch_size)
+            
             if i < len_target:
-                target_inputs,target_targets,target_paths = target_iter.next()
+                target_inputs,target_targets = target_iter.next()
                 target_inputs = Variable(target_inputs)
                 target_output_label,target_output_domain = model(target_inputs, alpha=alpha)
 
@@ -239,9 +256,12 @@ class ML_model():
                 target_domain_loss = domain_criterion(target_output_domain,target_domain_label)
                 target_domain_acc = calculate_accuracy(target_output_domain,target_domain_label)
                 
+                target_domain_accuracies.update(target_domain_acc, batch_size)
+                
                 domain_loss = train_domain_loss+target_domain_loss
                 loss = train_label_loss+domain_loss
-                target_domain_accuracies.update(target_domain_acc, batch_size)
+                
+               
             
             else:
                 domain_loss = train_domain_loss
@@ -249,8 +269,7 @@ class ML_model():
 
             losses.update(loss.item(), batch_size)
             domain_losses.update(domain_loss.item(), batch_size)
-            train_label_accuracies.update(train_label_acc, batch_size)
-            train_domain_accuracies.update(train_domain_acc, batch_size)
+
 
 
             optimizer.zero_grad()
@@ -260,15 +279,15 @@ class ML_model():
             batch_time.update(time.time() - end_time)
             end_time = time.time()
 
-            batch_logger.log({
-                'epoch': epoch,
-                'batch': i + 1,
-                'iter': (epoch - 1) * len(train_loader) + (i + 1),
-                'loss': losses.val,
-                'train_label_acc': train_label_accuracies.val,
-                'train_domain_acc': train_domain_accuracies.val,
-                'target_domain_acc': target_domain_accuracies.val,
-                'lr': optimizer.param_groups[0]['lr']})
+#             batch_logger.log({
+#                 'epoch': epoch,
+#                 'batch': i + 1,
+#                 'iter': (epoch - 1) * len(train_loader) + (i + 1),
+#                 'loss': losses.val,
+#                 'train_label_acc': train_label_accuracies.val,
+#                 'train_domain_acc': train_domain_accuracies.val,
+#                 'target_domain_acc': target_domain_accuracies.val,
+#                 'lr': optimizer.param_groups[0]['lr']})
 
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
@@ -325,13 +344,11 @@ class ML_model():
         confidence_for_each_validation = {}
         ###########################################################################
 
-        for i, (inputs, targets, paths) in enumerate(data_loader):
+        for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
-            if not opt.no_cuda:
-                targets = targets.cuda(async=True)
+            targets = targets.cuda(async=True)
             with torch.no_grad():
-            
                 inputs = Variable(inputs)
                 targets = Variable(targets)
                 outputs,_ = model(inputs,alpha=1)
@@ -392,11 +409,9 @@ class ML_model():
 
         end_time = time.time()
 
-        for i, (inputs, targets, paths) in enumerate(data_loader):
+        for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
-
-            if not opt.no_cuda:
-                targets = targets.cuda(async=True)
+            targets = targets.cuda(async=True)
             with torch.no_grad():
             
                 inputs = Variable(inputs)

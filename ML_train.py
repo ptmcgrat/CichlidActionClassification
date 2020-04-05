@@ -124,7 +124,7 @@ def check_args(args):
 
 check_args(args)
 w = ML_model(args)
-w.work()
+# w.work()
 
 # Validate data
 # def check_args(args):
