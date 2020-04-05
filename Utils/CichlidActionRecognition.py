@@ -185,13 +185,13 @@ class ML_model():
         previous_domain_accuracy=0.5
         for i in range(opt.n_epochs + 1):
             
-#             domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
-#                         train_logger,previous_domain_accuracy)
-#             previous_domain_accuracy = domain_average_acc
+            domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
+                        train_logger,previous_domain_accuracy)
+            previous_domain_accuracy = domain_average_acc
             
-#             validation_loss = self._val_epoch(i, val_loader, model, criterion, opt,val_logger)
+            validation_loss = self._val_epoch(i, val_loader, model, criterion, opt,val_logger)
             
-#             scheduler.step(training_loss)
+            scheduler.step(training_loss)
             test_loss = self._test_epoch(i, test_loader, model, criterion, opt,test_logger)
 
         
