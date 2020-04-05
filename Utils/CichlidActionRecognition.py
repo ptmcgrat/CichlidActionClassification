@@ -124,6 +124,7 @@ class ML_model():
             os.path.join(opt.Performance_directory, 'val.log'), ['epoch', 'loss', 'acc'])
 
         # test data loader
+        pdb.set_trace()
         test_data = cichlids(opt.Clips_temp_directory,
                              self.json_file,
                              'testing',
@@ -131,7 +132,7 @@ class ML_model():
                              temporal_transform=temporal_transform,
                              target_transform=target_transform, 
                              annotationDict =source_annotation_dict)
-        pdb.set_trace()
+        
         test_loader = torch.utils.data.DataLoader(test_data,
                                                   batch_size=opt.batch_size,
                                                   shuffle=True,
