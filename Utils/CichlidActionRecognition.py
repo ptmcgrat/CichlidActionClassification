@@ -183,12 +183,11 @@ class ML_model():
             optimizer, 'min', patience=opt.lr_patience)
         
         previous_domain_accuracy=0.5
-        pdb.set_trace()
         for i in range(opt.n_epochs + 1):
             
-            domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
-                        train_logger,previous_domain_accuracy)
-            previous_domain_accuracy = domain_average_acc
+#             domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
+#                         train_logger,previous_domain_accuracy)
+#             previous_domain_accuracy = domain_average_acc
             
             validation_loss = self._val_epoch(i, val_loader, model, criterion, opt,val_logger)
             

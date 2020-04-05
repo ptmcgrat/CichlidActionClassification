@@ -77,7 +77,7 @@ parser.add_argument('--sample_size',
                     help='Height and width of inputs')
                     
 parser.add_argument('--n_threads',
-                    default=3,
+                    default=6,
                     type=int,
                     help='Number of threads for multi-thread loading')
 
