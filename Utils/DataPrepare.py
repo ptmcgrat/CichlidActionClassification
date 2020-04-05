@@ -26,31 +26,31 @@ class DP_worker():
             annotation_file  = os.path.join(self.args.Log_directory,'target_domain_annotation.csv')
             meansalll_file = os.path.join(self.args.Log_directory,'target_MeansAll.csv')
             means_file = os.path.join(self.args.Log_directory,'target_Means.csv')
-            annotation_f=open(annotation_file,'w')
-            print('Location,MeanID', file = annotation_f)
+#             annotation_f=open(annotation_file,'w')
+#             print('Location,MeanID', file = annotation_f)
         
-        videos_temp = os.path.join(self.args.Clips_temp_directory,domain)
-        if not os.path.exists(videos_temp):
-            os.makedirs(videos_temp)
-        
-        for file_name in os.listdir(video_dir):
-            if not file_name.endswith('.mp4'):
-                continue
-            if domain == 'source':
-                location = file_name.split('.')[0]
-            else:
-                tokens = file_name.split('.')[0].split('__')
-                location = '_'.join(tokens[-5:])
-                MeanID = ':'.join(tokens[:2])
-                print(location+','+MeanID,file=annotation_f)
-            video_file_path = os.path.join(video_dir,file_name)
-            target_folder = os.path.join(videos_temp,location)
-            if not os.path.exists(target_folder):
-                os.makedirs(target_folder)
-            cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
+#         videos_temp = os.path.join(self.args.Clips_temp_directory,domain)
+#         if not os.path.exists(videos_temp):
+#             os.makedirs(videos_temp)
+#         
+#         for file_name in os.listdir(video_dir):
+#             if not file_name.endswith('.mp4'):
+#                 continue
+#             if domain == 'source':
+#                 location = file_name.split('.')[0]
+#             else:
+#                 tokens = file_name.split('.')[0].split('__')
+#                 location = '_'.join(tokens[-5:])
+#                 MeanID = ':'.join(tokens[:2])
+#                 print(location+','+MeanID,file=annotation_f)
+#             video_file_path = os.path.join(video_dir,file_name)
+#             target_folder = os.path.join(videos_temp,location)
+#             if not os.path.exists(target_folder):
+#                 os.makedirs(target_folder)
+#             cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
 #             subprocess.run(cmd)
-        if domain == 'target':
-            annotation_f.close()
+#         if domain == 'target':
+#             annotation_f.close()
 #             
 #         with open(meansalll_file, 'w') as f:
 #             print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
@@ -103,23 +103,23 @@ class DP_worker():
                             print(row.Location+','+row.Label,file=val)
         else:
             target_list = os.path.join(self.args.Log_directory,'target_list.txt')
-            test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
-            test_clips = []
-            with open(test_list,'r') as input:
-                for line in input:
-                    clip = line.split(',')[0]
-                    test_clips.append(clip)
+#             test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
+#             test_clips = []
+#             with open(test_list,'r') as input:
+#                 for line in input:
+#                     clip = line.split(',')[0]
+#                     test_clips.append(clip)
             
             
             with open(target_list,'w') as target:
-                count = 0
-                for clip in test_clips:
-                    count += 1
-                    print(clip+',target',file=target)
+#                 count = 0
+#                 for clip in test_clips:
+#                     count += 1
+#                     print(clip+',target',file=target)
                 
                 for index,row in annotation_df.iterrows():
-                    if row.Location in test_clips:
-                        continue
+#                     if row.Location in test_clips:
+#                         continue
                     count += 1
                     print(row.Location+',target',file=target)
                     if count == 9704:
@@ -185,7 +185,7 @@ class DP_worker():
     def work(self):
 #         pass
 #         self.prepare_domain('source')
-#         self.prepare_domain('target')
+        self.prepare_domain('target')
         self.prepare_json()
 #         
         
