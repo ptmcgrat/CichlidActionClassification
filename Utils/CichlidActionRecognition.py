@@ -75,9 +75,10 @@ class ML_model():
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, RandomVerticalFlip(),RandomHorizontalFlip(), ToTensor(1), norm_method])
-        pdb.set_trace()
+        
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
+        pdb.set_trace()
         training_data = cichlids(opt.Clips_temp_directory,
                                  self.json_file,
                                  'training',
