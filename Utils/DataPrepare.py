@@ -106,8 +106,9 @@ class DP_worker():
             test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
             test_clips = []
             with open(test_list,'r') as input:
-                clip = input.split(',')[0]
-                test_clips.append(clip)
+                for line in input:
+                    clip = line.split(',')[0]
+                    test_clips.append(clip)
             
             
             with open(target_list,'w') as target:
