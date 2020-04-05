@@ -162,9 +162,9 @@ class DP_worker():
     
         dst_data['database'] = {}
         dst_data['labels'] = classes
+        dst_data['database'].update(test_database)
         dst_data['database'].update(train_database)
         dst_data['database'].update(val_database)
-        dst_data['database'].update(test_database)
         dst_data['database'].update(target_database)
         
         with open(dst_json_path, 'w') as dst_file:
