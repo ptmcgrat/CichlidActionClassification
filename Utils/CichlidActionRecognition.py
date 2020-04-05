@@ -36,9 +36,9 @@ class ML_model():
         
     def work(self):
         pdb.set_trace()
-        opts = self.args
-        with open(opts.Log, 'w') as opt_file:
-            json.dump(vars(opts), opt_file)
+        opt = self.args
+        with open(opt.Log, 'w') as opt_file:
+            json.dump(vars(opt), opt_file)
         model = DANN_model.DANN_resnet18(
                 num_classes=opt.n_classes,
                 shortcut_type=opt.resnet_shortcut,
@@ -58,7 +58,7 @@ class ML_model():
         source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
         
-        target_annotateFile = os.path.join(opts.Log_directory,'target_domain_annotation.csv')
+        target_annotateFile = os.path.join(opt.Log_directory,'target_domain_annotation.csv')
         target_annotateData = pd.read_csv(target_annotateFile, sep = ',', header = 0)
         target_annotation_dict = dict(zip(target_annotateData['Location'],target_annotateData['MeanID']))
         
@@ -66,7 +66,7 @@ class ML_model():
         if not opt.no_train:
             crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
             spatial_transforms = {}
-            mean_file = os.path.join(opts.Log_directory,'source_Means.csv')
+            mean_file = os.path.join(opt.Log_directory,'source_Means.csv')
             with open(mean_file) as f:
                 for i,line in enumerate(f):
                     if i==0:
