@@ -1,9 +1,9 @@
 import os
 import subprocess
 #transfer
-# source = '/data/home/llong35/data/annotated_videos'
-# target = '/data/home/llong35/data/all_videos/'
-# 
+source = '/data/home/llong35/data/annotated_videos'
+target = '/data/home/llong35/data/all_videos/'
+
 # for folder in os.listdir(source):
 #     folder_path = os.path.join(source,folder)
 #     videos = os.listdir(folder_path)
@@ -32,3 +32,26 @@ import subprocess
 #     subprocess.run(cmd)
 #     
 #     break
+
+
+source = '/data/home/llong35/data/labeled_videos'
+target = '/data/home/llong35/data/annotated_videos'
+annotation = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv'
+
+with open(annotation,'r') as input:
+    input.readline()
+    for line in input:
+        tokens = line.split(',')
+        file_name = tokens[0]+'.mp4'
+        label = tokens[2]
+        source_file = os.path.join(source,file_name)
+        target_folder = os.path.join(target,label)
+        if not os.path.exists(target_folder):
+            os.makedirs(target_folder)
+        cmd = ['cp','source_file',target_folder+'/']
+        print(' '.join(cmd))
+        
+        
+        
+        
+        
