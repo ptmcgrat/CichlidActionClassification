@@ -16,7 +16,8 @@ from Utils import DANN_model
 from Utils.DataPrepare import DP_worker
 from Utils.utils import Logger,AverageMeter, calculate_accuracy
 from Utils.transforms import (Compose, Normalize, Scale, CenterCrop, 
-                              RandomHorizontalFlip, FixedScaleRandomCenterCrop, MultiScaleRandomCenterCrop,
+                              RandomHorizontalFlip,RandomVerticalFlip, 
+                              FixedScaleRandomCenterCrop, MultiScaleRandomCenterCrop,
                               ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
                               ClassLabel, VideoID,TargetCompose)
 
@@ -63,7 +64,7 @@ class ML_model():
         target_annotation_dict = dict(zip(target_annotateData['Location'],target_annotateData['MeanID']))
         
         # training data loader
-        pdb.set_trace()
+        
         crop_method = MultiScaleRandomCenterCrop([0.99,0.97,0.95,0.93,0.91],opt.sample_size)
         spatial_transforms = {}
         mean_file = os.path.join(opt.Log_directory,'source_Means.csv')
@@ -74,6 +75,7 @@ class ML_model():
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, RandomVerticalFlip(),RandomHorizontalFlip(), ToTensor(1), norm_method])
+        pdb.set_trace()
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
         training_data = cichlids(opt.Clips_temp_directory,
