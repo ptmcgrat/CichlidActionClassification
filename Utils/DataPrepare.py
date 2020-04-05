@@ -174,10 +174,10 @@ class DP_worker():
     
     
     def work(self):
-        pass
+#         pass
 #         self.prepare_domain('source')
 #         self.prepare_domain('target')
-#         self.prepare_json()
+        self.prepare_json()
 #         
         
             
