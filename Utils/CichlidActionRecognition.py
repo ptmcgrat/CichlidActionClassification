@@ -86,7 +86,7 @@ class ML_model():
                                  temporal_transform=temporal_transform,
                                  target_transform=target_transform, 
                                  annotationDict =source_annotation_dict)
-        pdb.set_trace()
+        
         train_loader = torch.utils.data.DataLoader(training_data,
                                                    batch_size=opt.batch_size,
                                                    shuffle=True,
@@ -182,6 +182,7 @@ class ML_model():
         
         i=0
         previous_domain_accuracy=0.5
+        pdb.set_trace()
         domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
                         train_logger,previous_domain_accuracy)
     
