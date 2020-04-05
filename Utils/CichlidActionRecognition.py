@@ -189,9 +189,9 @@ class ML_model():
 #                         train_logger,previous_domain_accuracy)
 #             previous_domain_accuracy = domain_average_acc
             
-            validation_loss = self._val_epoch(i, val_loader, model, criterion, opt,val_logger)
+#             validation_loss = self._val_epoch(i, val_loader, model, criterion, opt,val_logger)
             
-            scheduler.step(training_loss)
+#             scheduler.step(training_loss)
             test_loss = self._test_epoch(i, test_loader, model, criterion, opt,test_logger)
 
         
