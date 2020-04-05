@@ -208,7 +208,7 @@ class ML_model():
         end_time = time.time()
     
     
-        for i, (inputs, targets, paths) in enumerate(train_loader):
+        for i, (inputs, targets) in enumerate(train_loader):
     
             p = float(i + epoch * len_train) / opt.n_epochs / len_train
             alpha = 2. / (1. + np.exp(-10 * p)) - 1
