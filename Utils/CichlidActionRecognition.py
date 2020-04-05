@@ -44,15 +44,15 @@ class ML_model():
                 shortcut_type=opt.resnet_shortcut,
                 sample_size=opt.sample_size,
                 sample_duration=opt.sample_duration)
-        if not opt.no_cuda:
-            model = model.cuda()
-            model = nn.DataParallel(model, device_ids=None)
+
+        model = model.cuda()
+        model = nn.DataParallel(model, device_ids=None)
         parameters = model.parameters()
         criterion = nn.CrossEntropyLoss()
         domain_criterion = nn.CrossEntropyLoss()
-        if not opt.no_cuda:
-            criterion = criterion.cuda()
-            domain_criterion.cuda()
+
+        criterion = criterion.cuda()
+        domain_criterion.cuda()
 
 
         source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
