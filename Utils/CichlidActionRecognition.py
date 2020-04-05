@@ -77,7 +77,7 @@ class ML_model():
             temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
             target_transform = ClassLabel()
             training_data = cichlids(opt.Clips_temp_directory,
-                                     self.json_file
+                                     self.json_file,
                                     'training',
                                      spatial_transforms=spatial_transforms,
                                      temporal_transform=temporal_transform,
