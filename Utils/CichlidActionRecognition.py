@@ -180,7 +180,9 @@ class ML_model():
             optimizer, 'min', patience=opt.lr_patience)
         
         previous_domain_accuracy=0.5
+        pdb.set_trace()
         for i in range(opt.n_epochs + 1):
+            
             domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
                         train_logger,previous_domain_accuracy)
             previous_domain_accuracy = domain_average_acc
@@ -189,14 +191,10 @@ class ML_model():
             
             scheduler.step(training_loss)
             test_loss = self._test_epoch(i, test_loader, model, criterion, opt,test_logger)
-            
-        if not opt.no_train and not opt.no_val:
-            scheduler.step(training_loss)
-        i=0
+
         
-        pdb.set_trace()
-        domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
-                        train_logger,previous_domain_accuracy)
+
+
     
         
     def _train_epoch(self, epoch, train_loader,target_loader, model, criterion, domain_criterion,optimizer, opt,
