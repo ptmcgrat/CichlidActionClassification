@@ -91,6 +91,7 @@ parser.add_argument('--nesterov', action='store_true', help='Nesterov momentum')
 parser.set_defaults(nesterov=False)
 parser.add_argument('--optimizer',default='sgd',type=str,help='Currently only support SGD')
 parser.add_argument('--lr_patience',default=10,type=int,help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.')
+parser.add_argument('--resnet_shortcut',default='B',type=int,help='Shortcut type of resnet (A | B)')
 
 
 # Parameters for data augmentation
