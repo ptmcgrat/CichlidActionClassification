@@ -48,7 +48,7 @@ with open(annotation,'r') as input:
         target_folder = os.path.join(target,label)
         if not os.path.exists(target_folder):
             os.makedirs(target_folder)
-        cmd = ['cp','source_file',target_folder+'/']
+        cmd = ['cp',source_file,target_folder+'/']
         print(' '.join(cmd))
         
         
