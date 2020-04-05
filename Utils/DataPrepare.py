@@ -153,6 +153,7 @@ class DP_worker():
             return database,classes
         train_database,classes = convert_csv_to_dict(train_list, 'training')
         val_database,_ = convert_csv_to_dict(val_list, 'validation')
+        pdb.set_trace()
         test_database,_ = convert_csv_to_dict(test_list, 'testing')
         target_database,_ = convert_csv_to_dict(target_list, 'target')
         
