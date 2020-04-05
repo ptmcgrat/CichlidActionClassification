@@ -63,34 +63,32 @@ class ML_model():
         target_annotation_dict = dict(zip(target_annotateData['Location'],target_annotateData['MeanID']))
         
         # training data loader
-        if not opt.no_train:
-            crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
-            spatial_transforms = {}
-            mean_file = os.path.join(opt.Log_directory,'source_Means.csv')
-            with open(mean_file) as f:
-                for i,line in enumerate(f):
-                    if i==0:
-                        continue
-                    tokens = line.rstrip().split(',')
-                    norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                    spatial_transforms[tokens[0]] = Compose([crop_method, RandomVerticalFlip(),RandomHorizontalFlip(), ToTensor(1), norm_method])
-            temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
-            target_transform = ClassLabel()
-            training_data = cichlids(opt.Clips_temp_directory,
-                                     self.json_file,
-                                    'training',
-                                     spatial_transforms=spatial_transforms,
-                                     temporal_transform=temporal_transform,
-                                     target_transform=target_transform, 
-                                     annotationDict =source_annotation_dict)
+        crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
+        spatial_transforms = {}
+        mean_file = os.path.join(opt.Log_directory,'source_Means.csv')
+        with open(mean_file) as f:
+            for i,line in enumerate(f):
+                if i==0:
+                    continue
+                tokens = line.rstrip().split(',')
+                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                spatial_transforms[tokens[0]] = Compose([crop_method, RandomVerticalFlip(),RandomHorizontalFlip(), ToTensor(1), norm_method])
+        temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
+        target_transform = ClassLabel()
+        training_data = cichlids(opt.Clips_temp_directory,
+                                 self.json_file,
+                                 'training',
+                                 spatial_transforms=spatial_transforms,
+                                 temporal_transform=temporal_transform,
+                                 target_transform=target_transform, 
+                                 annotationDict =source_annotation_dict)
                                      
-            train_loader = torch.utils.data.DataLoader(
-            training_data,
-            batch_size=opt.batch_size,
-            shuffle=True,
-            num_workers=opt.n_threads,
-            pin_memory=True)
-            train_logger = Logger(os.path.join(opt.Performance_directory, 'train.log'),
+        train_loader = torch.utils.data.DataLoader(training_data,
+                                                   batch_size=opt.batch_size,
+                                                   shuffle=True,
+                                                   num_workers=opt.n_threads,
+                                                   pin_memory=True)
+        train_logger = Logger(os.path.join(opt.Performance_directory, 'train.log'),
             ['epoch', 'loss','domain_loss', 'train_label_acc','train_domain_acc','target_domain_acc', 'lr','alpha'])
         if opt.nesterov:
             dampening = 0
