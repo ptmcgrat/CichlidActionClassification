@@ -38,7 +38,7 @@ class ML_model():
         pdb.set_trace()
         opts = self.args
         with open(opts.Log, 'w') as opt_file:
-            json.dump(vars(opt), opt_file)
+            json.dump(vars(opts), opt_file)
         model = DANN_model.DANN_resnet18(
                 num_classes=opt.n_classes,
                 shortcut_type=opt.resnet_shortcut,
