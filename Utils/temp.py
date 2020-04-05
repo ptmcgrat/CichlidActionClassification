@@ -49,7 +49,7 @@ with open(annotation,'r') as input:
         if not os.path.exists(target_folder):
             os.makedirs(target_folder)
         cmd = ['cp',source_file,target_folder+'/']
-        print(' '.join(cmd))
+        subprocess.run(cmd)
         
         
         
