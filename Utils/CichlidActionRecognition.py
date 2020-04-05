@@ -78,7 +78,7 @@ class ML_model():
         
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
-        pdb.set_trace()
+        
         training_data = cichlids(opt.Clips_temp_directory,
                                  self.json_file,
                                  'training',
@@ -94,6 +94,77 @@ class ML_model():
                                                    pin_memory=True)
         train_logger = Logger(os.path.join(opt.Performance_directory, 'train.log'),
             ['epoch', 'loss','domain_loss', 'train_label_acc','train_domain_acc','target_domain_acc', 'lr','alpha'])
+        
+        
+        # validation data loader
+        crop_method = CenterCrop(opt.sample_size)
+        spatial_transforms = {}
+        with open(mean_file) as f:
+            for i,line in enumerate(f):
+                if i==0:
+                    continue
+                tokens = line.rstrip().split(',')
+                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
+        temporal_transform = TemporalCenterCrop(opt.sample_duration)
+        validation_data = cichlids(opt.Clips_temp_directory,
+                                   self.json_file,
+                                   'validation',
+                                   spatial_transforms=spatial_transforms,
+                                   temporal_transform=temporal_transform,
+                                   target_transform=target_transform, 
+                                   annotationDict =source_annotation_dict)
+                                     
+        validation_loader = torch.utils.data.DataLoader(validation_data,
+                                                        batch_size=opt.batch_size,
+                                                        shuffle=True,
+                                                        num_workers=opt.n_threads,
+                                                        pin_memory=True)
+        val_logger = Logger(
+            os.path.join(opt.Performance_directory, 'val.log'), ['epoch', 'loss', 'acc'])
+        
+        # test data loader
+        test_data = cichlids(opt.Clips_temp_directory,
+                             self.json_file,
+                             'testing',
+                             spatial_transforms=spatial_transforms,
+                             temporal_transform=temporal_transform,
+                             target_transform=target_transform, 
+                             annotationDict =source_annotation_dict)
+                                     
+        test_loader = torch.utils.data.DataLoader(test_data,
+                                                  batch_size=opt.batch_size,
+                                                  shuffle=True,
+                                                  num_workers=opt.n_threads,
+                                                  pin_memory=True)
+        test_logger = Logger(
+            os.path.join(opt.Performance_directory, 'test.log'), ['epoch', 'loss', 'acc'])
+        
+        # target data loader
+        pdb.set_trace()
+        spatial_transforms = {}
+        mean_file = os.path.join(opt.Log_directory,'target_Means.csv')
+        with open(mean_file) as f:
+            for i,line in enumerate(f):
+                if i==0:
+                    continue
+                tokens = line.rstrip().split(',')
+                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
+        target_data = cichlids(opt.Clips_temp_directory,
+                               self.json_file,
+                               'target',
+                               spatial_transforms=spatial_transforms,
+                               temporal_transform=temporal_transform,
+                               target_transform=target_transform, 
+                               annotationDict =target_annotation_dict)
+        target_loader = torch.utils.data.DataLoader(target_data,
+                                                    batch_size=opt.batch_size,
+                                                    shuffle=True,
+                                                    num_workers=opt.n_threads,
+                                                    pin_memory=True)
+        
+        
         if opt.nesterov:
             dampening = 0
         else:

@@ -118,7 +118,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         }
         if len(labels) != 0:
             if labels[i] != 'target':
-                sample['label'] = class_to_idx[labels[i]['label']]
+                sample['label'] = class_to_idx[labels[i]]
             else:
                 sample['label'] = -1
         else:
@@ -187,6 +187,7 @@ class cichlids(data.Dataset):
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration)
+        
         self.subset = subset
 
         self.spatial_transforms = spatial_transforms
@@ -202,9 +203,8 @@ class cichlids(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-#         if self.subset == 'target'
         path = self.data[index]['video']
-        clip_name = path.rstrip().split('/')[-1]
+        clip_name = self.data[index]['video_id']
         frame_indices = self.data[index]['frame_indices']
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
@@ -217,7 +217,7 @@ class cichlids(data.Dataset):
         target = self.data[index]
         if self.target_transform is not None:
             target = self.target_transform(target)
-        return clip, target, path
+        return clip, target
 
     def __len__(self):
         return len(self.data)
