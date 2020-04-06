@@ -4,6 +4,10 @@ from Utils.CichlidActionRecognition import ML_model
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
 # Input data
+RESULTS_DIR = '/data/home/llong35/data/transfer_test'
+PROJECT = 'MC6_5'
+RESULTS_DIR = os.path.join(RESULTS_DIR,PROJECT)
+
 parser.add_argument('--ML_videos_directory',
                     type = str, 
                     default = '/data/home/llong35/data/labeled_videos',
@@ -12,7 +16,7 @@ parser.add_argument('--ML_videos_directory',
 
 parser.add_argument('--Unlabeled_videos_directory',
                     type = str, 
-                    default = '/data/home/llong35/data/unlabled_videos/MC16_2/clips/AllClips',
+                    default = '/data/home/llong35/data/unlabled_videos/'+PROJECT+'/AllClips',
                     required = False, 
                     help = 'Name of directory to hold videos to annotate for machine learning purposes')
                     
@@ -27,16 +31,21 @@ parser.add_argument('--purpose',
                     default = 'train',
                     required = False, 
                     help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
+
+parser.add_argument('--TEST_PROJECT', 
+                    type = str, 
+                    default = PROJECT,
+                    help = 'project to be tested on')
                     
 parser.add_argument('--Log', 
                     type = str, 
-                    default = '/data/home/llong35/data/04_03_2020/log',
+                    default = RESULTS_DIR+'/log',
                     required = False, 
                     help = 'Log file to keep track of versions + parameters used')
 
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory', 
-                    default='/data/home/llong35/data/temp',
+                    default='/data/home/llong35/data/tmp/'+PROJECT,
                     type = str, 
                     required = False, 
                     help = 'Location for temp files to be stored')
@@ -45,18 +54,18 @@ parser.add_argument('--Clips_temp_directory',
 parser.add_argument('--Log_directory', 
                     type = str, 
                     required = False, 
-                    default = '/data/home/llong35/data/04_03_2020',
+                    default = RESULTS_DIR,
                     help = 'directory to store sample prepare logs')
                     
 parser.add_argument('--Model_directory', 
                     type = str, 
                     required = False, 
-                    default = '/data/home/llong35/data/04_03_2020',
+                    default = RESULTS_DIR,
                     help = 'directory to store models')
                     
 parser.add_argument('--Performance_directory', 
                     type = str, 
-                    default = '/data/home/llong35/data/04_03_2020',
+                    default = RESULTS_DIR,
                     required = False, 
                     help = 'directory to store accuracy and loss change across training or fineturing')
                     
@@ -77,7 +86,7 @@ parser.add_argument('--sample_size',
                     help='Height and width of inputs')
                     
 parser.add_argument('--n_threads',
-                    default=6,
+                    default=3,
                     type=int,
                     help='Number of threads for multi-thread loading')
 
@@ -86,11 +95,11 @@ parser.add_argument('--n_threads',
 parser.add_argument('--learning_rate',default=0.1,type=float,help='Initial learning rate (divided by 10 while training by lr scheduler)')
 parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
 parser.add_argument('--dampening', default=0.9, type=float, help='dampening of SGD')
-parser.add_argument('--weight_decay', default=1e-25, type=float, help='Weight Decay')
+parser.add_argument('--weight_decay', default=1e-5, type=float, help='Weight Decay')
 parser.add_argument('--nesterov', action='store_true', help='Nesterov momentum')
 parser.set_defaults(nesterov=False)
 parser.add_argument('--optimizer',default='sgd',type=str,help='Currently only support SGD')
-parser.add_argument('--lr_patience',default=10,type=int,help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.')
+parser.add_argument('--lr_patience',default=5,type=int,help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.')
 parser.add_argument('--resnet_shortcut',default='B',help='Shortcut type of resnet (A | B)')
 
 
@@ -121,10 +130,12 @@ args = parser.parse_args()
 def check_args(args):
     if not os.path.exists(args.Log_directory):
         os.makedirs(args.Log_directory)
+    if not os.path.exists(args.Clips_temp_directory):
+        os.makedirs(args.Clips_temp_directory)
 
 check_args(args)
 w = ML_model(args)
-w.work()
+# w.work()
 
 # Validate data
 # def check_args(args):
