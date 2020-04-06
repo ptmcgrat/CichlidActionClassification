@@ -28,7 +28,7 @@ for animal in animals_list:
     animal_video_source = dropbox+':'+master_path+animal+'/AllClips.tar'
     cmd = ['rclone','copy',animal_video_source,animal_folder+'/']
     subprocess.run(cmd)
-    cmd = ['tar','-xvf',animal_folder+'/AllClips.tar']
+    cmd = ['tar','-xvf',animal_folder+'/AllClips.tar','-C',animal_folder]
     subprocess.run(cmd)
 
 
