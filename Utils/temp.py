@@ -15,7 +15,7 @@ target = '/data/home/llong35/data/all_videos/'
 #         subprocess.run(command)
 
 
-add other datasets to the video clips
+# add other datasets to the video clips
 dropbox = 'd'
 animals_list = ['MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
 #download them to seperate folders
