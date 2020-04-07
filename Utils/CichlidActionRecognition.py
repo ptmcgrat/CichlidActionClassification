@@ -169,20 +169,20 @@ class ML_model():
                                                     num_workers=opt.n_threads,
                                                     pin_memory=True)
         
-        if opt.purpose == 'train':
-            if opt.nesterov:
-                dampening = 0
-            else:
-                dampening = opt.dampening
-            optimizer = optim.SGD(
-                parameters,
-                lr=opt.learning_rate,
-                momentum=opt.momentum,
-                dampening=dampening,
-                weight_decay=opt.weight_decay,
-                nesterov=opt.nesterov)
-            scheduler = lr_scheduler.ReduceLROnPlateau(
-                optimizer, 'min', patience=opt.lr_patience)
+
+        if opt.nesterov:
+            dampening = 0
+        else:
+            dampening = opt.dampening
+        optimizer = optim.SGD(
+            parameters,
+            lr=opt.learning_rate,
+            momentum=opt.momentum,
+            dampening=dampening,
+            weight_decay=opt.weight_decay,
+            nesterov=opt.nesterov)
+        scheduler = lr_scheduler.ReduceLROnPlateau(
+            optimizer, 'min', patience=opt.lr_patience)
         
 
 
@@ -190,14 +190,6 @@ class ML_model():
             checkpoint = torch.load(os.path.join(opt.Model_directory,'save_60.pth'))
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
-            parameters = model.parameters()
-            optimizer = optim.SGD(
-                parameters,
-                lr=opt.learning_rate,
-                momentum=opt.momentum,
-                dampening=dampening,
-                weight_decay=opt.weight_decay,
-                nesterov=opt.nesterov)
             optimizer.load_state_dict(checkpoint['optimizer'])
 #             optimizer = optim.Adam(parameters,lr=0.0001)
 
