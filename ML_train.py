@@ -139,7 +139,7 @@ def check_args(args):
 check_args(args)
 # pdb.set_trace()
 w = ML_model(args)
-# w.work()
+w.work()
 
 # Validate data
 # def check_args(args):
