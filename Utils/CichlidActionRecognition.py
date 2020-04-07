@@ -192,7 +192,7 @@ class ML_model():
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             parameters = model.parameters()
-            optimizer = optim.Adam(parameters,lr=0.01)
+            optimizer = optim.Adam(parameters,lr=0.0001)
 
         
         
