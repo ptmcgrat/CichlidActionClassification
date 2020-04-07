@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(description='This script takes video clips and 
 # RESULTS_DIR = '/data/home/llong35/data/transfer_test'
 # PROJECT = 'MC6_5'
 # RESULTS_DIR = os.path.join(RESULTS_DIR,PROJECT)
-RESULTS_DIR = '/data/home/llong35/data/04_06_2020_2' 
+RESULTS_DIR = '/data/home/llong35/data/finetune_transfer_lr0.0001' 
 
 parser.add_argument('--ML_videos_directory',
                     type = str, 
@@ -120,7 +120,7 @@ parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is sa
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
 parser.add_argument('--batch_size', default=5, type=int, help='Batch Size')
-parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
+parser.add_argument('--n_epochs',default=200,type=int,help='Number of total epochs to run')
 
 
 #Parameters specific for finetuning for other animals

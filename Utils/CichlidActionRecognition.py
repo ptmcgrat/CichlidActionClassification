@@ -187,13 +187,12 @@ class ML_model():
 
 
         if opt.purpose == 'finetune':
-            checkpoint = torch.load('/data/home/llong35/data/04_06_2020/save_60.pth')
+            checkpoint = torch.load(os.path.join(opt.Model_directory,'save_80.pth')
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             parameters = model.parameters()
             optimizer = optim.Adam(parameters,lr=0.0001)
 
-        
         
         previous_domain_accuracy=0.5
         for i in range(begin_epoch,opt.n_epochs + 1):
