@@ -4,9 +4,10 @@ from Utils.CichlidActionRecognition import ML_model
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
 # Input data
-RESULTS_DIR = '/data/home/llong35/data/transfer_test'
-PROJECT = 'MC6_5'
-RESULTS_DIR = os.path.join(RESULTS_DIR,PROJECT)
+# RESULTS_DIR = '/data/home/llong35/data/transfer_test'
+# PROJECT = 'MC6_5'
+# RESULTS_DIR = os.path.join(RESULTS_DIR,PROJECT)
+RESULTS_DIR = '/data/home/llong35/data/04_06_2020' 
 
 parser.add_argument('--ML_videos_directory',
                     type = str, 
@@ -28,7 +29,7 @@ parser.add_argument('--ML_labels',
                     
 parser.add_argument('--purpose', 
                     type = str, 
-                    default = 'train',
+                    default = 'finetune',
                     required = False, 
                     help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
 
@@ -45,7 +46,8 @@ parser.add_argument('--Log',
 
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory', 
-                    default='/data/home/llong35/data/tmp/'+PROJECT,
+                    # default='/data/home/llong35/data/tmp/'+PROJECT,
+                    default='/data/home/llong35/data/temp',
                     type = str, 
                     required = False, 
                     help = 'Location for temp files to be stored')
@@ -134,6 +136,7 @@ def check_args(args):
         os.makedirs(args.Clips_temp_directory)
 
 check_args(args)
+pdb.set_trace()
 w = ML_model(args)
 # w.work()
 

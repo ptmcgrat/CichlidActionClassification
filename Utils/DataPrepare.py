@@ -32,7 +32,7 @@ class DP_worker():
         videos_temp = os.path.join(self.args.Clips_temp_directory,domain)
         if not os.path.exists(videos_temp):
             os.makedirs(videos_temp)
-        
+        count = 0
         for file_name in os.listdir(video_dir):
             if not file_name.endswith('.mp4'):
                 continue
@@ -49,6 +49,9 @@ class DP_worker():
                 os.makedirs(target_folder)
             cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
             subprocess.run(cmd)
+            count += 1
+            if domain == 'target' and count > self.train_count:
+                break
         if domain == 'target':
             annotation_f.close()
             
@@ -177,6 +180,7 @@ class DP_worker():
     
     
     def work(self):
+        
         self.prepare_domain('source')
         self.prepare_domain('target')
         self.prepare_json()

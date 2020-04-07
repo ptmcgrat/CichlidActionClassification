@@ -40,6 +40,7 @@ class ML_model():
     def work(self):
         
         opt = self.args
+        
         with open(opt.Log, 'w') as opt_file:
             json.dump(vars(opt), opt_file)
         model = DANN_model.DANN_resnet18(
@@ -167,23 +168,35 @@ class ML_model():
                                                     num_workers=opt.n_threads,
                                                     pin_memory=True)
         
+        if opt.purpose == 'train':
+            if opt.nesterov:
+                dampening = 0
+            else:
+                dampening = opt.dampening
+            optimizer = optim.SGD(
+                parameters,
+                lr=opt.learning_rate,
+                momentum=opt.momentum,
+                dampening=dampening,
+                weight_decay=opt.weight_decay,
+                nesterov=opt.nesterov)
+            scheduler = lr_scheduler.ReduceLROnPlateau(
+                optimizer, 'min', patience=opt.lr_patience)
         
-        if opt.nesterov:
-            dampening = 0
-        else:
-            dampening = opt.dampening
-        optimizer = optim.SGD(
-            parameters,
-            lr=opt.learning_rate,
-            momentum=opt.momentum,
-            dampening=dampening,
-            weight_decay=opt.weight_decay,
-            nesterov=opt.nesterov)
-        scheduler = lr_scheduler.ReduceLROnPlateau(
-            optimizer, 'min', patience=opt.lr_patience)
+
+
+        
+        if opt.purpose == 'finetune':
+            checkpoint = torch.load('/data/home/llong35/data/04_06_2020/save_60.pth')
+            begin_epoch = checkpoint['epoch']
+            model.load_state_dict(checkpoint['state_dict'])
+            parameters = model.parameters()
+            optimizer = optim.Adam(parameters,lr=0.01)
+
+        
         
         previous_domain_accuracy=0.5
-        for i in range(opt.n_epochs + 1):
+        for i in range(begin_epoch,opt.n_epochs + 1):
             
             domain_average_acc,training_loss = self._train_epoch(i, train_loader, target_loader, model, criterion,domain_criterion, optimizer, opt,
                         train_logger,previous_domain_accuracy)
@@ -228,6 +241,8 @@ class ML_model():
     #         alpha = 2*previous_domain_accuracy-0.9
     #         if alpha < 0:
     #             alpha = 0
+            if opt.purpose == 'finetune':
+                alpha = 1
         
             data_time.update(time.time() - end_time)
             batch_size = inputs.size(0)
