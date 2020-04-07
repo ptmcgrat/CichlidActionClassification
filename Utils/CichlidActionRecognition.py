@@ -38,7 +38,7 @@ class ML_model():
         
         
     def work(self):
-        pdb.set_trace()
+        
         
         opt = self.args
         
@@ -186,7 +186,7 @@ class ML_model():
         
 
 
-        
+        pdb.set_trace()
         if opt.purpose == 'finetune':
             checkpoint = torch.load('/data/home/llong35/data/04_06_2020/save_60.pth')
             begin_epoch = checkpoint['epoch']
