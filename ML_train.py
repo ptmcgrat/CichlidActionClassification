@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(description='This script takes video clips and 
 # RESULTS_DIR = '/data/home/llong35/data/transfer_test'
 # PROJECT = 'MC6_5'
 # RESULTS_DIR = os.path.join(RESULTS_DIR,PROJECT)
-RESULTS_DIR = '/data/home/llong35/data/finetune_transfer_lr0.0001' 
+RESULTS_DIR = '/data/home/llong35/data/finetune_on_validation_loss' 
 
 parser.add_argument('--ML_videos_directory',
                     type = str, 

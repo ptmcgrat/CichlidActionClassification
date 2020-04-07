@@ -187,11 +187,19 @@ class ML_model():
 
 
         if opt.purpose == 'finetune':
-            checkpoint = torch.load(os.path.join(opt.Model_directory,'save_80.pth'))
+            checkpoint = torch.load(os.path.join(opt.Model_directory,'save_60.pth'))
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             parameters = model.parameters()
-            optimizer = optim.Adam(parameters,lr=0.0001)
+            optimizer = optim.SGD(
+                parameters,
+                lr=opt.learning_rate,
+                momentum=opt.momentum,
+                dampening=dampening,
+                weight_decay=opt.weight_decay,
+                nesterov=opt.nesterov)
+            optimizer.load_state_dict(checkpoint['optimizer'])
+#             optimizer = optim.Adam(parameters,lr=0.0001)
 
         
         previous_domain_accuracy=0.5
@@ -203,7 +211,7 @@ class ML_model():
             
             validation_loss = self._val_epoch(i, val_loader, model, criterion, opt,val_logger)
             
-#             scheduler.step(training_loss)
+            scheduler.step(validation_loss)
             test_loss = self._test_epoch(i, test_loader, model, criterion, opt,test_logger)
 
         
