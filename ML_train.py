@@ -89,7 +89,7 @@ parser.add_argument('--sample_size',
                     help='Height and width of inputs')
                     
 parser.add_argument('--n_threads',
-                    default=3,
+                    default=5,
                     type=int,
                     help='Number of threads for multi-thread loading')
 
@@ -119,7 +119,7 @@ parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is sa
 
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
-parser.add_argument('--batch_size', default=6, type=int, help='Batch Size')
+parser.add_argument('--batch_size', default=5, type=int, help='Batch Size')
 parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
 
 
