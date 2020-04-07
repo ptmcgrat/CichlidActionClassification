@@ -17,7 +17,8 @@ parser.add_argument('--ML_videos_directory',
 
 parser.add_argument('--Unlabeled_videos_directory',
                     type = str, 
-                    default = '/data/home/llong35/data/unlabled_videos/'+PROJECT+'/AllClips',
+#                     default = '/data/home/llong35/data/unlabled_videos/'+PROJECT+'/AllClips',
+                    default = '/data/home/llong35/data/unlabled_videos/MC16_2/clips/AllClips'
                     required = False, 
                     help = 'Name of directory to hold videos to annotate for machine learning purposes')
                     
