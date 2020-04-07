@@ -36,7 +36,7 @@ parser.add_argument('--purpose',
 
 parser.add_argument('--TEST_PROJECT', 
                     type = str, 
-                    default = PROJECT,
+#                     default = PROJECT,
                     help = 'project to be tested on')
                     
 parser.add_argument('--Log', 
