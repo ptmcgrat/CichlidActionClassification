@@ -187,7 +187,7 @@ class ML_model():
 
 
         if opt.purpose == 'finetune':
-            checkpoint = torch.load(os.path.join(opt.Model_directory,'save_80.pth')
+            checkpoint = torch.load(os.path.join(opt.Model_directory,'save_80.pth'))
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             parameters = model.parameters()
