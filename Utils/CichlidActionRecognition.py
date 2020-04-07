@@ -34,7 +34,7 @@ class ML_model():
         if not os.path.exists(self.source_json_file):
             print('preparing data')
             dp_worker = DP_worker(args)
-            dp_worker.work()
+#             dp_worker.work()
         
         
     def work(self):

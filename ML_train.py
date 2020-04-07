@@ -137,7 +137,7 @@ def check_args(args):
         os.makedirs(args.Clips_temp_directory)
 
 check_args(args)
-pdb.set_trace()
+# pdb.set_trace()
 w = ML_model(args)
 # w.work()
 
