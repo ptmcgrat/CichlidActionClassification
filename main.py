@@ -265,7 +265,7 @@ if __name__ == '__main__':
         values = annotateData[annotateData.Dataset=='Train']['MeanID']
 
         annotationDictionary = dict(zip(keys, values))
-
+        pdb.set_trace()
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
 #         pdb.set_trace()
