@@ -265,7 +265,6 @@ if __name__ == '__main__':
         values = annotateData['MeanID']
 
         annotationDictionary = dict(zip(keys, values))
-        pdb.set_trace()
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
         training_data = get_training_set(opt, spatial_transforms,
