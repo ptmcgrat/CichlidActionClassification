@@ -321,8 +321,6 @@ if __name__ == '__main__':
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
     if not opt.no_test:
-        temporal_transform = TemporalCenterCrop(opt.sample_duration)
-        target_transform = ClassLabel()
         test_data = get_test_set(
             opt, spatial_transforms, temporal_transform, target_transform, annotationDictionary)
         test_loader = torch.utils.data.DataLoader(
@@ -332,7 +330,7 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True)
         test_logger = Logger(
-            os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
+            os.path.join(opt.result_path, 'test.log'), ['epoch', 'loss', 'acc'])
 
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
@@ -357,6 +355,6 @@ if __name__ == '__main__':
             scheduler.step(validation_loss)
         
         if not opt.no_test:
-            test_epoch(i, val_loader, model, criterion, opt,
+            test_epoch(i, test_loader, model, criterion, opt,
                                         test_logger)
 
