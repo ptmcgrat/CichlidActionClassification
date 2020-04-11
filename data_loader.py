@@ -217,9 +217,11 @@ class cichlids(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-        pdb.set_trace()
+        
         path = self.data[index]['video']
+        print(path)
         clip_name = path.rstrip().split('/')[-1]
+        print(clip_name)
         frame_indices = self.data[index]['frame_indices']
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
