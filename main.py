@@ -356,7 +356,7 @@ if __name__ == '__main__':
         if not opt.no_train and not opt.no_val:
             scheduler.step(validation_loss)
         
-        if not opt.no_val:
+        if not opt.no_test:
             test_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
 
