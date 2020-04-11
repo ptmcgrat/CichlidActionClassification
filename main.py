@@ -261,14 +261,13 @@ if __name__ == '__main__':
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-        keys = annotateData[annotateData.Dataset=='Train']['Location']
-        values = annotateData[annotateData.Dataset=='Train']['MeanID']
+        keys = annotateData['Location']
+        values = annotateData['MeanID']
 
         annotationDictionary = dict(zip(keys, values))
         pdb.set_trace()
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
-#         pdb.set_trace()
         training_data = get_training_set(opt, spatial_transforms,
                                          temporal_transform, target_transform, annotationDictionary)
         train_loader = torch.utils.data.DataLoader(
@@ -308,12 +307,6 @@ if __name__ == '__main__':
                 spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size),ToTensor(opt.norm_value), norm_method])
 
         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-        keys = annotateData[annotateData.Dataset=='Test']['Location']
-        values = annotateData[annotateData.Dataset=='Test']['MeanID']
-
-        annotationDictionary = dict(zip(keys, values))
-        
-
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
         #temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = ClassLabel()
@@ -329,8 +322,6 @@ if __name__ == '__main__':
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
     if not opt.no_test:
-
-
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
         target_transform = ClassLabel()
         validation_data = get_test_set(
