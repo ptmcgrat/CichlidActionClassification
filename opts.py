@@ -125,13 +125,8 @@ def parse_opts():
         help='If true, validation is not performed.')
     parser.set_defaults(no_val=False)
     parser.add_argument(
-        '--test', action='store_true', help='If true, test is performed.')
+        '--no_test', action='store_true', help='If true, test is performed.')
     parser.set_defaults(test=False)
-    parser.add_argument(
-        '--test_subset',
-        default='val',
-        type=str,
-        help='Used subset in test (val | test)')
     parser.add_argument(
         '--no_softmax_in_test',
         action='store_true',
