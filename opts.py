@@ -64,7 +64,7 @@ def parse_opts():
     parser.add_argument(
         '--dampening', default=0.9, type=float, help='dampening of SGD')
     parser.add_argument(
-        '--weight_decay', default=1e-23, type=float, help='Weight Decay')
+        '--weight_decay', default=1e-5, type=float, help='Weight Decay')
     parser.add_argument(
         '--nesterov', action='store_true', help='Nesterov momentum')
     parser.set_defaults(nesterov=False)
