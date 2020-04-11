@@ -323,15 +323,15 @@ if __name__ == '__main__':
     if not opt.no_test:
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
         target_transform = ClassLabel()
-        validation_data = get_test_set(
+        test_data = get_test_set(
             opt, spatial_transforms, temporal_transform, target_transform, annotationDictionary)
-        val_loader = torch.utils.data.DataLoader(
-            validation_data,
+        test_loader = torch.utils.data.DataLoader(
+            test_data,
             batch_size=opt.batch_size,
             shuffle=False,
             num_workers=opt.n_threads,
             pin_memory=True)
-        val_logger = Logger(
+        test_logger = Logger(
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
     if opt.resume_path:
@@ -358,5 +358,5 @@ if __name__ == '__main__':
         
         if not opt.no_test:
             test_epoch(i, val_loader, model, criterion, opt,
-                                        val_logger)
+                                        test_logger)
 
