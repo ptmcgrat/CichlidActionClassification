@@ -16,10 +16,10 @@ def create_random_spliting_train_test(annotation_file,
                                         training_sample_size = 9500,
                                         val_sample_size = 2000,
                                         test_sample_size = -1,
-                                        test_in_train = 400):
+                                        test_in_train = 800):
     animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
     training = np.sort(np.random.choice(animals_list, n_training, replace=False))
-    training = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'CV10_3']
+    training = [ 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
     result_dir = os.path.join(master_dir,','.join(training)+'testintrain'+str(test_in_train))
     if os.path.isdir(result_dir):
         return
