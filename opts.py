@@ -122,7 +122,7 @@ def parse_opts():
     parser.set_defaults(no_val=False)
     parser.add_argument(
         '--no_test', action='store_true', help='If true, test is performed.')
-    parser.set_defaults(test=False)
+    parser.set_defaults(no_test=False)
     parser.add_argument(
         '--no_softmax_in_test',
         action='store_true',
