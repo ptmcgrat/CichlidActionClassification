@@ -14,11 +14,10 @@ class DP_worker():
 
     def prepare_data(self):
         video_dir = self.args.ML_videos_directory
-        meansalll_file = os.path.join(self.args.Log_directory,'source_MeansAll.csv')
-        means_file = os.path.join(self.args.Log_directory,'source_Means.csv')
+        means_all_file = os.path.join(self.args.Results_directory,'MeansAll.csv')
+        means_file = os.path.join(self.args.Results_directory,'Means.csv')
         annotation_file = self.args.ML_labels
         videos_temp = self.args.Clips_temp_directory
-
 
         if not os.path.exists(videos_temp):
             os.makedirs(videos_temp)
@@ -34,7 +33,7 @@ class DP_worker():
                 cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
                 subprocess.run(cmd)
             count += 1
-        with open(meansalll_file, 'w') as f:
+        with open(means_all_file, 'w') as f:
             print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
             for video in os.listdir(videos_temp):
                 video_folder = os.path.join(videos_temp,video)
@@ -54,7 +53,7 @@ class DP_worker():
                 mean = img.mean(axis = (0,1))
                 std = img.std(axis = (0,1))
                 print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
-        dt = pd.read_csv(meansalll_file,sep=',')
+        dt = pd.read_csv(means_all_file,sep=',')
         annotation_df = pd.read_csv(annotation_file,sep=',')
         dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.Location==row.Clip].MeanID.values[0], axis = 1)
         means = dt.groupby('MeanID').mean()
@@ -63,11 +62,10 @@ class DP_worker():
             print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
             for row in means.itertuples():
                 print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
-        
 
-        train_list = os.path.join(self.args.Log_directory,'source_train_list.txt')
-        val_list = os.path.join(self.args.Log_directory,'source_val_list.txt')
-        test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
+        train_list = os.path.join(self.args.Results_directory,'train_list.txt')
+        val_list = os.path.join(self.args.Results_directory,'val_list.txt')
+        test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         test_animals = [self.args.TEST_PROJECT]
         with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
             for index,row in annotation_df.iterrows():
@@ -77,10 +75,6 @@ class DP_worker():
                 else:
                     if np.random.uniform()<0.8:
                         print(row.Location+','+row.Label,file=train)
-                        try:
-                            self.train_count += 1
-                        except:
-                            self.train_count = 1
                     else:
                         print(row.Location+','+row.Label,file=val)
         
@@ -88,7 +82,6 @@ class DP_worker():
         train_list = os.path.join(self.args.Results_directory,'train_list.txt')
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
-        
         source_json_path = os.path.join(self.args.Log_directory,'source.json')
         
         def convert_csv_to_dict(csv_path, subset):
@@ -129,9 +122,6 @@ class DP_worker():
     def work(self):
         self.prepare_data()
         self.prepare_json()
-#         
-        
-            
         
         
         
