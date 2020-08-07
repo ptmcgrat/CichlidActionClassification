@@ -1,81 +1,43 @@
 import argparse, subprocess, datetime, os, pdb, sys
 from Utils.CichlidActionRecognition import ML_model
+from Utils.DataPrepare import DP_worker
 
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
-# Input data
-# RESULTS_DIR = '/data/home/llong35/data/transfer_test'
-# PROJECT = 'MC6_5'
-# RESULTS_DIR = os.path.join(RESULTS_DIR,PROJECT)
-RESULTS_DIR = '/data/home/llong35/data/finetune_on_validation_loss' 
 
 parser.add_argument('--ML_videos_directory',
                     type = str, 
                     default = '/data/home/llong35/data/labeled_videos',
                     required = False, 
-                    help = 'Name of directory to hold videos to annotate for machine learning purposes')
-
-parser.add_argument('--Unlabeled_videos_directory',
-                    type = str, 
-#                     default = '/data/home/llong35/data/unlabled_videos/'+PROJECT+'/AllClips',
-                    default = '/data/home/llong35/data/unlabled_videos/MC16_2/clips/AllClips',
-                    required = False, 
-                    help = 'Name of directory to hold videos to annotate for machine learning purposes')
+                    help = 'Name of directory to hold all video clips')
                     
 parser.add_argument('--ML_labels',
                     type = str, 
                     default = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv',
-                    required = False, 
                     help = 'labels given to each ML video')
                     
-parser.add_argument('--purpose', 
+parser.add_argument('--Purpose',
                     type = str, 
-                    default = 'finetune',
-                    required = False, 
+                    default = 'train',
                     help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
 
-parser.add_argument('--TEST_PROJECT', 
-                    type = str, 
-#                     default = PROJECT,
+parser.add_argument('--TEST_PROJECT',
+                    type = str,
+                    default = '',
                     help = 'project to be tested on')
-                    
-parser.add_argument('--Log', 
-                    type = str, 
-                    default = RESULTS_DIR+'/log',
-                    required = False, 
-                    help = 'Log file to keep track of versions + parameters used')
 
 # Temp directories that wlil be deleted at the end of the analysis
-parser.add_argument('--Clips_temp_directory', 
-                    # default='/data/home/llong35/data/tmp/'+PROJECT,
-                    default='/data/home/llong35/data/temp',
+parser.add_argument('--Clips_temp_directory',
+                    default=os.path.join(os.getenv("HOME"),'clips_temp'),
                     type = str, 
                     required = False, 
                     help = 'Location for temp files to be stored')
 
 # Output data
-parser.add_argument('--Log_directory', 
-                    type = str, 
-                    required = False, 
-                    default = RESULTS_DIR,
+parser.add_argument('--Results_directory',
+                    type = str,
+                    default=os.path.join(os.getenv("HOME"),'temp','test_aug_7_1'),
                     help = 'directory to store sample prepare logs')
-                    
-parser.add_argument('--Model_directory', 
-                    type = str, 
-                    required = False, 
-                    default = RESULTS_DIR,
-                    help = 'directory to store models')
-                    
-parser.add_argument('--Performance_directory', 
-                    type = str, 
-                    default = RESULTS_DIR,
-                    required = False, 
-                    help = 'directory to store accuracy and loss change across training or fineturing')
-                    
-parser.add_argument('--Prediction_File', 
-                    type = str, 
-                    help = 'label for new animal clips')
-
 
 # Parameters for the dataloader
 parser.add_argument('--sample_duration',
@@ -120,99 +82,24 @@ parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is sa
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
 parser.add_argument('--batch_size', default=5, type=int, help='Batch Size')
-parser.add_argument('--n_epochs',default=200,type=int,help='Number of total epochs to run')
+parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
 
 
-#Parameters specific for finetuning for other animals
+# Parameters specific for finetuning for other animals
 parser.add_argument('--resume_path',default='',type=str,help='Save data (.pth) of previous training')
-parser.add_argument('--new_animals',type=str,help='new animals to apply the machine learning model')
-parser.add_argument('--finetuning_epochs',default=20,type=int,help='Number of total epochs to run')
-
 
 args = parser.parse_args()
+
+
 def check_args(args):
-    if not os.path.exists(args.Log_directory):
-        os.makedirs(args.Log_directory)
+    if not os.path.exists(args.Results_directory):
+        os.makedirs(args.Results_directory)
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
-check_args(args)
-# pdb.set_trace()
-w = ML_model(args)
-w.work()
 
-# Validate data
-# def check_args(args):
-#     bad_data = False
-#     if '.mp4' not in args.Movie_file:
-#         print('Movie_file must be mp4 file')
-#         bad_data = True
-#     if '.npy' not in args.HMM_transition_filename:
-#         print('HMM_transition_filename must have npy extension')
-#         bad_data = True
-#     if '.npy' not in args.Cl_labeled_transition_filename:
-#         print('Cl_labeled_transition_filename must have npy extension')
-#         bad_data = True
-#     if '.csv' not in args.Cl_labeled_cluster_filename:
-#         print('Cl_labeled_cluster_filename must have csv extension')
-#         bad_data = True
-#     if bad_data:
-#         raise Exception('Error in argument input.')
-#     else:
-#         if args.HMM_temp_directory[-1] != '/':
-#             args.HMM_temp_directory += '/'
-#         if os.path.exists(args.HMM_temp_directory):
-#             subprocess.run(['rm','-rf', args.HMM_temp_directory])
-#         os.makedirs(args.HMM_temp_directory)
-#         if args.Cl_videos_directory[-1] != '/':
-#             args.Cl_videos_directory += '/'
-#         if not os.path.exists(args.Cl_videos_directory):
-#             os.makedirs(args.Cl_videos_directory)
-#         if args.ML_frames_directory[-1] != '/':
-#             args.ML_frames_directory += '/'
-#         if not os.path.exists(args.ML_frames_directory):
-#             os.makedirs(args.ML_frames_directory)
-#         if args.ML_videos_directory[-1] != '/':
-#             args.ML_videos_directory += '/'
-#         if not os.path.exists(args.ML_videos_directory):
-#             os.makedirs(args.ML_videos_directory)
-# 
-#         for ofile in [args.HMM_filename, args.HMM_transition_filename, args.Cl_labeled_transition_filename, args.Cl_labeled_cluster_filename, args.Log]:
-#             odir = ofile.split(ofile.split('/')[-1])[0]
-#             if not os.path.exists(odir) and odir != '':
-#                 os.makedirs(odir)
-# 
-# check_args(args)
-# 
-# with open(args.Log, 'w') as f:
-#     for key, value in vars(args).items():
-#         print(key + ': ' + str(value), file = f)
-#     print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
-#     import pandas as pd
-#     print('PandasVersion: ' + pd.__version__, file = f)
-#     import numpy as np
-#     print('NumpyVersion: ' + np.__version__, file = f)
-#     import hmmlearn
-#     print('HMMLearnVersion: ' + hmmlearn.__version__, file = f)
-#     import scipy
-#     print('ScipyVersion: ' + scipy.__version__, file = f)
-#     import cv2
-#     print('OpenCVVersion: ' + cv2.__version__, file = f)
-#     import sklearn
-#     print('SkLearnVersion: ' + sklearn.__version__, file = f)
-# 
-# 
-# Filter out HMM related arguments
-# HMM_args = {}
-# for key, value in vars(args).items():
-#     if 'HMM' in key or 'Video' in key or 'Movie' in key or 'Num' in key or 'Filter' in key: 
-#         if value is not None:
-#             HMM_args[key] = value
-# 
-# HMM_command = ['python3', 'Utils/calculateHMM.py']
-# for key, value in HMM_args.items():
-#     HMM_command.extend(['--' + key, str(value)])
-# 
-# print(HMM_command)
-# subprocess.run(HMM_command)
-#
+check_args(args)
+data_worker = DP_worker(args)
+data_worker.work()
+ML_model = ML_model(args)
+ML_model.work()

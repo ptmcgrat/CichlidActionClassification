@@ -11,50 +11,29 @@ class DP_worker():
     def __init__(self, args):
         self.args = args
         self.means = {}
-        
-        
-    
-    def prepare_domain(self,domain):
-        if domain == 'source':
-            video_dir = self.args.ML_videos_directory
-            meansalll_file = os.path.join(self.args.Log_directory,'source_MeansAll.csv')
-            means_file = os.path.join(self.args.Log_directory,'source_Means.csv')
-            annotation_file = self.args.ML_labels
-            
-        else:
-            video_dir = self.args.Unlabeled_videos_directory
-            annotation_file  = os.path.join(self.args.Log_directory,'target_domain_annotation.csv')
-            meansalll_file = os.path.join(self.args.Log_directory,'target_MeansAll.csv')
-            means_file = os.path.join(self.args.Log_directory,'target_Means.csv')
-            annotation_f=open(annotation_file,'w')
-            print('Location,MeanID', file = annotation_f)
-        
-        videos_temp = os.path.join(self.args.Clips_temp_directory,domain)
+
+    def prepare_data(self):
+        video_dir = self.args.ML_videos_directory
+        meansalll_file = os.path.join(self.args.Log_directory,'source_MeansAll.csv')
+        means_file = os.path.join(self.args.Log_directory,'source_Means.csv')
+        annotation_file = self.args.ML_labels
+        videos_temp = self.args.Clips_temp_directory
+
+
         if not os.path.exists(videos_temp):
             os.makedirs(videos_temp)
         count = 0
         for file_name in os.listdir(video_dir):
             if not file_name.endswith('.mp4'):
                 continue
-            if domain == 'source':
-                location = file_name.split('.')[0]
-            else:
-                tokens = file_name.split('.')[0].split('__')
-                location = '_'.join(tokens[-5:])
-                MeanID = ':'.join(tokens[:2])
-                print(location+','+MeanID,file=annotation_f)
+            location = file_name.split('.')[0]
             video_file_path = os.path.join(video_dir,file_name)
             target_folder = os.path.join(videos_temp,location)
             if not os.path.exists(target_folder):
                 os.makedirs(target_folder)
-            cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
-            subprocess.run(cmd)
+                cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
+                subprocess.run(cmd)
             count += 1
-            if domain == 'target' and count > self.train_count:
-                break
-        if domain == 'target':
-            annotation_f.close()
-            
         with open(meansalll_file, 'w') as f:
             print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
             for video in os.listdir(videos_temp):
@@ -85,52 +64,32 @@ class DP_worker():
             for row in means.itertuples():
                 print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
         
-        if domain == 'source':
-            train_list = os.path.join(self.args.Log_directory,'source_train_list.txt')
-            val_list = os.path.join(self.args.Log_directory,'source_val_list.txt')
-            test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
-            test_animals = [self.args.TEST_PROJECT]
-            with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
-                for index,row in annotation_df.iterrows():
-                    animal = row.MeanID.split(':')[0]
-                    if animal in test_animals:
-                        print(row.Location+','+row.Label,file=test)
-                    else:
-                        if np.random.uniform()<0.8:
-                            print(row.Location+','+row.Label,file=train)
-                            try:
-                                self.train_count += 1
-                            except:
-                                self.train_count = 1
-                        else:
-                            print(row.Location+','+row.Label,file=val)
-        else:
-            target_list = os.path.join(self.args.Log_directory,'target_list.txt')
-            test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
-            test_clips = []
-            with open(test_list,'r') as input:
-                for line in input:
-                    clip = line.split(',')[0]
-                    test_clips.append(clip)
-            
-            
-            with open(target_list,'w') as target:
-                count = 0
-                for index,row in annotation_df.iterrows():
-                    count += 1
-                    print(row.Location+',target',file=target)
-                    if self.train_count == self.train_count:
-                        break
-        
-        
-    def prepare_json(self):
+
         train_list = os.path.join(self.args.Log_directory,'source_train_list.txt')
         val_list = os.path.join(self.args.Log_directory,'source_val_list.txt')
         test_list = os.path.join(self.args.Log_directory,'source_test_list.txt')
-        target_list = os.path.join(self.args.Log_directory,'target_list.txt')
+        test_animals = [self.args.TEST_PROJECT]
+        with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
+            for index,row in annotation_df.iterrows():
+                animal = row.MeanID.split(':')[0]
+                if animal in test_animals:
+                    print(row.Location+','+row.Label,file=test)
+                else:
+                    if np.random.uniform()<0.8:
+                        print(row.Location+','+row.Label,file=train)
+                        try:
+                            self.train_count += 1
+                        except:
+                            self.train_count = 1
+                    else:
+                        print(row.Location+','+row.Label,file=val)
+        
+    def prepare_json(self):
+        train_list = os.path.join(self.args.Results_directory,'train_list.txt')
+        val_list = os.path.join(self.args.Results_directory,'val_list.txt')
+        test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         
         source_json_path = os.path.join(self.args.Log_directory,'source.json')
-        target_json_path = os.path.join(self.args.Log_directory,'target.json')
         
         def convert_csv_to_dict(csv_path, subset):
             keys = []
@@ -154,7 +113,6 @@ class DP_worker():
         train_database,classes = convert_csv_to_dict(train_list, 'training')
         val_database,_ = convert_csv_to_dict(val_list, 'validation')
         test_database,_ = convert_csv_to_dict(test_list, 'testing')
-        target_database,_ = convert_csv_to_dict(target_list, 'target')
         
         assert len(classes)==10
         
@@ -167,22 +125,9 @@ class DP_worker():
         dst_data['database'].update(test_database)
         with open(source_json_path, 'w') as dst_file:
             json.dump(dst_data, dst_file)
-        dst_data = {}
-        dst_data['labels'] = classes
-        dst_data['database'] = {}
- 
-        dst_data['database'].update(target_database)
-        with open(target_json_path, 'w') as dst_file:
-            json.dump(dst_data, dst_file)
 
-        
-    
-    
-    
     def work(self):
-        
-        self.prepare_domain('source')
-        self.prepare_domain('target')
+        self.prepare_data()
         self.prepare_json()
 #         
         
