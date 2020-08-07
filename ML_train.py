@@ -99,7 +99,7 @@ def check_args(args):
 
 pdb.set_trace()
 check_args(args)
-data_worker = DP_worker(args)
-data_worker.work()
-# ML_model = ML_model(args)
-# ML_model.work()
+# data_worker = DP_worker(args)
+# data_worker.work()
+ML_model = ML_model(args)
+ML_model.work()
