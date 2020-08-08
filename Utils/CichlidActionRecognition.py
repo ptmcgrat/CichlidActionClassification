@@ -234,16 +234,16 @@ class ML_model():
                 'lr': optimizer.param_groups[0]['lr']
             })
 
-            if epoch % opt.checkpoint == 0:
-                save_file_path = os.path.join(opt.result_path,
-                                              'save_{}.pth'.format(epoch))
-                states = {
-                    'epoch': epoch + 1,
-                    'arch': opt.arch,
-                    'state_dict': model.state_dict(),
-                    'optimizer': optimizer.state_dict(),
-                }
-                torch.save(states, save_file_path)
+        if epoch % opt.checkpoint == 0:
+            save_file_path = os.path.join(opt.Results_directory,
+                                          'save_{}.pth'.format(epoch))
+            states = {
+                'epoch': epoch + 1,
+                'arch': opt.arch,
+                'state_dict': model.state_dict(),
+                'optimizer': optimizer.state_dict(),
+            }
+            torch.save(states, save_file_path)
 
     def val_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('validation at epoch {}'.format(epoch))
