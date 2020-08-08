@@ -95,15 +95,15 @@ class DP_worker():
                         else:
                             label = row.Label
                             location = row.Location
-                            category_count[label].append((location,label))
+                            category_count[label].append(location)
                     for key, value in category_count.items():
                         training_videos = np.random.choice(value,220)
                         for training_video in training_videos:
-                            print(training_video[0] + ',' + training_video[1], file=train)
+                            print(training_video[0] + ',' + key, file=train)
                         validation_videos = [item for item in value if item not in training_videos]
-                        validation_videos = np.random.choice(validation_videos,50)
+                        validation_videos = np.random.choice(validation_videos, 50)
                         for validation_video in validation_videos:
-                            print(validation_video[0] + ',' + validation_video[1], file=val)
+                            print(validation_video[0] + ',' + key, file=val)
 
                 elif self.args.Split_mode == 'mode2':
                     pass
