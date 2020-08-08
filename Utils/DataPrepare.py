@@ -6,6 +6,7 @@ from skimage import io
 import pandas as pd
 import numpy as np
 
+from collections import defaultdict
 import pdb
 class DP_worker():
     def __init__(self, args):
@@ -64,22 +65,47 @@ class DP_worker():
                 for row in means.itertuples():
                     print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
 
+
+    def split_data(self):
         train_list = os.path.join(self.args.Results_directory,'train_list.txt')
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         test_animals = [self.args.TEST_PROJECT]
         if not os.path.exists(train_list):
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
-                for index,row in annotation_df.iterrows():
-                    animal = row.MeanID.split(':')[0]
-                    if animal in test_animals:
-                        print(row.Location+','+row.Label,file=test)
-                    else:
-                        if np.random.uniform()<0.8:
-                            print(row.Location+','+row.Label,file=train)
+                if self.args.split_mode == 'random':
+                    for index,row in annotation_df.iterrows():
+                        animal = row.MeanID.split(':')[0]
+                        if animal in test_animals:
+                            print(row.Location+','+row.Label,file=test)
                         else:
-                            print(row.Location+','+row.Label,file=val)
-        
+                            if np.random.uniform()<0.8:
+                                print(row.Location+','+row.Label,file=train)
+                            else:
+                                print(row.Location+','+row.Label,file=val)
+                elif self.args.Split_mode == 'mode1':
+                    category_count = defaultdict(list)
+                    for index, row in annotation_df.iterrows():
+                        animal = row.MeanID.split(':')[0]
+                        if animal in test_animals:
+                            print(row.Location+','+row.Label,file=test)
+                        else:
+                            label = row.Label
+                            location = row.Location
+                            category_count[label].append((location,label))
+                            for key,value in category_count.items():
+                                training_videos = np.random.choice(value,220)
+                                for training_video in training_videos:
+                                    print(training_video[0] + ',' + training_video[1], file=train)
+                                validation_videos = [item for item in value if item not in training_videos]
+                                validation_videos = np.random.choice(validation_videos,50)
+                                for validation_video in validation_videos:
+                                    print(validation_video[0] + ',' + validation_video[1], file=val)
+
+                elif self.args.Split_mode == 'mode2':
+                    pass
+
+
     def prepare_json(self):
         train_list = os.path.join(self.args.Results_directory,'train_list.txt')
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
@@ -124,7 +150,9 @@ class DP_worker():
 
     def work(self):
         self.prepare_data()
-        print('data conversion done, preparing json file')
+        print('data conversion done, split data')
+        self.split_data()
+        print('data split done, prepare json')
         self.prepare_json()
         
         
