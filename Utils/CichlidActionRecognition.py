@@ -167,8 +167,7 @@ class ML_model():
         print('run')
 
         for i in range(begin_epoch,opt.n_epochs + 1):
-            # self.train_epoch(i, train_loader, model, criterion, optimizer, opt,
-            #             train_logger, train_batch_logger)
+            self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
 
             validation_loss,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
 
@@ -262,7 +261,7 @@ class ML_model():
         confidence_for_each_validation = {}
         ###########################################################################
 
-        pdb.set_trace()
+        # pdb.set_trace()
         for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
