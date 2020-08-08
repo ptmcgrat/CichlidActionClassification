@@ -73,7 +73,7 @@ class DP_worker():
         test_animals = [self.args.TEST_PROJECT]
         if not os.path.exists(train_list):
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
-                if self.args.split_mode == 'random':
+                if self.args.Split_mode == 'random':
                     for index,row in annotation_df.iterrows():
                         animal = row.MeanID.split(':')[0]
                         if animal in test_animals:
