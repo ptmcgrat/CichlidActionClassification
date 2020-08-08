@@ -170,7 +170,10 @@ class ML_model():
             self.train_epoch(i, train_loader, model, criterion, optimizer, opt,
                         train_logger, train_batch_logger)
 
-            validation_loss = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+            validation_loss,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+
+            confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
+            confusion_matrix.to_csv(confusion_matrix_file)
 
             scheduler.step(validation_loss)
 
@@ -255,10 +258,7 @@ class ML_model():
         accuracies = AverageMeter()
 
         end_time = time.time()
-
-        #########  temp line, needs to be removed##################################
-        #     file  = 'epoch_'+ str(epoch)+'_validation_matrix.csv'
-        #     confusion_matrix = np.zeros((opt.n_classes,opt.n_classes))
+        confusion_matrix = np.zeros((opt.n_classes,opt.n_classes))
         #     confidence_for_each_validation = {}
         ###########################################################################
 
@@ -276,13 +276,13 @@ class ML_model():
                 #########  temp line, needs to be removed##################################
                 #             for j in range(len(targets)):
                 #                 confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
-                '''
+
                 rows = [int(x) for x in targets]
                 columns = [int(x) for x in np.argmax(outputs,1)]
                 assert len(rows) == len(columns)
                 for idx in range(len(rows)):
                     confusion_matrix[rows[idx]][columns[idx]] +=1
-                '''
+
                 ###########################################################################
                 losses.update(loss.data, inputs.size(0))
                 accuracies.update(acc, inputs.size(0))
@@ -304,7 +304,7 @@ class ML_model():
                     acc=accuracies))
             #########  temp line, needs to be removed##################################
             # print(confusion_matrix)
-            # confusion_matrix = pd.DataFrame(confusion_matrix)
+            confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
             #     confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
             #     confidence_matrix.to_csv('confidence_matrix.csv')
@@ -313,7 +313,7 @@ class ML_model():
 
         logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
-        return losses.avg
+        return losses.avg,confusion_matrix
         
     def test_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('test at epoch {}'.format(epoch))
