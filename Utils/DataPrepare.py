@@ -99,11 +99,11 @@ class DP_worker():
                     for key, value in category_count.items():
                         training_videos = np.random.choice(value,220)
                         for training_video in training_videos:
-                            print(training_video[0] + ',' + key, file=train)
+                            print(training_video + ',' + key, file=train)
                         validation_videos = [item for item in value if item not in training_videos]
                         validation_videos = np.random.choice(validation_videos, 50)
                         for validation_video in validation_videos:
-                            print(validation_video[0] + ',' + key, file=val)
+                            print(validation_video + ',' + key, file=val)
 
                 elif self.args.Split_mode == 'mode2':
                     pass
