@@ -97,11 +97,11 @@ class DP_worker():
                             location = row.Location
                             category_count[label].append(location)
                     for key, value in category_count.items():
-                        training_videos = np.random.choice(value,220)
+                        training_videos = np.random.choice(value,220, replace=False)
                         for training_video in training_videos:
                             print(training_video + ',' + key, file=train)
                         validation_videos = [item for item in value if item not in training_videos]
-                        validation_videos = np.random.choice(validation_videos, 50)
+                        validation_videos = np.random.choice(validation_videos, 50, replace=False)
                         for validation_video in validation_videos:
                             print(validation_video + ',' + key, file=val)
 
