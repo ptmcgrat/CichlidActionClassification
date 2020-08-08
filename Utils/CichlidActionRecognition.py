@@ -278,7 +278,7 @@ class ML_model():
                 #     confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
 
                 rows = [int(x) for x in targets]
-                columns = [int(x) for x in outputs.data.cpu()]
+                columns = [int(x) for x in np.argmax(outputs.data.cpu(),1)]
                 assert len(rows) == len(columns)
                 for idx in range(len(rows)):
                     confusion_matrix[rows[idx]][columns[idx]] +=1
