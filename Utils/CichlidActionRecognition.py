@@ -311,9 +311,9 @@ class ML_model():
 
             #########  temp line, needs to be removed##################################
 
-            logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
+        logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
-            return losses.avg
+        return losses.avg
         
     def test_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('test at epoch {}'.format(epoch))
