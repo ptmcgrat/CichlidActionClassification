@@ -155,7 +155,7 @@ class ML_model():
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
 
-        if opt.purpose == 'finetune':
+        if opt.Purpose == 'finetune':
             checkpoint = torch.load(os.path.join(opt.Model_directory,'save_60.pth'))
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
