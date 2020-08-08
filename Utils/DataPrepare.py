@@ -121,7 +121,7 @@ class DP_worker():
                         print(training_video[1] + ',' + training_video[0], file=train)
 
                     validation_indices = []
-                    for i in range(2200):
+                    for i in range(len(all_samples)):
                         if i not in training_indices:
                             validation_indices.append(i)
                     validation_indices = np.random.choice(validation_indices, 500, replace=False)
