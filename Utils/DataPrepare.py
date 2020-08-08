@@ -71,6 +71,9 @@ class DP_worker():
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         test_animals = [self.args.TEST_PROJECT]
+
+        annotation_df = pd.read_csv(self.args.ML_labels, sep=',')
+
         if not os.path.exists(train_list):
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
                 if self.args.Split_mode == 'random':
