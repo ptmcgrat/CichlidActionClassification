@@ -131,14 +131,14 @@ class ML_model():
                                    temporal_transform=temporal_transform,
                                    target_transform=target_transform,
                                    annotationDict=source_annotation_dict)
-
-        test_loader = torch.utils.data.DataLoader(test_data,
-                                                 batch_size=opt.batch_size,
-                                                 shuffle=True,
-                                                 num_workers=opt.n_threads,
-                                                 pin_memory=True)
-        test_logger = Logger(
-            os.path.join(opt.Results_directory, 'test.log'), ['epoch', 'loss', 'acc'])
+        if len(test_data) != 0:
+            test_loader = torch.utils.data.DataLoader(test_data,
+                                                     batch_size=opt.batch_size,
+                                                     shuffle=True,
+                                                     num_workers=opt.n_threads,
+                                                     pin_memory=True)
+            test_logger = Logger(
+                os.path.join(opt.Results_directory, 'test.log'), ['epoch', 'loss', 'acc'])
 
 
         if opt.nesterov:
