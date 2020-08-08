@@ -106,7 +106,24 @@ class DP_worker():
                             print(validation_video + ',' + key, file=val)
 
                 elif self.args.Split_mode == 'mode2':
-                    pass
+                    all_samples = []
+                    for index, row in annotation_df.iterrows():
+                        animal = row.MeanID.split(':')[0]
+                        if animal in test_animals:
+                            print(row.Location + ',' + row.Label, file=test)
+                        else:
+                            label = row.Label
+                            location = row.Location
+                            all_samples.append((label,location))
+                    training_videos = all_samples[np.random.choice(len(all_samples),2200,replace=False)]
+                    for training_video in training_videos:
+                        print(training_video[1] + ',' + training_video[0], file=train)
+
+                    validation_videos = [item for item in all_samples if item not in training_videos]
+                    validation_videos = all_samples[np.random.choice(len(validation_videos), 500, replace=False)]
+                    for validation_video in validation_videos:
+                        print(training_video[1] + ',' + training_video[0], file=val)
+
 
 
     def prepare_json(self):
