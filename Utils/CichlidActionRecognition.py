@@ -44,11 +44,7 @@ class ML_model():
         model = nn.DataParallel(model, device_ids=None)
         parameters = model.parameters()
         criterion = nn.CrossEntropyLoss()
-        domain_criterion = nn.CrossEntropyLoss()
-
         criterion = criterion.cuda()
-        domain_criterion.cuda()
-
 
         source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
