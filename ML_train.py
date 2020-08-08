@@ -98,6 +98,7 @@ def check_args(args):
         os.makedirs(args.Clips_temp_directory)
 
 pdb.set_trace()
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 check_args(args)
 # data_worker = DP_worker(args)
 # data_worker.work()
