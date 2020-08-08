@@ -227,7 +227,7 @@ class ML_model():
                 data_time=data_time,
                 loss=losses,
                 acc=accuracies))
-            epoch_logger.log({
+        epoch_logger.log({
                 'epoch': epoch,
                 'loss': losses.avg,
                 'acc': accuracies.avg,
