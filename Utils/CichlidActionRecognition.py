@@ -167,8 +167,8 @@ class ML_model():
         print('run')
 
         for i in range(begin_epoch,opt.n_epochs + 1):
-            self.train_epoch(i, train_loader, model, criterion, optimizer, opt,
-                        train_logger, train_batch_logger)
+            # self.train_epoch(i, train_loader, model, criterion, optimizer, opt,
+            #             train_logger, train_batch_logger)
 
             validation_loss,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
 
@@ -259,10 +259,10 @@ class ML_model():
 
         end_time = time.time()
         confusion_matrix = np.zeros((opt.n_classes,opt.n_classes))
-        #     confidence_for_each_validation = {}
+        confidence_for_each_validation = {}
         ###########################################################################
 
-        # pdb.set_trace()
+        pdb.set_trace()
         for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
@@ -274,8 +274,8 @@ class ML_model():
                 loss = criterion(outputs, targets)
                 acc = calculate_accuracy(outputs, targets)
                 #########  temp line, needs to be removed##################################
-                #             for j in range(len(targets)):
-                #                 confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
+                # for j in range(len(targets)):
+                #     confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
 
                 rows = [int(x) for x in targets]
                 columns = [int(x) for x in np.argmax(outputs,1)]
