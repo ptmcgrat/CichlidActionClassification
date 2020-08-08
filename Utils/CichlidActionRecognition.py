@@ -32,8 +32,8 @@ class ML_model():
     def work(self):
         opt = self.args
         log_file = os.path.join(opt.Results_directory,'log')
-        with open(opt.Log, 'w') as opt_file:
-            json.dump(vars(opt), opt_file)
+        with open(log_file, 'w') as output:
+            json.dump(vars(opt), output)
         model = resnet18(
                 num_classes=opt.n_classes,
                 shortcut_type=opt.resnet_shortcut,
