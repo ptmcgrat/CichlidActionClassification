@@ -81,7 +81,7 @@ parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is sa
 
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
-parser.add_argument('--batch_size', default=5, type=int, help='Batch Size')
+parser.add_argument('--batch_size', default=12, type=int, help='Batch Size')
 parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
 
 
