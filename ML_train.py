@@ -64,7 +64,7 @@ parser.add_argument('--weight_decay', default=1e-5, type=float, help='Weight Dec
 parser.add_argument('--nesterov', action='store_true', help='Nesterov momentum')
 parser.set_defaults(nesterov=False)
 parser.add_argument('--optimizer',default='sgd',type=str,help='Currently only support SGD')
-parser.add_argument('--lr_patience',default=5,type=int,help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.')
+parser.add_argument('--lr_patience',default=10,type=int,help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.')
 parser.add_argument('--resnet_shortcut',default='B',help='Shortcut type of resnet (A | B)')
 
 
@@ -81,7 +81,7 @@ parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is sa
 
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
-parser.add_argument('--batch_size', default=12, type=int, help='Batch Size')
+parser.add_argument('--batch_size', default=14, type=int, help='Batch Size')
 parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
 
 
@@ -97,7 +97,7 @@ def check_args(args):
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
-pdb.set_trace()
+# pdb.set_trace()
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 check_args(args)
 # data_worker = DP_worker(args)
