@@ -115,14 +115,19 @@ class DP_worker():
                             label = row.Label
                             location = row.Location
                             all_samples.append((label,location))
-                    training_videos = all_samples[np.random.choice(len(all_samples),2200,replace=False)]
+                    training_indices = np.random.choice(len(all_samples),2200,replace=False)
+                    training_videos = [all_samples[i] for i in training_indices]
                     for training_video in training_videos:
                         print(training_video[1] + ',' + training_video[0], file=train)
 
-                    validation_videos = [item for item in all_samples if item not in training_videos]
-                    validation_videos = all_samples[np.random.choice(len(validation_videos), 500, replace=False)]
+                    validation_indices = []
+                    for i in range(2200):
+                        if i not in training_indices:
+                            validation_indices.append(i)
+                    validation_indices = np.random.choice(validation_indices, 500, replace=False)
+                    validation_videos = [all_samples[i] for i in validation_indices]
                     for validation_video in validation_videos:
-                        print(training_video[1] + ',' + training_video[0], file=val)
+                        print(validation_video[1] + ',' + validation_video[0], file=val)
 
 
 
