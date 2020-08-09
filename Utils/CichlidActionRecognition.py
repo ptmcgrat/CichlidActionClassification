@@ -156,11 +156,10 @@ class ML_model():
             optimizer, 'min', patience=opt.lr_patience)
 
         if opt.Purpose == 'finetune':
-            checkpoint = torch.load(os.path.join(opt.Model_directory,'save_60.pth'))
+            checkpoint = torch.load(opt.resume_path)
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
-#             optimizer = optim.Adam(parameters,lr=0.0001)
         else:
             begin_epoch = 0
 
