@@ -28,7 +28,7 @@ parser.add_argument('--TEST_PROJECT',
 
 parser.add_argument('--Split_mode',
                     type = str,
-                    default = 'mode1',
+                    default = 'mode2',
                     help = 'random|mode1|mode2')
 
 # Temp directories that wlil be deleted at the end of the analysis
@@ -41,7 +41,7 @@ parser.add_argument('--Clips_temp_directory',
 # Output data
 parser.add_argument('--Results_directory',
                     type = str,
-                    default=os.path.join(os.getenv("HOME"),'temp','test_aug_8_1_equal_sampling'),
+                    default=os.path.join(os.getenv("HOME"),'temp','test_aug_8_2_restricted_total_sampling'),
                     help = 'directory to store sample prepare logs')
 
 # Parameters for the dataloader
@@ -91,7 +91,7 @@ parser.add_argument('--n_epochs',default=200,type=int,help='Number of total epoc
 
 
 # Parameters specific for finetuning for other animals
-parser.add_argument('--resume_path',default='/data/home/llong35/temp/test_aug_8_1_equal_sampling/save_100.pth',type=str,help='Save data (.pth) of previous training')
+parser.add_argument('--resume_path',default='/data/home/llong35/temp/test_aug_8_2_restricted_total_sampling/save_100.pth',type=str,help='Save data (.pth) of previous training')
 
 args = parser.parse_args()
 
@@ -103,7 +103,7 @@ def check_args(args):
         os.makedirs(args.Clips_temp_directory)
 
 # pdb.set_trace()
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="2"
 check_args(args)
 data_worker = DP_worker(args)
 data_worker.work()
