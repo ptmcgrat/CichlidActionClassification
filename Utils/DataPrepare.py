@@ -119,7 +119,6 @@ class DP_worker():
                     training_videos = [all_samples[i] for i in training_indices]
                     for training_video in training_videos:
                         print(training_video[1] + ',' + training_video[0], file=train)
-
                     validation_indices = []
                     for i in range(len(all_samples)):
                         if i not in training_indices:
@@ -128,6 +127,32 @@ class DP_worker():
                     validation_videos = [all_samples[i] for i in validation_indices]
                     for validation_video in validation_videos:
                         print(validation_video[1] + ',' + validation_video[0], file=val)
+                elif self.args.Split_mode == 'mode3':
+                    category_count = defaultdict(list)
+                    for index, row in annotation_df.iterrows():
+                        animal = row.MeanID.split(':')[0]
+                        if animal in test_animals:
+                            print(row.Location + ',' + row.Label, file=test)
+                        else:
+                            label = row.Label
+                            location = row.Location
+                            category_count[label].append(location)
+                    for key, value in category_count.items():
+                        # if less than 800 samples, 80% for training and rest for validation
+                        # otherwise use 640 for training and 160 for validation
+                        if len(value) >= 800:
+                            training_videos = np.random.choice(value, 640, replace=False)
+                            validation_videos = [item for item in value if item not in training_videos]
+                            validation_videos = np.random.choice(validation_videos, 160, replace=False)
+                        else:
+                            training_video_count = int(len(value)*0.8)
+                            training_videos = np.random.choice(value, training_video_count, replace=False)
+                            validation_videos = [item for item in value if item not in training_videos]
+                        for training_video in training_videos:
+                            print(training_video + ',' + key, file=train)
+                        for validation_video in validation_videos:
+                            print(validation_video + ',' + key, file=val)
+
 
 
 
