@@ -167,7 +167,7 @@ class ML_model():
         pdb.set_trace()
         for i in range(begin_epoch,opt.n_epochs + 1):
             self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
-            
+
             validation_loss,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
 
             confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
@@ -302,7 +302,7 @@ class ML_model():
                     acc=accuracies))
             #########  temp line, needs to be removed##################################
             # print(confusion_matrix)
-            confusion_matrix = pd.DataFrame(confusion_matrix)
+        confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
             #     confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
             #     confidence_matrix.to_csv('confidence_matrix.csv')
