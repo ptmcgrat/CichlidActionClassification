@@ -164,10 +164,10 @@ class ML_model():
             begin_epoch = 0
 
         print('run')
-
+        pdb.set_trace()
         for i in range(begin_epoch,opt.n_epochs + 1):
             self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
-
+            
             validation_loss,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
 
             confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
