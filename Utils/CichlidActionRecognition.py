@@ -164,7 +164,6 @@ class ML_model():
             begin_epoch = 0
 
         print('run')
-        pdb.set_trace()
         for i in range(begin_epoch,opt.n_epochs + 1):
             self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
 
