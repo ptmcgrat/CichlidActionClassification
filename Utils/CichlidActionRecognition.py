@@ -107,7 +107,7 @@ class ML_model():
                                      
         val_loader = torch.utils.data.DataLoader(validation_data,
                                                         batch_size=opt.batch_size,
-                                                        shuffle=True,
+                                                        shuffle=False,
                                                         num_workers=opt.n_threads,
                                                         pin_memory=True)
         val_logger = Logger(
