@@ -29,7 +29,7 @@ parser.add_argument('--TEST_PROJECT',
 parser.add_argument('--Split_mode',
                     type = str,
                     default = 'mode3',
-                    help = 'random|mode1|mode2')
+                    help = 'random|mode1|mode2|mode3')
 
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory',
@@ -41,7 +41,7 @@ parser.add_argument('--Clips_temp_directory',
 # Output data
 parser.add_argument('--Results_directory',
                     type = str,
-                    default=os.path.join(os.getenv("HOME"),'temp','test_aug_10_mode3'),
+                    default=os.path.join(os.getenv("HOME"),'temp','test_aug_15_temp'),
                     help = 'directory to store sample prepare logs')
 
 # Parameters for the dataloader
@@ -102,7 +102,7 @@ def check_args(args):
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
-# pdb.set_trace()
+pdb.set_trace()
 os.environ["CUDA_VISIBLE_DEVICES"]="3"
 check_args(args)
 data_worker = DP_worker(args)
