@@ -7,7 +7,7 @@ The scripts will first pre-process the video clips, randomly split the data into
 ML_train.py
 
 Master script that runs a 3d convolutional neural network to classify video clips. This script runs 1) Training of the neural network from scratch. 2) Applying a pre_trained neural network to unobserved video clips. 
-To run this file, either change the default arguments or feed in the desired arguments at command line.
+To run this file, either change the default arguments or feed in the desired arguments at command line. You can find how to use the arguments using the argument help. 
 
 
 VideoClassification.yaml
