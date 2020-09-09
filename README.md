@@ -1,8 +1,9 @@
 This repository contains code for classifying video clips of Lake Malawi cichlids.The input is a folder of small video clips of interest and an annotation file that gives a label for each video clip. The 14172 video clips and their annotations can be found at https://data.mendeley.com/datasets/3hspb73m79/draft?a=b72c1f6d-505a-431a-ba3d-824cd148c01e
 
 
-If fine-tuning is required, then a saved model file should be provided.
-The scripts will first pre-process the video clips, randomly split the data into training and validation. After this, a 3D ResNet will be trained and accuracy will be reported.
+If fine-tuning is required, an additional saved model file should be provided. This saved model should include the state of the model and the state of the optimizer. This can be retrieved during the training process.
+
+The scripts will first pre-process the video clips to continuous images, randomly split the data into training and validation. After this, a 3D ResNet will be trained and accuracy will be reported along with training.
 
 ML_train.py
 
