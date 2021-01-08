@@ -23,7 +23,7 @@ parser.add_argument('--Purpose',
 
 parser.add_argument('--TEST_PROJECT',
                     type = str,
-                    default = '',
+                    default = 'MC16_2,CV10_3',
                     help = 'project to be tested on')
 
 parser.add_argument('--Split_mode',
@@ -41,7 +41,7 @@ parser.add_argument('--Clips_temp_directory',
 # Output data
 parser.add_argument('--Results_directory',
                     type = str,
-                    default=os.path.join(os.getenv("HOME"),'temp','test_aug_15_temp'),
+                    default=os.path.join(os.getenv("HOME"),'temp','test_JAN_7_temp'),
                     help = 'directory to store sample prepare logs')
 
 # Parameters for the dataloader
@@ -102,7 +102,7 @@ def check_args(args):
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
-# pdb.set_trace()
+pdb.set_trace()
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 check_args(args)
 data_worker = DP_worker(args)

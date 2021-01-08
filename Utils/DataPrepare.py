@@ -70,7 +70,7 @@ class DP_worker():
         train_list = os.path.join(self.args.Results_directory,'train_list.txt')
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
-        test_animals = [self.args.TEST_PROJECT]
+        test_animals = self.args.TEST_PROJECT.split(',')
 
         annotation_df = pd.read_csv(self.args.ML_labels, sep=',')
 
