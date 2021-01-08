@@ -173,6 +173,8 @@ class ML_model():
             confusion_matrix.to_csv(confusion_matrix_file)
 
             scheduler.step(validation_loss)
+            if i % 5 == 0:
+                _ = self.test_epoch(i, test_loader, model, criterion, opt, test_logger)
 
 
     def train_epoch(self, epoch, data_loader, model, criterion, optimizer, opt,
