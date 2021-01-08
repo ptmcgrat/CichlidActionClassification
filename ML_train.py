@@ -28,7 +28,7 @@ parser.add_argument('--TEST_PROJECT',
 
 parser.add_argument('--Split_mode',
                     type = str,
-                    default = 'mode3',
+                    default = 'random',
                     help = 'random|mode1|mode2|mode3')
 
 # Temp directories that wlil be deleted at the end of the analysis
