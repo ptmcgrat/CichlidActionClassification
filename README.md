@@ -9,12 +9,44 @@ The scripts will first pre-process the video clips to continuous images, randoml
 ## ML_train.py
 
 Master script that runs a 3d convolutional neural network to classify video clips. This script runs 1) Training of the neural network from scratch. 2) Applying a pre_trained neural network to unobserved video clips. 
-To run this file, either change the default arguments or feed in the desired arguments at command line. You can find how to use the arguments using the argument help. 
+Arguments for this script include the location of the video clips, labels, temporary directory for storing intermedia files as well as results folder. You can also change parameters for the deep learning model.
+
+
 
 
 ## VideoClassification.yaml
 
 Anaconda environment for running this repository
+
+## Utils/CichlidActionRecognition.py
+
+Master script to run the 3d-resnet model, including training, validation and testing.
+
+## Utils/DataPrepare.py
+Master script to prepare the dataset. This script
+   1.Convert video clips to images for faster loading
+   2.Calculate mean RGB value for each project
+   3.Split training, validation and test data
+   4.Create a json file containing combining clip annotations
+
+
+## Utils/data_loader.py
+Utility script used by CichlidActionRecognition.py to load images and labels.
+## Utils/interpret_annotations.py
+Utility script used by DataPrepare.py to convert textual labels to numbers and vice versa.
+## Utils/model.py
+Utility script used by CichlidActionRecognition.py to construct the 3d resnet model.
+## Utils/split_by_animal.py
+Utility script used by DataPrepare.py to do special dataset splitting.
+## Utils/training_size_test.py
+Utility to do ablation studies for the size of the dataset.
+## Utils/transforms.py
+Utility script used by CichlidActionRecognition.py to do spatial and temporal transformation for each video clip.
+## Utils/utils.py
+Utility script used by CichlidActionRecognition.py to keep track of accuracy.
+
+
+
 
 
 
