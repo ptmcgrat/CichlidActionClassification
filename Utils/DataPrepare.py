@@ -22,17 +22,17 @@ class DP_worker():
 
         if not os.path.exists(videos_temp):
             os.makedirs(videos_temp)
-			print('convert video clips to images for faster loading')
-			for file_name in os.listdir(video_dir):
-				if not file_name.endswith('.mp4'):
-					continue
-				location = file_name.split('.')[0]
-				video_file_path = os.path.join(video_dir,file_name)
-				target_folder = os.path.join(videos_temp,location)
-				if not os.path.exists(target_folder):
-					os.makedirs(target_folder)
-					cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
-					subprocess.run(cmd)
+            print('convert video clips to images for faster loading')
+            for file_name in os.listdir(video_dir):
+                if not file_name.endswith('.mp4'):
+                    continue
+                location = file_name.split('.')[0]
+                video_file_path = os.path.join(video_dir,file_name)
+                target_folder = os.path.join(videos_temp,location)
+                if not os.path.exists(target_folder):
+                    os.makedirs(target_folder)
+                    cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
+                    subprocess.run(cmd)
         print('calculate mean file')
         if not os.path.exists(means_file):
             with open(means_all_file, 'w') as f:
