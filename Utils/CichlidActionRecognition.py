@@ -182,7 +182,7 @@ class ML_model():
 
             scheduler.step(validation_loss)
             if i % 5 == 0:
-                _ = self.test_epoch(i, test_loader, model, criterion, opt, test_logger)
+                _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
 
 
     def train_epoch(self, epoch, data_loader, model, criterion, optimizer, opt,
