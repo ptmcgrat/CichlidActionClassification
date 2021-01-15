@@ -130,7 +130,7 @@ class ML_model():
         pdb.set_trace()
         test_data = cichlids(opt.Clips_temp_directory,
                                    self.source_json_file,
-                                   'test',
+                                   'testing',
                                    spatial_transforms=spatial_transforms,
                                    temporal_transform=temporal_transform,
                                    target_transform=target_transform,
