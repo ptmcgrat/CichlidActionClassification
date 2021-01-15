@@ -73,6 +73,11 @@ class DP_worker():
         test_animals = self.args.TEST_PROJECT.split(',')
 
         annotation_df = pd.read_csv(self.args.ML_labels, sep=',')
+        if self.args.Purpose == 'classify':
+            with open(val_list,'w') as val:
+                for index,row in annotation_df.iterrows():
+                    print(row.Location+','+row.Label,file=val)
+            return
 
         if not os.path.exists(train_list):
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:

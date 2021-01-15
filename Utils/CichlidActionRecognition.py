@@ -49,6 +49,9 @@ class ML_model():
         source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
         
+        
+        
+        
         # training data loader
         
         crop_method = MultiScaleRandomCenterCrop([0.99,0.97,0.95,0.93,0.91],opt.sample_size)
@@ -155,14 +158,18 @@ class ML_model():
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
 
-        if opt.Purpose == 'finetune':
+        if opt.Purpose in ['finetune','classify']:
             checkpoint = torch.load(opt.resume_path)
             begin_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
         else:
             begin_epoch = 0
-
+        if opt.Purpose == 'classify':
+            _,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+            confusion_matrix_file = os.path.join(self.args.Results_directory,'prediction_confusion.csv')
+            confusion_matrix.to_csv(confusion_matrix_file)
+            return
         print('run')
         for i in range(begin_epoch,opt.n_epochs + 1):
             self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
