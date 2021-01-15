@@ -22,7 +22,9 @@ If train from scratch, follow these steps:
    Results_directory is set to folder at your will.
 4. run ML_train.py  
 
-
+'''
+python ML_train.py --ML_videos_directory $directory --ML_labels labels --Purpose train
+'''
 
 ## VideoClassification.yaml
 
