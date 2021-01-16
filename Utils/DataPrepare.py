@@ -171,7 +171,7 @@ class DP_worker():
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         source_json_path = os.path.join(self.args.Results_directory,'source.json')
-        if self.args.Purpose == 'Classify':
+        if self.args.Purpose == 'classify':
             with open(args.Train_json,'r') as input_f:
                 training_json = json.load(input_f) 
             dst_data = {}
@@ -188,11 +188,7 @@ class DP_worker():
             with open(source_json_path, 'w') as dst_file:
                 json.dump(dst_data, dst_file)
             return
-            
-        train_list = os.path.join(self.args.Results_directory,'train_list.txt')
-        val_list = os.path.join(self.args.Results_directory,'val_list.txt')
-        test_list = os.path.join(self.args.Results_directory,'test_list.txt')
-        source_json_path = os.path.join(self.args.Results_directory,'source.json')
+        
         if os.path.exists(source_json_path):
             return
         def convert_csv_to_dict(csv_path, subset):

@@ -105,7 +105,6 @@ def check_args(args):
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 check_args(args)
-pdb.set_trace()
 data_worker = DP_worker(args)
 data_worker.work()
 ML_model = ML_model(args)
