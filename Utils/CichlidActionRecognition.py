@@ -197,7 +197,7 @@ class ML_model():
         accuracies = AverageMeter()
 
         end_time = time.time()
-        for i, (inputs, targets) in enumerate(data_loader):
+        for i, (inputs, targets,_) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
             targets = targets.cuda(async=True)
@@ -271,7 +271,7 @@ class ML_model():
         ###########################################################################
 
         # pdb.set_trace()
-        for i, (inputs, targets) in enumerate(data_loader):
+        for i, (inputs, targets,paths) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
             targets = targets.cuda(async=True)
@@ -281,9 +281,9 @@ class ML_model():
                 outputs = model(inputs)
                 loss = criterion(outputs, targets)
                 acc = calculate_accuracy(outputs, targets)
-                #########  temp line, needs to be removed##################################
-                # for j in range(len(targets)):
-                #     confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
+                ########  temp line, needs to be removed##################################
+                for j in range(len(targets)):
+                    confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
 
                 rows = [int(x) for x in targets]
                 columns = [int(x) for x in np.argmax(outputs.data.cpu(),1)]
@@ -314,14 +314,14 @@ class ML_model():
             # print(confusion_matrix)
         confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
-            #     confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
+        confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
             #     confidence_matrix.to_csv('confidence_matrix.csv')
 
             #########  temp line, needs to be removed##################################
 
         logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
-        return losses.avg,confusion_matrix
+        return losses.avg,confusion_matrix,confidence_matrix
         
     def test_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('test at epoch {}'.format(epoch))
@@ -335,7 +335,7 @@ class ML_model():
 
         end_time = time.time()
 
-        for i, (inputs, targets) in enumerate(data_loader):
+        for i, (inputs, targets,_) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
             if not opt.no_cuda:
                 targets = targets.cuda(async=True)
