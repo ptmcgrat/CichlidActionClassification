@@ -103,9 +103,10 @@ def check_args(args):
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 check_args(args)
 data_worker = DP_worker(args)
 data_worker.work()
 ML_model = ML_model(args)
+pdb.set_trace()
 ML_model.work()
