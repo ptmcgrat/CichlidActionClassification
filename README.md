@@ -39,7 +39,7 @@ python ClassifyVideo.py --ML_videos_directory $directory --Clips_annotations $vi
 Convert prediction confidence to labels.
 
 ```
-python ClassifyVideo.py ----confidence_file $confidence_file --prediction_file $prediction_label_file
+python prediction_to_label.py ----confidence_file $confidence_file --prediction_file $prediction_label_file
 ```
 
 ## VideoClassification.yaml
