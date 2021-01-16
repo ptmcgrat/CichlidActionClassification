@@ -6,7 +6,7 @@ If fine-tuning is required, an additional saved model file should be provided. T
 
 The scripts will first pre-process the video clips to continuous images, randomly split the data into training and validation. After this, a 3D ResNet will be trained and accuracy will be reported along with training.
 
-## ML_train.py
+## TrainModel.py
 
 Master script that runs a 3d convolutional neural network to classify video clips. This script runs 1) Training of the neural network from scratch. 2) Applying a pre_trained neural network to unobserved video clips. 
 Arguments for this script include the location of the video clips, labels, temporary directory for storing intermedia files as well as results folder. You can also change parameters for the deep learning model.
@@ -23,8 +23,19 @@ If train from scratch, follow these steps:
 4. run ML_train.py  
 
 ```
-python ML_train.py --ML_videos_directory $directory --ML_labels labels --Purpose train
+python ML_train.py --ML_videos_directory $directory --ML_labels $label_file --Purpose train --Results_directory $model-directory
 ```
+
+## ClassifyVideo.py
+
+Master script that applies a pre-trained neutral network for a new dataset.  
+
+```
+python ClassifyVideo.py --ML_videos_directory $directory --Clips_annotations $video_clip_each_video_belong_to --Purpose classify --Train_json json file used in training
+```
+
+
+
 
 ## VideoClassification.yaml
 
