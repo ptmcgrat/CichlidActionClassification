@@ -181,7 +181,7 @@ class DP_worker():
             database={}
             with open(os.path.join(val_list),'r') as input:
                 for line in input:
-                    basename = line.rstrip()
+                    key = line.rstrip()
                     database[key] = {}
                     database[key]['subset'] = 'validation'
                     database[key]['annotations'] = {'label': dst_data['labels'][0]}
