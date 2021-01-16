@@ -75,13 +75,15 @@ class DP_worker():
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         
 
-        annotation_df = pd.read_csv(self.args.ML_labels, sep=',')
+        
         if self.args.Purpose == 'classify':
+        	annotation_df = pd.read_csv(self.args.Clips_annotations, sep=',')
             with open(val_list,'w') as val:
                 for index,row in annotation_df.iterrows():
                     print(row.Location,file=val)
             return
         test_animals = self.args.TEST_PROJECT.split(',')
+        
         if not os.path.exists(train_list):
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
                 if self.args.Split_mode == 'random':
