@@ -199,7 +199,7 @@ class cichlids(data.Dataset):
         target = self.data[index]
         if self.target_transform is not None:
             target = self.target_transform(target)
-        return clip, target
+        return clip, target,path
 
     def __len__(self):
         return len(self.data)

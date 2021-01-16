@@ -168,15 +168,18 @@ class ML_model():
         else:
             begin_epoch = 0
         if opt.Purpose == 'classify':
-            _,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
-            confusion_matrix_file = os.path.join(self.args.Results_directory,'prediction_confusion.csv')
-            confusion_matrix.to_csv(confusion_matrix_file)
+            _,confusion_matrix,confidence_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+            confidence_matrix_file = os.path.join(self.args.Results_directory,'prediction_confusion.csv')
+            with open(self.source_json_file,'r') as input_f:
+                source_json = json.load(input_f)
+            confidence_matrix.columns = ['Location']+source_json['labels']
+            confidence_matrix.to_csv(confidence_matrix_file)
             return
         print('run')
         for i in range(begin_epoch,opt.n_epochs + 1):
             self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
 
-            validation_loss,confusion_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+            validation_loss,confusion_matrix,_ = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
 
             confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
             confusion_matrix.to_csv(confusion_matrix_file)
@@ -315,6 +318,7 @@ class ML_model():
         confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
         confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
+        
             #     confidence_matrix.to_csv('confidence_matrix.csv')
 
             #########  temp line, needs to be removed##################################
