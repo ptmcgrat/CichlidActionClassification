@@ -26,7 +26,6 @@ def main():
         output.write('Location,predicted_label\n')
         for line in input:
             tokens = line.rstrip().split(',')
-            labels = tokens[1:]
             max_index = 0
             max_value = tokens[1]
             for i in range(len(tokens)-2):
