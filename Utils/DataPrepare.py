@@ -171,7 +171,6 @@ class DP_worker():
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         source_json_path = os.path.join(self.args.Results_directory,'source.json')
-        pdb.set_trace()
         if self.args.Purpose == 'classify':
             with open(self.args.Train_json,'r') as input_f:
                 training_json = json.load(input_f) 
