@@ -172,7 +172,7 @@ class ML_model():
             confidence_matrix_file = os.path.join(self.args.Results_directory,'prediction_confusion.csv')
             with open(self.source_json_file,'r') as input_f:
                 source_json = json.load(input_f)
-            confidence_matrix.columns = ['Location']+source_json['labels']
+            confidence_matrix.columns = source_json['labels']
             confidence_matrix.to_csv(confidence_matrix_file)
             return
         print('run')
@@ -286,6 +286,7 @@ class ML_model():
                 acc = calculate_accuracy(outputs, targets)
                 ########  temp line, needs to be removed##################################
                 for j in range(len(targets)):
+                    key = paths[j].split('/')[0]
                     confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
 
                 rows = [int(x) for x in targets]
