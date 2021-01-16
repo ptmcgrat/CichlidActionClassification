@@ -287,6 +287,8 @@ class ML_model():
                 ########  temp line, needs to be removed##################################
                 for j in range(len(targets)):
                     key = paths[j].split('/')[0]
+                    print(paths[j])
+                    print(key)
                     confidence_for_each_validation[key] = [x.item() for x in outputs[j]]
 
                 rows = [int(x) for x in targets]
