@@ -286,7 +286,8 @@ class ML_model():
                 acc = calculate_accuracy(outputs, targets)
                 ########  temp line, needs to be removed##################################
                 for j in range(len(targets)):
-                    key = paths[j].item().split('/')[0]
+                    pdb.set_trace()
+                    key = paths[j].split('/')[0]
                     print(paths[j])
                     print(key)
                     confidence_for_each_validation[key] = [x.item() for x in outputs[j]]
