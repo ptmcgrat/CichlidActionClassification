@@ -36,7 +36,7 @@ parser.add_argument('--Clips_temp_directory',
 
 # Parameters specific for finetuning for other animals
 parser.add_argument('--resume_path',
-                    default='/data/home/llong35/temp/test_JAN_7_temp/save_30.pth',
+                    default='/data/home/llong35/temp/test_JAN_7_temp/save_50.pth',
                     type=str,
                     help='Save data (.pth) of previous training')
 
