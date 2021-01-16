@@ -314,6 +314,7 @@ class ML_model():
                     data_time=data_time,
                     loss=losses,
                     acc=accuracies))
+            break
             #########  temp line, needs to be removed##################################
             # print(confusion_matrix)
         confusion_matrix = pd.DataFrame(confusion_matrix)
