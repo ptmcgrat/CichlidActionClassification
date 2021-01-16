@@ -45,8 +45,10 @@ class ML_model():
         parameters = model.parameters()
         criterion = nn.CrossEntropyLoss()
         criterion = criterion.cuda()
-
-        source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
+        if opt.Purpose =='classify':
+            source_annotateData = pd.read_csv(opt.Clips_annotations, sep = ',', header = 0)
+        else:
+            source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
         
         
