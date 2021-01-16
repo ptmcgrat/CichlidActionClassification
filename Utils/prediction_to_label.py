@@ -20,7 +20,6 @@ def main():
 
     args = parser.parse_args()
     
-    pdb.set_trace()
     with open(args.confidence_file,'r') as input, open(args.prediction_file,'w') as output:
         labels = input.readline().rstrip().split(',')[1:]
         output.write('Location,predicted_label\n')
