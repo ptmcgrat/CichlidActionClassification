@@ -77,18 +77,18 @@ class ML_model():
                                  temporal_transform=temporal_transform,
                                  target_transform=target_transform, 
                                  annotationDict =source_annotation_dict)
-        
-        train_loader = torch.utils.data.DataLoader(training_data,
-                                                   batch_size=opt.batch_size,
-                                                   shuffle=True,
-                                                   num_workers=opt.n_threads,
-                                                   pin_memory=True)
-        train_logger = Logger(
-            os.path.join(opt.Results_directory, 'train.log'),
-            ['epoch', 'loss', 'acc', 'lr'])
-        train_batch_logger = Logger(
-            os.path.join(opt.Results_directory, 'train_batch.log'),
-            ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
+        if len(training_data) != 0:
+            train_loader = torch.utils.data.DataLoader(training_data,
+                                                       batch_size=opt.batch_size,
+                                                       shuffle=True,
+                                                       num_workers=opt.n_threads,
+                                                       pin_memory=True)
+            train_logger = Logger(
+                os.path.join(opt.Results_directory, 'train.log'),
+                ['epoch', 'loss', 'acc', 'lr'])
+            train_batch_logger = Logger(
+                os.path.join(opt.Results_directory, 'train_batch.log'),
+                ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
         
         
         # validation data loader
