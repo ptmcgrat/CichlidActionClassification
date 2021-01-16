@@ -31,7 +31,7 @@ python ML_train.py --ML_videos_directory $directory --ML_labels $label_file --Pu
 Master script that applies a pre-trained neutral network for a new dataset.  
 
 ```
-python ClassifyVideo.py --ML_videos_directory $directory --Clips_annotations $video_clip_each_video_belong_to --Purpose classify --Train_json json file used in training
+python ClassifyVideo.py --ML_videos_directory $directory --Clips_annotations $video_clip_each_video_belong_to --Purpose classify --Train_json json_file_used_in_training
 ```
 
 

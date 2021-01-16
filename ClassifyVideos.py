@@ -3,7 +3,7 @@ from Utils.CichlidActionRecognition import ML_model
 from Utils.DataPrepare import DP_worker
 
 
-parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
+parser = argparse.ArgumentParser(description='This script takes a model, and apply this model to new video clips')
 
 parser.add_argument('--ML_videos_directory',
                     type = str, 
@@ -108,5 +108,4 @@ check_args(args)
 data_worker = DP_worker(args)
 data_worker.work()
 ML_model = ML_model(args)
-pdb.set_trace()
 ML_model.work()
