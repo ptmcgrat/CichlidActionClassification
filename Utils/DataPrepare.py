@@ -17,7 +17,10 @@ class DP_worker():
         video_dir = self.args.ML_videos_directory
         means_all_file = os.path.join(self.args.Results_directory,'MeansAll.csv')
         means_file = os.path.join(self.args.Results_directory,'Means.csv')
-        annotation_file = self.args.ML_labels
+        if self.args.Purpose == 'classify':
+            annotation_file = self.args.Clips_annotations
+        else:
+            annotation_file = self.args.ML_labels
         videos_temp = self.args.Clips_temp_directory
 
         if not os.path.exists(videos_temp):
@@ -76,7 +79,7 @@ class DP_worker():
         if self.args.Purpose == 'classify':
             with open(val_list,'w') as val:
                 for index,row in annotation_df.iterrows():
-                    print(row.Location+','+row.Label,file=val)
+                    print(row.Location,file=val)
             return
 
         if not os.path.exists(train_list):
@@ -166,6 +169,28 @@ class DP_worker():
         val_list = os.path.join(self.args.Results_directory,'val_list.txt')
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         source_json_path = os.path.join(self.args.Results_directory,'source.json')
+        if args.Purpose == 'Classify':
+            with open(args.Train_json,'r') as input_f:
+                training_json = json.load(input_f) 
+            dst_data = {}
+            dst_data['labels'] = training_json['labels']
+            
+            database={}
+            with open(os.path.join(val_list),'r') as input:
+                for line in input:
+                    basename = line.rstrip()
+                    database[key] = {}
+                    database[key]['subset'] = 'validation'
+                    database[key]['annotations'] = {'label': dst_data['labels'][0]}
+            dst_data['database'] = database
+            with open(source_json_path, 'w') as dst_file:
+                json.dump(dst_data, dst_file)
+            return
+            
+        train_list = os.path.join(self.args.Results_directory,'train_list.txt')
+        val_list = os.path.join(self.args.Results_directory,'val_list.txt')
+        test_list = os.path.join(self.args.Results_directory,'test_list.txt')
+        source_json_path = os.path.join(self.args.Results_directory,'source.json')
         if os.path.exists(source_json_path):
             return
         def convert_csv_to_dict(csv_path, subset):
@@ -202,6 +227,7 @@ class DP_worker():
         dst_data['database'].update(test_database)
         with open(source_json_path, 'w') as dst_file:
             json.dump(dst_data, dst_file)
+            
 
     def work(self):
         self.prepare_data()
@@ -209,6 +235,8 @@ class DP_worker():
         self.split_data()
         print('data split done, prepare json')
         self.prepare_json()
+        
+    
         
         
         
