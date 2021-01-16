@@ -9,13 +9,13 @@ def main():
     parser.add_argument('--confidence_file',
                         type = str, 
                         default = '/data/home/llong35/temp/test_JAN_15_temp/prediction_confusion.csv',
-                        required = True, 
+                        required = False, 
                         help = 'confidence file')
     
     parser.add_argument('--prediction_file',
                         type = str, 
                         default = '/data/home/llong35/temp/test_JAN_15_temp/prediction_confusion_label.csv',
-                        required = True, 
+                        required = False, 
                         help = 'label_prediction')
 
     args = parser.parse_args()
