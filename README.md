@@ -40,7 +40,7 @@ Convert prediction confidence to labels.
 
 ```
 python ClassifyVideo.py ----confidence_file $confidence_file --prediction_file $prediction_label_file
-
+```
 
 ## VideoClassification.yaml
 
