@@ -33,7 +33,7 @@ parser.add_argument('--Split_mode',
                     
 parser.add_argument('--Log', 
 					type = str, 
-					required = True, 
+					required = False, 
 					default=os.path.join(os.getenv("HOME"),'temp','test_JAN_20_log'),
 					help = 'Log file to keep track of versions + parameters used')
 					
@@ -115,7 +115,7 @@ def check_args(args):
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
 check_args(args)
 
 with open(args.Log, 'w') as f:
@@ -129,7 +129,7 @@ with open(args.Log, 'w') as f:
 	import pytorch as torch
 	print('pytorch: ' + torch.__version__, file = f)
 	
-
+os.environ["CUDA_VISIBLE_DEVICES"]=arg.gpu
 data_worker = DP_worker(args)
 data_worker.work()
 ML_model = ML_model(args)
