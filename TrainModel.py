@@ -4,7 +4,7 @@ from Utils.DataPrepare import DP_worker
 
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
-
+# Input data
 parser.add_argument('--ML_videos_directory',
                     type = str, 
                     default = '/data/home/llong35/data/labeled_videos',
@@ -14,7 +14,7 @@ parser.add_argument('--ML_videos_directory',
 parser.add_argument('--ML_labels',
                     type = str, 
                     default = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv',
-                    help = 'labels given to each ML video')
+                    help = 'labels given to each ML video, it should contain three columns: Location,Label and MeanID')
                     
 parser.add_argument('--Purpose',
                     type = str, 
@@ -30,6 +30,22 @@ parser.add_argument('--Split_mode',
                     type = str,
                     default = 'random',
                     help = 'random|mode1|mode2|mode3')
+                    
+parser.add_argument('--Log', 
+					type = str, 
+					required = True, 
+					default=os.path.join(os.getenv("HOME"),'temp','test_JAN_20_log'),
+					help = 'Log file to keep track of versions + parameters used')
+					
+parser.add_argument('--n_threads',
+                    default=5,
+                    type=int,
+                    help='Number of threads for multi-thread loading')
+                    
+parser.add_argument('--gpu',
+                    default='0',
+                    type=str,
+                    help='The index of GPU to use for training')
 
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory',
@@ -55,10 +71,7 @@ parser.add_argument('--sample_size',
                     type=int,
                     help='Height and width of inputs')
                     
-parser.add_argument('--n_threads',
-                    default=5,
-                    type=int,
-                    help='Number of threads for multi-thread loading')
+
 
 
 # Parameters for the optimizer
