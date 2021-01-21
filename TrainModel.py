@@ -41,7 +41,7 @@ parser.add_argument('--Clips_temp_directory',
 # Output data
 parser.add_argument('--Results_directory',
                     type = str,
-                    default=os.path.join(os.getenv("HOME"),'temp','test_JAN_7_temp'),
+                    default=os.path.join(os.getenv("HOME"),'temp','test_JAN_20_temp'),
                     help = 'directory to store sample prepare logs')
 
 # Parameters for the dataloader
@@ -104,6 +104,19 @@ def check_args(args):
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 check_args(args)
+
+with open(args.Log, 'w') as f:
+	for key, value in vars(args).items():
+		print(key + ': ' + str(value), file = f)
+	print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
+	import pandas as pd
+	print('PandasVersion: ' + pd.__version__, file = f)
+	import numpy as np
+	print('NumpyVersion: ' + np.__version__, file = f)
+	import pytorch as torch
+	print('pytorch: ' + torch.__version__, file = f)
+	
+
 data_worker = DP_worker(args)
 data_worker.work()
 ML_model = ML_model(args)
