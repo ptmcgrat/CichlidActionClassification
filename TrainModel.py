@@ -129,7 +129,7 @@ with open(args.Log, 'w') as f:
 	import torch
 	print('pytorch: ' + torch.__version__, file = f)
 	
-os.environ["CUDA_VISIBLE_DEVICES"]=arg.gpu
+os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu
 data_worker = DP_worker(args)
 data_worker.work()
 ML_model = ML_model(args)
