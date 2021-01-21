@@ -126,7 +126,7 @@ with open(args.Log, 'w') as f:
 	print('PandasVersion: ' + pd.__version__, file = f)
 	import numpy as np
 	print('NumpyVersion: ' + np.__version__, file = f)
-	import pytorch as torch
+	import torch
 	print('pytorch: ' + torch.__version__, file = f)
 	
 os.environ["CUDA_VISIBLE_DEVICES"]=arg.gpu
