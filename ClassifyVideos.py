@@ -56,8 +56,13 @@ parser.add_argument('--Clips_temp_directory',
                     default=os.path.join(os.getenv("HOME"),'clips_temp'),
                     type = str, 
                     required = False, 
-                    help = 'Location for temp files to be stored')
+                    help = 'Location for temp clips to be stored')
 
+parser.add_argument('--intermediate_temp_directory',
+                    default=os.path.join(os.getenv("HOME"),'intermediate_temp'),
+                    type = str, 
+                    required = False, 
+                    help = 'Location for temp files to be stored')
 # Parameters for the dataloader
 parser.add_argument('--sample_duration',
                     default=96,
@@ -89,11 +94,6 @@ parser.add_argument('--n_classes',default=10,type=int)
 
 args = parser.parse_args()
 # Parameters to load from previous training_log
-To_load_parameters = ['sample_duration','sample_size','learning_rate',
-                        'momentum','dampening','weight_decay',
-                        'nesterov','optimizer','lr_patience',
-                        'resnet_shortcut','n_classes']
-previous_log = {}
 
 with open(args.Train_log,'r') as input_f:
     for line in input_f:
@@ -108,8 +108,11 @@ with open(args.Train_log,'r') as input_f:
             vars(args)[key]= key=='True'
         else:
             pass
+vars(args)['Results_directory']= args.intermediate_temp_directory
 pdb.set_trace()
 def check_args(args):
+    if not os.path.exists(args.Results_directory):
+        os.makedirs(args.Results_directory)
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
