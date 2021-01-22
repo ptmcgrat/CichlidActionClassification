@@ -52,8 +52,6 @@ class ML_model():
         source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
         
         
-        
-        
         # training data loader
         
         crop_method = MultiScaleRandomCenterCrop([0.99,0.97,0.95,0.93,0.91],opt.sample_size)
@@ -173,6 +171,7 @@ class ML_model():
             with open(self.source_json_file,'r') as input_f:
                 source_json = json.load(input_f)
             confidence_matrix.columns = source_json['labels']
+            confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
             confidence_matrix.to_csv(confidence_matrix_file)
             return
         print('run')
