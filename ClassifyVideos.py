@@ -94,7 +94,8 @@ To_load_parameters = ['sample_duration','sample_size','learning_rate',
                         'nesterov','optimizer','lr_patience',
                         'resnet_shortcut','n_classes']
 previous_log = {}
-with open('args.Train_log','r') as input_f:
+
+with open(args.Train_log,'r') as input_f:
     for line in input_f:
         key,value = line.rstrip().split(': ')
         if key in ['sample_duration','sample_size','lr_patience','n_classes']:
@@ -107,11 +108,11 @@ with open('args.Train_log','r') as input_f:
             vars(args)[key]= key=='True'
         else:
             pass
-
+pdb.set_trace()
 def check_args(args):
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
-pdb.set_trace()
+
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
 check_args(args)
 data_worker = DP_worker(args)
