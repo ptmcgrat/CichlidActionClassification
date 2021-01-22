@@ -109,7 +109,6 @@ with open(args.Train_log,'r') as input_f:
         else:
             pass
 vars(args)['Results_directory']= args.intermediate_temp_directory
-pdb.set_trace()
 def check_args(args):
     if not os.path.exists(args.Results_directory):
         os.makedirs(args.Results_directory)
