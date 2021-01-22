@@ -15,6 +15,11 @@ parser.add_argument('--Clips_annotations',
                     type = str, 
                     default = '/data/home/llong35/patrick_code_test/test.csv',
                     help = 'project each animal belongs to')
+
+parser.add_argument('--resume_path',
+                    default='/data/home/llong35/temp/test_JAN_20_temp/save_50.pth',
+                    type=str,
+                    help='Save data (.pth) of previous training')
                     
 parser.add_argument('--Train_json',
                     type = str, 
@@ -36,25 +41,22 @@ parser.add_argument('--Purpose',
                     default = 'classify',
                     help = 'classify is the only function for this script for now')
 
-
+parser.add_argument('--batch_size', 
+                    default=13, 
+                    type=int, help='Batch Size')
+                    
+parser.add_argument('--n_threads',
+                    default=5,
+                    type=int,
+                    help='Number of threads for multi-thread loading')
+                    
+                    
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory',
                     default=os.path.join(os.getenv("HOME"),'clips_temp'),
                     type = str, 
                     required = False, 
                     help = 'Location for temp files to be stored')
-
-# Parameters specific for finetuning for other animals
-parser.add_argument('--resume_path',
-                    default='/data/home/llong35/temp/test_JAN_7_temp/save_50.pth',
-                    type=str,
-                    help='Save data (.pth) of previous training')
-                    
-parser.add_argument('--n_threads',
-                    default=5,
-                    type=int,
-                    help='Number of threads for multi-thread loading')
-
 
 # Parameters for the dataloader
 parser.add_argument('--sample_duration',
@@ -68,8 +70,6 @@ parser.add_argument('--sample_size',
                     help='Height and width of inputs')
                     
 
-
-
 # Parameters for the optimizer
 parser.add_argument('--learning_rate',default=0.1,type=float,help='Initial learning rate (divided by 10 while training by lr scheduler)')
 parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
@@ -82,34 +82,36 @@ parser.add_argument('--lr_patience',default=10,type=int,help='Patience of LR sch
 parser.add_argument('--resnet_shortcut',default='B',help='Shortcut type of resnet (A | B)')
 
 
-# Parameters for data augmentation
-parser.add_argument('--no_hflip',action='store_true',help='If true holizontal flipping is not performed.')
-parser.set_defaults(no_hflip=False)
-parser.add_argument('--no_vflip',action='store_true',help='If true vertical flipping is not performed.')
-parser.set_defaults(no_hflip=False)
-
-
-# Parameters for general training
-parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is saved at every this epochs.')
-
-
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
-parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
-parser.add_argument('--n_epochs',default=200,type=int,help='Number of total epochs to run')
-
 
 
 
 args = parser.parse_args()
 # Parameters to load from previous training_log
+To_load_parameters = ['sample_duration','sample_size','learning_rate',
+                        'momentum','dampening','weight_decay',
+                        'nesterov','optimizer','lr_patience',
+                        'resnet_shortcut','n_classes']
+previous_log = {}
+with open('args.Train_log','r') as input_f:
+    for line in input_f:
+        key,value = line.rstrip().split(': ')
+        if key in ['sample_duration','sample_size','lr_patience','n_classes']:
+            vars(args)[key]=int(value)
+        elif key in ['optimizer','resnet_shortcut']:
+            vars(args)[key]=str(value)
+        elif key in ['learning_rate','momentum','dampening','weight_decay',]:
+            vars(args)[key]=float(value)
+        elif key in ['nesterov']:
+            vars(args)[key]= key=='True'
+        else:
+            pass
 
 def check_args(args):
-    if not os.path.exists(args.Results_directory):
-        os.makedirs(args.Results_directory)
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
-
+pdb.set_trace()
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
 check_args(args)
 data_worker = DP_worker(args)
