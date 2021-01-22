@@ -167,12 +167,11 @@ class ML_model():
             begin_epoch = 0
         if opt.Purpose == 'classify':
             _,confusion_matrix,confidence_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
-            confidence_matrix_file = os.path.join(self.args.Results_directory,'prediction_confusion.csv')
             with open(self.source_json_file,'r') as input_f:
                 source_json = json.load(input_f)
             confidence_matrix.columns = source_json['labels']
             confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
-            confidence_matrix.to_csv(confidence_matrix_file)
+            confidence_matrix.to_csv(self.args.Output_file)
             return
         print('run')
         for i in range(begin_epoch,opt.n_epochs + 1):
