@@ -50,7 +50,10 @@ parser.add_argument('--n_threads',
                     type=int,
                     help='Number of threads for multi-thread loading')
                     
-                    
+parser.add_argument('--gpu_card',
+                    default='1',
+                    type=str,
+                    help='gpu card to use')
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--Clips_temp_directory',
                     default=os.path.join(os.getenv("HOME"),'clips_temp'),
@@ -115,7 +118,7 @@ def check_args(args):
     if not os.path.exists(args.Clips_temp_directory):
         os.makedirs(args.Clips_temp_directory)
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_card
 check_args(args)
 data_worker = DP_worker(args)
 data_worker.work()

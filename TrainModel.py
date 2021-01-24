@@ -23,7 +23,7 @@ parser.add_argument('--Purpose',
 
 parser.add_argument('--TEST_PROJECT',
                     type = str,
-                    default = 'MC16_2,CV10_3',
+                    default = '',
                     help = 'project to be tested on')
 
 parser.add_argument('--Split_mode',
@@ -34,7 +34,7 @@ parser.add_argument('--Split_mode',
 parser.add_argument('--Log', 
 					type = str, 
 					required = False, 
-					default=os.path.join(os.getenv("HOME"),'temp','test_JAN_20_log'),
+					default=os.path.join(os.getenv("HOME"),'temp','test_JAN_24_log'),
 					help = 'Log file to keep track of versions + parameters used')
 					
 parser.add_argument('--n_threads',
@@ -57,7 +57,7 @@ parser.add_argument('--Clips_temp_directory',
 # Output data
 parser.add_argument('--Results_directory',
                     type = str,
-                    default=os.path.join(os.getenv("HOME"),'temp','test_JAN_20_temp'),
+                    default=os.path.join(os.getenv("HOME"),'temp','test_JAN_24_temp'),
                     help = 'directory to store sample prepare logs')
 
 # Parameters for the dataloader
@@ -100,7 +100,7 @@ parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is sa
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
 parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
-parser.add_argument('--n_epochs',default=50,type=int,help='Number of total epochs to run')
+parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
 
 
 # Parameters specific for finetuning for other animals
