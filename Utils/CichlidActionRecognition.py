@@ -275,7 +275,7 @@ class ML_model():
         for i, (inputs, targets,paths) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
-            targets = targets.cuda(async=True)
+            targets = targets.cuda(non_blocking=True)
             with torch.no_grad():
                 inputs = Variable(inputs)
                 targets = Variable(targets)
@@ -341,7 +341,7 @@ class ML_model():
         for i, (inputs, targets,_) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
             if not opt.no_cuda:
-                targets = targets.cuda(async=True)
+                targets = targets.cuda(non_blocking=True)
                 with torch.no_grad():
                     inputs = Variable(inputs)
                     targets = Variable(targets)
