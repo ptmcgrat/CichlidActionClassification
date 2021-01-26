@@ -98,7 +98,7 @@ parser.add_argument('--n_classes',default=10,type=int)
 args = parser.parse_args()
 # Parameters to load from previous training_log
 
-with open(args.Train_log,'r') as input_f:
+with open(args.Training_options,'r') as input_f:
     for line in input_f:
         key,value = line.rstrip().split(': ')
         if key in ['sample_duration','sample_size','lr_patience','n_classes']:
