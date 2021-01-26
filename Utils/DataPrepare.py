@@ -35,6 +35,7 @@ class DP_worker():
             if not os.path.exists(target_folder):
                 os.makedirs(target_folder)
                 cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
+                pdb.set_trace()
                 subprocess.run(cmd)
         print('calculate mean file')
         if not os.path.exists(means_file):
