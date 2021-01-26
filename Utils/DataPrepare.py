@@ -18,7 +18,7 @@ class DP_worker():
         means_all_file = os.path.join(self.args.Results_directory,'MeansAll.csv')
         means_file = os.path.join(self.args.Results_directory,'Means.csv')
         if self.args.Purpose == 'classify':
-            annotation_file = self.args.Videos_to_projects_file
+            annotation_file = self.args.Videos_to_project_file
         else:
             annotation_file = self.args.ML_labels
         videos_temp = self.args.Clips_temp_directory
@@ -77,7 +77,7 @@ class DP_worker():
 
         
         if self.args.Purpose == 'classify':
-            annotation_df = pd.read_csv(self.args.Videos_to_projects_file, sep=',')
+            annotation_df = pd.read_csv(self.args.Videos_to_project_file, sep=',')
             with open(val_list,'w') as val:
                 for index,row in annotation_df.iterrows():
                     print(row.Location,file=val)
