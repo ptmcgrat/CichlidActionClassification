@@ -21,7 +21,7 @@ class DP_worker():
             annotation_file = self.args.Videos_to_project_file
         else:
             annotation_file = self.args.ML_labels
-        videos_temp = self.args.Clips_temp_directory
+        videos_temp = self.args.Temporary_clips_directory
 
         if not os.path.exists(videos_temp):
             os.makedirs(videos_temp)
