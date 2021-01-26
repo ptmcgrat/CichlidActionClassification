@@ -127,7 +127,7 @@ class ML_model():
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]])
                 spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
-        test_data = cichlids(opt.Clips_temp_directory,
+        test_data = cichlids(opt.Temporary_clips_directory,
                                    self.source_json_file,
                                    'testing',
                                    spatial_transforms=spatial_transforms,
