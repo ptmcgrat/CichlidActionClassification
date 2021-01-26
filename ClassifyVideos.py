@@ -5,28 +5,28 @@ from Utils.DataPrepare import DP_worker
 
 parser = argparse.ArgumentParser(description='This script takes a model, and apply this model to new video clips')
 # Input data
-parser.add_argument('--ML_videos_directory',
+parser.add_argument('--Input_videos_directory',
                     type = str, 
                     default = '/data/home/llong35/data/labeled_videos',
                     required = False, 
                     help = 'Name of directory to hold all video clips')
                     
-parser.add_argument('--Clips_annotations',
+parser.add_argument('--Videos_to_project_file',
                     type = str, 
                     default = '/data/home/llong35/patrick_code_test/test.csv',
                     help = 'project each animal belongs to')
 
-parser.add_argument('--resume_path',
+parser.add_argument('--Trained_model',
                     default='/data/home/llong35/temp/test_JAN_20_temp/save_50.pth',
                     type=str,
                     help='Save data (.pth) of previous training')
                     
-parser.add_argument('--Train_json',
+parser.add_argument('--Trained_categories',
                     type = str, 
                     default = '/data/home/llong35/temp/test_JAN_7_temp/source.json',
                     help = 'json file previously used for training')
                     
-parser.add_argument('--Train_log',
+parser.add_argument('--Training_options',
                     type = str, 
                     default = os.path.join(os.getenv("HOME"),'temp','test_JAN_20_log'),
                     help = 'log file in training')
@@ -55,13 +55,13 @@ parser.add_argument('--gpu_card',
                     type=str,
                     help='gpu card to use')
 # Temp directories that wlil be deleted at the end of the analysis
-parser.add_argument('--Clips_temp_directory',
+parser.add_argument('--Temporary_clips_directory',
                     default=os.path.join(os.getenv("HOME"),'clips_temp'),
                     type = str, 
                     required = False, 
                     help = 'Location for temp clips to be stored')
 
-parser.add_argument('--intermediate_temp_directory',
+parser.add_argument('--Temporary_output_directory',
                     default=os.path.join(os.getenv("HOME"),'intermediate_temp'),
                     type = str, 
                     required = False, 
@@ -111,12 +111,12 @@ with open(args.Train_log,'r') as input_f:
             vars(args)[key]= key=='True'
         else:
             pass
-vars(args)['Results_directory']= args.intermediate_temp_directory
+vars(args)['Results_directory']= args.Temporary_output_directory
 def check_args(args):
     if not os.path.exists(args.Results_directory):
         os.makedirs(args.Results_directory)
-    if not os.path.exists(args.Clips_temp_directory):
-        os.makedirs(args.Clips_temp_directory)
+    if not os.path.exists(args.Temporary_clips_directory):
+        os.makedirs(args.Temporary_clips_directory)
 
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_card
 check_args(args)
