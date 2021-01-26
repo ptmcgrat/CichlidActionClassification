@@ -46,7 +46,7 @@ class ML_model():
         criterion = nn.CrossEntropyLoss()
         criterion = criterion.cuda()
         if opt.Purpose =='classify':
-            source_annotateData = pd.read_csv(opt.Clips_annotations, sep = ',', header = 0)
+            source_annotateData = pd.read_csv(opt.Videos_to_project_file, sep = ',', header = 0)
         else:
             source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
@@ -68,7 +68,7 @@ class ML_model():
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
         
-        training_data = cichlids(opt.Clips_temp_directory,
+        training_data = cichlids(opt.Temporary_clips_directory,
                                  self.source_json_file,
                                  'training',
                                  spatial_transforms=spatial_transforms,
@@ -100,7 +100,7 @@ class ML_model():
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
-        validation_data = cichlids(opt.Clips_temp_directory,
+        validation_data = cichlids(opt.Temporary_clips_directory,
                                    self.source_json_file,
                                    'validation',
                                    spatial_transforms=spatial_transforms,

@@ -14,11 +14,11 @@ class DP_worker():
         self.means = {}
 
     def prepare_data(self):
-        video_dir = self.args.ML_videos_directory
+        video_dir = self.args.Input_videos_directory
         means_all_file = os.path.join(self.args.Results_directory,'MeansAll.csv')
         means_file = os.path.join(self.args.Results_directory,'Means.csv')
         if self.args.Purpose == 'classify':
-            annotation_file = self.args.Clips_annotations
+            annotation_file = self.args.Videos_to_projects_file
         else:
             annotation_file = self.args.ML_labels
         videos_temp = self.args.Clips_temp_directory
@@ -77,7 +77,7 @@ class DP_worker():
 
         
         if self.args.Purpose == 'classify':
-            annotation_df = pd.read_csv(self.args.Clips_annotations, sep=',')
+            annotation_df = pd.read_csv(self.args.Videos_to_projects_file, sep=',')
             with open(val_list,'w') as val:
                 for index,row in annotation_df.iterrows():
                     print(row.Location,file=val)
@@ -172,7 +172,7 @@ class DP_worker():
         test_list = os.path.join(self.args.Results_directory,'test_list.txt')
         source_json_path = os.path.join(self.args.Results_directory,'source.json')
         if self.args.Purpose == 'classify':
-            with open(self.args.Train_json,'r') as input_f:
+            with open(self.args.Trained_categories,'r') as input_f:
                 training_json = json.load(input_f) 
             dst_data = {}
             dst_data['labels'] = training_json['labels']
