@@ -48,7 +48,7 @@ python TrainModel.py --ML_videos_directory $directory --ML_labels $label_file  -
 Master script that applies a pre-trained neutral network for a new dataset.  
 
 ```
-python ClassifyVideo.py --Input_videos_directory $directory --Videos_to_project_file $video_clip_each_video_belong_to --Trained_model $trained_model_path --Training_options $training_commands_file --Purpose classify --Trained_categories $json_file_used_in_training --Temporary_output_directory $temp_output_directory_path --Output_file $output_csv_file_path
+python ClassifyVideos.py --Input_videos_directory $directory --Videos_to_project_file $video_clip_each_video_belong_to --Trained_model $trained_model_path --Training_options $training_commands_file --Purpose classify --Trained_categories $json_file_used_in_training --Temporary_output_directory $temp_output_directory_path --Output_file $output_csv_file_path
 ```
 The Videos_to_project_file should have these columns:
    1. LID: index 
@@ -68,7 +68,7 @@ The Videos_to_project_file should have these columns:
    MeanID: MC16_2:0001_vid
    ProjectID: MC16_2
    video_name: 0001_vid__192__2135__797__238__1036
-   
+
 ## Utils/prediction_to_label.py
 
 Convert prediction confidence to labels.
