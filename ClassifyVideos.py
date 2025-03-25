@@ -51,7 +51,7 @@ parser.add_argument('--n_threads',
                     help='Number of threads for multi-thread loading')
                     
 parser.add_argument('--gpu_card',
-                    default='1',
+                    default='0',
                     type=str,
                     help='gpu card to use')
 # Temp directories that wlil be deleted at the end of the analysis
@@ -100,6 +100,7 @@ args = parser.parse_args()
 
 with open(args.Training_options,'r') as input_f:
     for line in input_f:
+        # pdb.set_trace()
         key,value = line.rstrip().split(': ')
         if key in ['sample_duration','sample_size','lr_patience','n_classes']:
             vars(args)[key]=int(value)

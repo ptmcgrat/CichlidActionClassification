@@ -75,32 +75,48 @@ def get_video_names_and_annotations(data, subset):
             label = value['annotations']['label']
             video_names.append(key)
             labels.append(label)
+            # pdb.set_trace()
             
-
+    # pdb.set_trace()
     return video_names,labels
 
 
 def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
-                 sample_duration):
+                 sample_duration,args):
     data = load_annotation_data(annotation_path)
+    # pdb.set_trace()
     video_names, labels = get_video_names_and_annotations(data, subset)
+    # pdb.set_trace()
     class_to_idx = get_class_labels(data)
     idx_to_class = {}
     for name, label in class_to_idx.items():
         idx_to_class[label] = name
     dataset = []
-
+    video_count = 0
+    n_frames_count = 0
     for i in range(len(video_names)):
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
-        video_path = os.path.join(root_path, video_names[i])
-
+        
+        
+        if args.Purpose == 'classify': 
+            video_name = "__".join(video_names[i].split("__")[-6:])
+        else:
+            video_name = video_names[i]
+        video_path = os.path.join(root_path, video_name)
+        # pdb.set_trace()
         if not os.path.exists(video_path):
             print(video_path+' not exist')
+            video_count+=1
             continue
 
         n_frames_file_path = os.path.join(video_path, 'n_frames')
+        if not os.path.exists(n_frames_file_path):
+            print(n_frames_file_path+' not exist')
+            n_frames_count += 1
+            continue
         n_frames = int(load_value_file(n_frames_file_path))
+        
         if n_frames <= 0:
             continue
 
@@ -110,7 +126,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
             'video': video_path,
             'segment': [begin_t, end_t],
             'n_frames': n_frames,
-            'video_id': video_names[i]
+            'video_id': video_name
         }
         if len(labels) != 0:
             if labels[i] != 'target':
@@ -135,7 +151,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                 sample_j['frame_indices'] = list(
                     range(j, min(n_frames + 1, j + sample_duration)))
                 dataset.append(sample_j)
-
+    # pdb.set_trace()
     return dataset, idx_to_class
 
 class cichlids(data.Dataset):
@@ -165,10 +181,11 @@ class cichlids(data.Dataset):
                  target_transform=None,
                  annotationDict = None,
                  sample_duration=16,
-                 get_loader=get_default_video_loader):
+                 get_loader=get_default_video_loader,
+                 args = None):
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
-            sample_duration)
+            sample_duration,args)
         
         self.subset = subset
 
@@ -176,8 +193,11 @@ class cichlids(data.Dataset):
         self.temporal_transform = temporal_transform
         self.target_transform = target_transform
         self.loader = get_loader()
+        # pdb.set_trace()
         self.annotationDict = annotationDict
-
+        self.args =args
+        # pdb.set_trace()
+        # pdb.set_trace()
     def __getitem__(self, index):
         """
         Args:
@@ -186,12 +206,19 @@ class cichlids(data.Dataset):
             tuple: (image, target) where target is class_index of the target class.
         """
         path = self.data[index]['video']
-        clip_name = self.data[index]['video_id']
+        if self.args.Purpose == 'classify': 
+            clip_name = self.data[index]['video_id'] +'.mp4'
+        else:
+            clip_name =  "__".join(self.data[index]['video_id'].split("__")[-5:])
+        
+        # pdb.set_trace()
         frame_indices = self.data[index]['frame_indices']
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
         clip = self.loader(path, frame_indices)
+        # pdb.set_trace()
         if self.spatial_transforms is not None:
+            # pdb.set_trace()
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)

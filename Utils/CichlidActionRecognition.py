@@ -67,81 +67,114 @@ class ML_model():
         
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
-        
-        training_data = cichlids(opt.Temporary_clips_directory,
-                                 self.source_json_file,
-                                 'training',
-                                 spatial_transforms=spatial_transforms,
-                                 temporal_transform=temporal_transform,
-                                 target_transform=target_transform, 
-                                 annotationDict =source_annotation_dict)
-        if len(training_data) != 0:
-            train_loader = torch.utils.data.DataLoader(training_data,
-                                                       batch_size=opt.batch_size,
-                                                       shuffle=True,
-                                                       num_workers=opt.n_threads,
-                                                       pin_memory=True)
-            train_logger = Logger(
-                os.path.join(opt.Results_directory, 'train.log'),
-                ['epoch', 'loss', 'acc', 'lr'])
-            train_batch_logger = Logger(
-                os.path.join(opt.Results_directory, 'train_batch.log'),
-                ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
-        
-        
-        # validation data loader
-        crop_method = CenterCrop(opt.sample_size)
-        spatial_transforms = {}
-        with open(mean_file) as f:
-            for i,line in enumerate(f):
-                if i==0:
-                    continue
-                tokens = line.rstrip().split(',')
-                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
-        temporal_transform = TemporalCenterCrop(opt.sample_duration)
-        validation_data = cichlids(opt.Temporary_clips_directory,
-                                   self.source_json_file,
-                                   'validation',
-                                   spatial_transforms=spatial_transforms,
-                                   temporal_transform=temporal_transform,
-                                   target_transform=target_transform, 
-                                   annotationDict =source_annotation_dict)
-                                     
-        val_loader = torch.utils.data.DataLoader(validation_data,
+        if opt.Purpose == 'classify':
+            crop_method = CenterCrop(opt.sample_size)
+            spatial_transforms = {}
+            with open(mean_file) as f:
+                for i,line in enumerate(f):
+                    if i==0:
+                        continue
+                    tokens = line.rstrip().split(',')
+                    norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                    spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
+            temporal_transform = TemporalCenterCrop(opt.sample_duration)
+            validation_data = cichlids(opt.Temporary_clips_directory,
+                                    self.source_json_file,
+                                    'validation',
+                                    spatial_transforms=spatial_transforms,
+                                    temporal_transform=temporal_transform,
+                                    target_transform=target_transform, 
+                                    annotationDict =source_annotation_dict,
+                                    args = self.args)
+                                        
+            val_loader = torch.utils.data.DataLoader(validation_data,
+                                                            batch_size=opt.batch_size,
+                                                            shuffle=False,
+                                                            num_workers=opt.n_threads,
+                                                            pin_memory=True)
+            val_logger = Logger(
+                os.path.join(opt.Results_directory, 'val.log'), ['epoch', 'loss', 'acc'])
+            
+        else:
+            # pdb.set_trace()
+            training_data = cichlids(opt.Temporary_clips_directory,
+                                    self.source_json_file,
+                                    'training',
+                                    spatial_transforms=spatial_transforms,
+                                    temporal_transform=temporal_transform,
+                                    target_transform=target_transform, 
+                                    annotationDict =source_annotation_dict,
+                                    args = self.args)
+            
+            if len(training_data) != 0:
+                train_loader = torch.utils.data.DataLoader(training_data,
                                                         batch_size=opt.batch_size,
-                                                        shuffle=False,
+                                                        shuffle=True,
                                                         num_workers=opt.n_threads,
                                                         pin_memory=True)
-        val_logger = Logger(
-            os.path.join(opt.Results_directory, 'val.log'), ['epoch', 'loss', 'acc'])
+                train_logger = Logger(
+                    os.path.join(opt.Results_directory, 'train.log'),
+                    ['epoch', 'loss', 'acc', 'lr'])
+                train_batch_logger = Logger(
+                    os.path.join(opt.Results_directory, 'train_batch.log'),
+                    ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
+            
+            else:
+                train_loader = None
+            # validation data loader
+            crop_method = CenterCrop(opt.sample_size)
+            spatial_transforms = {}
+            with open(mean_file) as f:
+                for i,line in enumerate(f):
+                    if i==0:
+                        continue
+                    tokens = line.rstrip().split(',')
+                    norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                    spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
+            temporal_transform = TemporalCenterCrop(opt.sample_duration)
+            validation_data = cichlids(opt.Temporary_clips_directory,
+                                    self.source_json_file,
+                                    'validation',
+                                    spatial_transforms=spatial_transforms,
+                                    temporal_transform=temporal_transform,
+                                    target_transform=target_transform, 
+                                    annotationDict =source_annotation_dict,
+                                    args = self.args)
+                                        
+            val_loader = torch.utils.data.DataLoader(validation_data,
+                                                            batch_size=opt.batch_size,
+                                                            shuffle=False,
+                                                            num_workers=opt.n_threads,
+                                                            pin_memory=True)
+            val_logger = Logger(
+                os.path.join(opt.Results_directory, 'val.log'), ['epoch', 'loss', 'acc'])
 
-        # test data loader
-        crop_method = CenterCrop(opt.sample_size)
-        spatial_transforms = {}
-        with open(mean_file) as f:
-            for i, line in enumerate(f):
-                if i == 0:
-                    continue
-                tokens = line.rstrip().split(',')
-                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]])
-                spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
-        temporal_transform = TemporalCenterCrop(opt.sample_duration)
-        test_data = cichlids(opt.Temporary_clips_directory,
-                                   self.source_json_file,
-                                   'testing',
-                                   spatial_transforms=spatial_transforms,
-                                   temporal_transform=temporal_transform,
-                                   target_transform=target_transform,
-                                   annotationDict=source_annotation_dict)
-        if len(test_data) != 0:
-            test_loader = torch.utils.data.DataLoader(test_data,
-                                                     batch_size=opt.batch_size,
-                                                     shuffle=True,
-                                                     num_workers=opt.n_threads,
-                                                     pin_memory=True)
-            test_logger = Logger(
-                os.path.join(opt.Results_directory, 'test.log'), ['epoch', 'loss', 'acc'])
+            # test data loader
+            crop_method = CenterCrop(opt.sample_size)
+            spatial_transforms = {}
+            with open(mean_file) as f:
+                for i, line in enumerate(f):
+                    if i == 0:
+                        continue
+                    tokens = line.rstrip().split(',')
+                    norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]])
+                    spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
+            temporal_transform = TemporalCenterCrop(opt.sample_duration)
+            test_data = cichlids(opt.Temporary_clips_directory,
+                                    self.source_json_file,
+                                    'testing',
+                                    spatial_transforms=spatial_transforms,
+                                    temporal_transform=temporal_transform,
+                                    target_transform=target_transform,
+                                    annotationDict=source_annotation_dict,args = self.args)
+            if len(test_data) != 0:
+                test_loader = torch.utils.data.DataLoader(test_data,
+                                                        batch_size=opt.batch_size,
+                                                        shuffle=True,
+                                                        num_workers=opt.n_threads,
+                                                        pin_memory=True)
+                test_logger = Logger(
+                    os.path.join(opt.Results_directory, 'test.log'), ['epoch', 'loss', 'acc'])
 
 
         if opt.nesterov:
@@ -166,25 +199,31 @@ class ML_model():
         else:
             begin_epoch = 0
         if opt.Purpose == 'classify':
-            _,confusion_matrix,confidence_matrix = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+            _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
             with open(self.source_json_file,'r') as input_f:
                 source_json = json.load(input_f)
             confidence_matrix.columns = source_json['labels']
             confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
             confidence_matrix.to_csv(self.args.Output_file)
+            # pdb.set_trace()
             return
         print('run')
-        for i in range(begin_epoch,opt.n_epochs + 1):
-            self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
+        # pdb.set_trace()
+        if train_loader is not None: 
+            for i in range(begin_epoch,opt.n_epochs + 1):
+                self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
 
-            validation_loss,confusion_matrix,_ = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+                validation_loss,confusion_matrix,_,results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+                
+                confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
+                confusion_matrix.to_csv(confusion_matrix_file)
+                validation_results_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_results.csv'.format(epoch=i))
+                # pdb.set_trace()
+                results_df.to_csv(validation_results_file)
 
-            confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
-            confusion_matrix.to_csv(confusion_matrix_file)
-
-            scheduler.step(validation_loss)
-            if i % 5 == 0 and len(test_data) != 0:
-                _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
+                scheduler.step(validation_loss)
+                if i % 5 == 0 and len(test_data) != 0:
+                    _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
 
 
     def train_epoch(self, epoch, data_loader, model, criterion, optimizer, opt,
@@ -198,6 +237,7 @@ class ML_model():
         accuracies = AverageMeter()
 
         end_time = time.time()
+        # pdb.set_trace()
         for i, (inputs, targets,_) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
@@ -270,9 +310,10 @@ class ML_model():
         confusion_matrix = np.zeros((opt.n_classes,opt.n_classes))
         confidence_for_each_validation = {}
         ###########################################################################
-
+        results =[]
         # pdb.set_trace()
         for i, (inputs, targets,paths) in enumerate(data_loader):
+            # pdb.set_trace()
             data_time.update(time.time() - end_time)
 
             targets = targets.cuda(non_blocking=True)
@@ -283,10 +324,16 @@ class ML_model():
                 loss = criterion(outputs, targets)
                 acc = calculate_accuracy(outputs, targets)
                 ########  temp line, needs to be removed##################################
+
+                predictedLabel = torch.argmax(outputs,dim =1).cpu().numpy()
+                targetLabel = targets.cpu().numpy()
+
                 for j in range(len(targets)):
                     key = paths[j].split('/')[-1]
                     confidence_for_each_validation[key] = [x.item() for x in outputs[j]]
+                    results.append({"ClipName":key, "TrueLabel":targetLabel[j],"PredictedLabel":predictedLabel[j]})
 
+                    
                 rows = [int(x) for x in targets]
                 columns = [int(x) for x in np.argmax(outputs.data.cpu(),1)]
                 assert len(rows) == len(columns)
@@ -299,6 +346,11 @@ class ML_model():
 
                 batch_time.update(time.time() - end_time)
                 end_time = time.time()
+                
+
+                # pdb.set_trace()
+
+                
 
                 print('Epoch: [{0}][{1}/{2}]\t'
                       'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
@@ -317,14 +369,14 @@ class ML_model():
         confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
         confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
-        
-            #     confidence_matrix.to_csv('confidence_matrix.csv')
+        results_df = pd.DataFrame(results)
+        # confidence_matrix.to_csv('confidence_matrix.csv')
 
             #########  temp line, needs to be removed##################################
 
         logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
-        return losses.avg,confusion_matrix,confidence_matrix
+        return losses.avg,confusion_matrix,confidence_matrix, results_df
         
     def test_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('test at epoch {}'.format(epoch))

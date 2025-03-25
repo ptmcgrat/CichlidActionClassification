@@ -25,6 +25,7 @@ class DP_worker():
 
         if not os.path.exists(videos_temp):
             os.makedirs(videos_temp)
+
         print('convert video clips to images for faster loading')
         for file_name in os.listdir(video_dir):
             if not file_name.endswith('.mp4'):
@@ -32,13 +33,31 @@ class DP_worker():
             location = file_name.split('.')[0]
             video_file_path = os.path.join(video_dir,file_name)
             target_folder = os.path.join(videos_temp,location)
+            # pdb.set_trace()
             if not os.path.exists(target_folder):
+                # os.makedirs(target_folder)
+                
+        
+                # Check for moov atom or invalid data errors
+                
+                frames_check = subprocess.run( ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=nb_frames', '-of', 'csv=p=0', video_file_path],stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                error_output = frames_check.stderr.lower()  # Capture error messages
+                if "moov atom not found" in error_output or "invalid data found when processing input" in error_output:
+                    pdb.set_trace()
+                    print(f"Skipping {video_file_path}: Corrupt video (moov atom missing).")
+                    continue
+            
+                # nb_frames = frames_check.stdout.strip()
+                # if nb_frames.isdigit() and int(nb_frames) > 0:
                 os.makedirs(target_folder)
                 cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
                 subprocess.run(cmd)
+            
+        # pdb.set_trace()
         print('calculate mean file')
         if not os.path.exists(means_file):
             with open(means_all_file, 'w') as f:
+                # pdb.set_trace()
                 print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
                 for video in os.listdir(videos_temp):
                     video_folder = os.path.join(videos_temp,video)
@@ -50,19 +69,30 @@ class DP_worker():
                             continue
                         image_indices.append(int(image_file_name[6:11]))
                         frames.append(image_file_path)
+                    # pdb.set_trace()
                     image_indices.sort(reverse=True)
+                    # print(video)
+                    if not image_indices:
+                        pdb.set_trace()
+                    #     continue
                     n_frames = image_indices[0]
                     with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
+                        # pdb.set_trace()
                         dst_file.write(str(n_frames))
                     img = io.imread(frames[0])
                     mean = img.mean(axis = (0,1))
                     std = img.std(axis = (0,1))
                     print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
+                    # pdb.set_trace()
             dt = pd.read_csv(means_all_file,sep=',')
+            # pdb.set_trace()
             annotation_df = pd.read_csv(annotation_file,sep=',')
-            dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.Location==row.Clip].MeanID.values[0], axis = 1)
-            means = dt.groupby('MeanID').mean()
-
+            # pdb.set_trace()
+            # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
+            dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
+            # pdb.set_trace()
+            means = dt[['MeanID','MeanR','MeanG','MeanB','StdR', 'StdG', 'StdB']].groupby('MeanID').mean()
+            # pdb.set_trace()
             with open(means_file,'w') as f:
                 print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
                 for row in means.itertuples():
@@ -80,7 +110,7 @@ class DP_worker():
             annotation_df = pd.read_csv(self.args.Videos_to_project_file, sep=',')
             with open(val_list,'w') as val:
                 for index,row in annotation_df.iterrows():
-                    print(row.Location,file=val)
+                    print(row.ClipName,file=val)
             return
         test_animals = self.args.TEST_PROJECT.split(',')
         annotation_df = pd.read_csv(self.args.ML_labels, sep=',')
@@ -90,21 +120,23 @@ class DP_worker():
                     for index,row in annotation_df.iterrows():
                         animal = row.MeanID.split(':')[0]
                         if animal in test_animals:
-                            print(row.Location+','+row.Label,file=test)
+                            print(row.ClipName+','+row.ManualLabel,file=test)
                         else:
                             if np.random.uniform()<0.8:
-                                print(row.Location+','+row.Label,file=train)
+                                # pdb.set_trace()
+                                print(row.ClipName+','+row.ManualLabel,file=train)
                             else:
-                                print(row.Location+','+row.Label,file=val)
+                                print(row.ClipName+','+row.ManualLabel,file=val)
+                        # pdb.set_trace()
                 elif self.args.Split_mode == 'mode1':
                     category_count = defaultdict(list)
                     for index, row in annotation_df.iterrows():
                         animal = row.MeanID.split(':')[0]
                         if animal in test_animals:
-                            print(row.Location+','+row.Label,file=test)
+                            print(row.ClipName+','+row.ManualLabel,file=test)
                         else:
-                            label = row.Label
-                            location = row.Location
+                            label = row.ManualLabel
+                            location = row.ClipName
                             category_count[label].append(location)
                     for key, value in category_count.items():
                         training_videos = np.random.choice(value,220, replace=False)
@@ -120,10 +152,10 @@ class DP_worker():
                     for index, row in annotation_df.iterrows():
                         animal = row.MeanID.split(':')[0]
                         if animal in test_animals:
-                            print(row.Location + ',' + row.Label, file=test)
+                            print(row.ClipName + ',' + row.ManualLabel, file=test)
                         else:
-                            label = row.Label
-                            location = row.Location
+                            label = row.ManualLabel
+                            location = row.ClipName
                             all_samples.append((label,location))
                     training_indices = np.random.choice(len(all_samples),2200,replace=False)
                     training_videos = [all_samples[i] for i in training_indices]
@@ -142,10 +174,10 @@ class DP_worker():
                     for index, row in annotation_df.iterrows():
                         animal = row.MeanID.split(':')[0]
                         if animal in test_animals:
-                            print(row.Location + ',' + row.Label, file=test)
+                            print(row.ClipName + ',' + row.ManualLabel, file=test)
                         else:
-                            label = row.Label
-                            location = row.Location
+                            label = row.ManualLabel
+                            location = row.ClipName
                             category_count[label].append(location)
                     for key, value in category_count.items():
                         # if less than 800 samples, 80% for training and rest for validation
@@ -162,6 +194,7 @@ class DP_worker():
                             print(training_video + ',' + key, file=train)
                         for validation_video in validation_videos:
                             print(validation_video + ',' + key, file=val)
+            
 
 
 
@@ -203,6 +236,7 @@ class DP_worker():
                     if class_name not in classes:
                         classes.append(class_name)
             database = {}
+            # pdb.set_trace()
             for i in range(len(keys)):
                 key = keys[i]
                 database[key] = {}
@@ -213,7 +247,7 @@ class DP_worker():
         train_database,classes = convert_csv_to_dict(train_list, 'training')
         val_database,_ = convert_csv_to_dict(val_list, 'validation')
         test_database,_ = convert_csv_to_dict(test_list, 'testing')
-        
+        # pdb.set_trace()
         assert len(classes)==10
         
         dst_data = {}

@@ -5,7 +5,7 @@ from Utils.DataPrepare import DP_worker
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
 # Input data
-parser.add_argument('--ML_videos_directory',
+parser.add_argument('--Input_videos_directory',
                     type = str, 
                     default = '/data/home/llong35/data/labeled_videos',
                     required = False, 
@@ -48,8 +48,8 @@ parser.add_argument('--gpu',
                     help='The index of GPU to use for training')
 
 # Temp directories that wlil be deleted at the end of the analysis
-parser.add_argument('--Clips_temp_directory',
-                    default=os.path.join(os.getenv("HOME"),'clips_temp'),
+parser.add_argument('--Temporary_clips_directory',
+                    default=os.path.join(os.getenv("HOME"),'Train/clips_temp'),
                     type = str, 
                     required = False, 
                     help = 'Location for temp files to be stored')
@@ -112,8 +112,8 @@ args = parser.parse_args()
 def check_args(args):
     if not os.path.exists(args.Results_directory):
         os.makedirs(args.Results_directory)
-    if not os.path.exists(args.Clips_temp_directory):
-        os.makedirs(args.Clips_temp_directory)
+    if not os.path.exists(args.Temporary_clips_directory):
+        os.makedirs(args.Temporary_clips_directory)
 
 
 check_args(args)
