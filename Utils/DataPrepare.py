@@ -87,7 +87,7 @@ class DP_worker():
             dt = pd.read_csv(means_all_file,sep=',')
             # pdb.set_trace()
             annotation_df = pd.read_csv(annotation_file,sep=',')
-             pdb.set_trace()
+            pdb.set_trace()
             # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
             dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
             # pdb.set_trace()
