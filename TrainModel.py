@@ -7,15 +7,22 @@ parser = argparse.ArgumentParser(description='This script takes video clips and 
 # Input data
 parser.add_argument('--Input_videos_directory',
                     type = str, 
-                    default = '/data/home/llong35/data/labeled_videos',
-                    required = False, 
+                    required = True, 
                     help = 'Name of directory to hold all video clips')
                     
 parser.add_argument('--ML_labels',
                     type = str, 
-                    default = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv',
-                    help = 'labels given to each ML video, it should contain three columns: Location,Label and MeanID')
-                    
+                    help = 'csv file with labels given to each ML video, it should contain three columns: Location, Label and MeanID')
+
+parser.add_argument('--Temporary_clips_directory',
+                    type = str, 
+                    required = True, 
+                    help = 'Location for temp files to be stored')
+
+parser.add_argument('--Results_directory',
+                    type = str,
+                    help = 'directory to store sample prepare logs')                    
+
 parser.add_argument('--Purpose',
                     type = str, 
                     default = 'train',
@@ -47,19 +54,6 @@ parser.add_argument('--gpu',
                     type=str,
                     help='The index of GPU to use for training')
 
-# Temp directories that wlil be deleted at the end of the analysis
-parser.add_argument('--Temporary_clips_directory',
-                    default=os.path.join(os.getenv("HOME"),'Train/clips_temp'),
-                    type = str, 
-                    required = False, 
-                    help = 'Location for temp files to be stored')
-
-# Output data
-parser.add_argument('--Results_directory',
-                    type = str,
-                    default=os.path.join(os.getenv("HOME"),'temp','test_JAN_24_temp'),
-                    help = 'directory to store sample prepare logs')
-
 # Parameters for the dataloader
 parser.add_argument('--sample_duration',
                     default=96,
@@ -71,9 +65,6 @@ parser.add_argument('--sample_size',
                     type=int,
                     help='Height and width of inputs')
                     
-
-
-
 # Parameters for the optimizer
 parser.add_argument('--learning_rate',default=0.1,type=float,help='Initial learning rate (divided by 10 while training by lr scheduler)')
 parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
@@ -85,23 +76,19 @@ parser.add_argument('--optimizer',default='sgd',type=str,help='Currently only su
 parser.add_argument('--lr_patience',default=10,type=int,help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.')
 parser.add_argument('--resnet_shortcut',default='B',help='Shortcut type of resnet (A | B)')
 
-
 # Parameters for data augmentation
 parser.add_argument('--no_hflip',action='store_true',help='If true holizontal flipping is not performed.')
 parser.set_defaults(no_hflip=False)
 parser.add_argument('--no_vflip',action='store_true',help='If true vertical flipping is not performed.')
 parser.set_defaults(no_hflip=False)
 
-
 # Parameters for general training
 parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is saved at every this epochs.')
-
 
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=10,type=int)
 parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
 parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
-
 
 # Parameters specific for finetuning for other animals
 parser.add_argument('--resume_path',default='/data/home/llong35/temp/test_aug_8_2_restricted_total_sampling/save_100.pth',type=str,help='Save data (.pth) of previous training')
