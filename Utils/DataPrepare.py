@@ -248,7 +248,7 @@ class DP_worker():
         train_database,classes = convert_csv_to_dict(train_list, 'training')
         val_database,_ = convert_csv_to_dict(val_list, 'validation')
         test_database,_ = convert_csv_to_dict(test_list, 'testing')
-        # pdb.set_trace()
+        pdb.set_trace()
         assert len(classes)==10
         
         dst_data = {}
