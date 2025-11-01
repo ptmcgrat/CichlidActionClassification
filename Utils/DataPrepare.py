@@ -236,7 +236,6 @@ class DP_worker():
         train_database,classes = convert_csv_to_dict(train_list, 'training')
         val_database,_ = convert_csv_to_dict(val_list, 'validation')
         test_database,_ = convert_csv_to_dict(test_list, 'testing')
-        pdb.set_trace()
         assert len(classes)==10
         
         dst_data = {}
@@ -246,6 +245,8 @@ class DP_worker():
         dst_data['database'].update(train_database)
         dst_data['database'].update(val_database)
         dst_data['database'].update(test_database)
+        pdb.set_trace()
+
         with open(source_json_path, 'w') as dst_file:
             json.dump(dst_data, dst_file)
             
