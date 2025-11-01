@@ -58,7 +58,7 @@ class DP_worker():
         if not os.path.exists(means_file):
             with open(means_all_file, 'w') as f:
                 # pdb.set_trace()
-                print('ClipName,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
+                print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
                 for video in os.listdir(videos_temp):
                     video_folder = os.path.join(videos_temp,video)
                     image_indices = []
