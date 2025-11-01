@@ -50,7 +50,7 @@ class ML_model():
         else:
             source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         pdb.set_trace()
-        source_annotation_dict = dict(zip(source_annotateData['Location'],source_annotateData['MeanID']))
+        source_annotation_dict = dict(zip(source_annotateData['ClipName'],source_annotateData['MeanID']))
         
         
         # training data loader
