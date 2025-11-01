@@ -33,17 +33,11 @@ class DP_worker():
             location = file_name.split('.')[0]
             video_file_path = os.path.join(video_dir,file_name)
             target_folder = os.path.join(videos_temp,location)
-            # pdb.set_trace()
             if not os.path.exists(target_folder):
                 # os.makedirs(target_folder)
-                
-        
-                # Check for moov atom or invalid data errors
-                
                 frames_check = subprocess.run( ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=nb_frames', '-of', 'csv=p=0', video_file_path],stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 error_output = frames_check.stderr.lower()  # Capture error messages
                 if "moov atom not found" in error_output or "invalid data found when processing input" in error_output:
-                    pdb.set_trace()
                     print(f"Skipping {video_file_path}: Corrupt video (moov atom missing).")
                     continue
             
@@ -57,7 +51,6 @@ class DP_worker():
         print('calculate mean file')
         if not os.path.exists(means_file):
             with open(means_all_file, 'w') as f:
-                # pdb.set_trace()
                 print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
                 for video in os.listdir(videos_temp):
                     video_folder = os.path.join(videos_temp,video)
@@ -69,7 +62,6 @@ class DP_worker():
                             continue
                         image_indices.append(int(image_file_name[6:11]))
                         frames.append(image_file_path)
-                    # pdb.set_trace()
                     image_indices.sort(reverse=True)
                     # print(video)
                     if not image_indices:
@@ -85,14 +77,10 @@ class DP_worker():
                     print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
                     # pdb.set_trace()
             dt = pd.read_csv(means_all_file,sep=',')
-            # pdb.set_trace()
             annotation_df = pd.read_csv(annotation_file,sep=',')
-            pdb.set_trace()
             # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
             dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
-            # pdb.set_trace()
             means = dt[['MeanID','MeanR','MeanG','MeanB','StdR', 'StdG', 'StdB']].groupby('MeanID').mean()
-            # pdb.set_trace()
             with open(means_file,'w') as f:
                 print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
                 for row in means.itertuples():
