@@ -118,6 +118,7 @@ class DP_worker():
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
                 if self.args.Split_mode == 'random':
                     for index,row in annotation_df.iterrows():
+                        pdb.set_trace()
                         animal = row.MeanID.split(':')[0]
                         if animal in test_animals:
                             print(row.ClipName+','+row.ManualLabel,file=test)
