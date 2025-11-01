@@ -119,15 +119,15 @@ class DP_worker():
                 if self.args.Split_mode == 'random':
                     for index,row in annotation_df.iterrows():
                         pdb.set_trace()
-                        animal = row.MeanID.split(':')[0]
-                        if animal in test_animals:
-                            print(row.ClipName+','+row.ManualLabel,file=test)
+                        #animal = row.MeanID.split(':')[0]
+                        #if animal in test_animals:
+                        #    print(row.ClipName+','+row.ManualLabel,file=test)
+                        #else:
+                        if np.random.uniform()<0.8:
+                            # pdb.set_trace()
+                            print(row.ClipName+','+row.ManualLabel,file=train)
                         else:
-                            if np.random.uniform()<0.8:
-                                # pdb.set_trace()
-                                print(row.ClipName+','+row.ManualLabel,file=train)
-                            else:
-                                print(row.ClipName+','+row.ManualLabel,file=val)
+                            print(row.ClipName+','+row.ManualLabel,file=val)
                         # pdb.set_trace()
                 elif self.args.Split_mode == 'mode1':
                     category_count = defaultdict(list)
