@@ -1,32 +1,23 @@
-import os
-import subprocess
-import json
+import os, subprocess, json, pdb
 
 from skimage import io
 import pandas as pd
 import numpy as np
-
 from collections import defaultdict
-import pdb
+
 class DP_worker():
     def __init__(self, args):
-        self.args = args
-        self.means = {}
+        self.inputVideosDir = self.args.Input_videos_directory
+        self.resultsDir = self.args.Results_directory
+        self.tempDir = self.args.Temporary_clips_directory
+        self.manualLabelFile = self.args.ML_labels
+        self.means = {} # Holds mean values for each video
 
-    def prepare_data(self):
-        video_dir = self.args.Input_videos_directory
-        means_all_file = os.path.join(self.args.Results_directory,'MeansAll.csv')
-        means_file = os.path.join(self.args.Results_directory,'Means.csv')
-        if self.args.Purpose == 'classify':
-            annotation_file = self.args.Videos_to_project_file
-        else:
-            annotation_file = self.args.ML_labels
-        videos_temp = self.args.Temporary_clips_directory
+        self._convertVideos()
 
-        if not os.path.exists(videos_temp):
-            os.makedirs(videos_temp)
-
+    def _convertVideos(self):
         print('convert video clips to images for faster loading')
+        pdb.set_trace()
         for file_name in os.listdir(video_dir):
             if not file_name.endswith('.mp4'):
                 continue
@@ -46,6 +37,22 @@ class DP_worker():
                 os.makedirs(target_folder)
                 cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
                 subprocess.run(cmd)
+
+    def prepare_data(self):
+        
+        video_dir = self.args.Input_videos_directory
+        means_all_file = os.path.join(self.args.Results_directory,'MeansAll.csv')
+        means_file = os.path.join(self.args.Results_directory,'Means.csv')
+        if self.args.Purpose == 'classify':
+            annotation_file = self.args.Videos_to_project_file
+        else:
+            annotation_file = self.args.ML_labels
+        videos_temp = self.args.Temporary_clips_directory
+
+        if not os.path.exists(videos_temp):
+            os.makedirs(videos_temp)
+
+        
             
         # pdb.set_trace()
         print('calculate mean file')
