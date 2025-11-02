@@ -7,10 +7,10 @@ from collections import defaultdict
 
 class DP_worker():
     def __init__(self, args):
-        self.inputVideosDir = self.args.Input_videos_directory
-        self.resultsDir = self.args.Results_directory
-        self.tempDir = self.args.Temporary_clips_directory
-        self.manualLabelFile = self.args.ML_labels
+        self.inputVideosDir = args.Input_videos_directory
+        self.resultsDir = args.Results_directory
+        self.tempDir = args.Temporary_clips_directory
+        self.manualLabelFile = args.ML_labels
         self.means = {} # Holds mean values for each video
 
         self._convertVideos()
