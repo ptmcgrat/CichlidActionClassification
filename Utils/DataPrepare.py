@@ -22,25 +22,27 @@ class DP_worker():
         all_videos = os.listdir(self.inputVideosDir)
   
         for mp4_file in self.dt.ClipName:
-            pdb.set_trace()
 
             if not mp4_file.endswith('.mp4'):
                 continue
 
             video_file_path = os.path.join(self.inputVideosDir,mp4_file)
             outputDir = os.path.join(self.tempDir,mp4_file.replace('.mp4',''))
-
+            
+            if not os.path.exists(video_file_path):
+                    print(f"Skipping {video_file_path}: File not found")
+                
             if not os.path.exists(outputDir):
                 # os.makedirs(target_folder)
-                if not os.path.exists(video_file_path):
-                    print(f"Skipping {video_file_path}: File not found")
                 output = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=nb_frames', '-of', 'csv=p=0', video_file_path], capture_output = True, encoding = 'utf-8')
                 if "moov atom not found" in output.stderr or "invalid data found when processing input" in output.stderr:
                     print(f"Skipping {video_file_path}: Corrupt video (moov atom missing).")
                     continue
                 os.makedirs(outputDir)
                 cmd = ['ffmpeg','-i',video_file_path,outputDir+'/image_%05d.jpg']
-                subprocess.run(cmd, capture_output = True)
+                output = subprocess.run(cmd, capture_output = True)
+                if output.returncode != 0:
+                    pdb.set_trace()
 
     def prepare_data(self):
         
