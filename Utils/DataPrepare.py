@@ -24,8 +24,7 @@ class DP_worker():
         all_videos = os.listdir(self.inputVideosDir)
         self.dt['ClipAvailable'] = True
         
-        for lid,row in self.dt.iterrows():
-            mp4_file = row.ClipName
+        for mp4_file in self.dt.ClipNames:
             if not mp4_file.endswith('.mp4'):
                 continue
 
@@ -34,7 +33,7 @@ class DP_worker():
             
             if not os.path.exists(video_file_path):
                 print(f"Skipping {video_file_path}: File not found")
-                pdb.set_trace()
+                self.dt.loc[self.dt.ClipName == mp4_file,'ClipAvailable'] = False
                 continue
 
             if not os.path.exists(outputDir):
