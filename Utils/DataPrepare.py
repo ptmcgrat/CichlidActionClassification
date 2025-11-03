@@ -22,10 +22,10 @@ class DP_worker():
     def _convertVideos(self):
         print('convert video clips to images for faster loading')
         all_videos = os.listdir(self.inputVideosDir)
-        self.dt['Location'] = self.dt.ClipName.str.replace('.mp4','')
+        self.dt['ClipAvailable'] = True
         
-        for mp4_file in self.dt.ClipName:
-
+        for lid,row in self.dt.iterrows():
+            mp4_file = row.ClipName
             if not mp4_file.endswith('.mp4'):
                 continue
 
@@ -34,6 +34,7 @@ class DP_worker():
             
             if not os.path.exists(video_file_path):
                 print(f"Skipping {video_file_path}: File not found")
+                pdb.set_trace()
                 continue
 
             if not os.path.exists(outputDir):
@@ -51,12 +52,12 @@ class DP_worker():
     def _calculateMeans(self):
         annotation_file = self.manualLabelFile
 
-        m_dt = pd.DataFrame(columns = ['Location','MeanID','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
+        m_dt = pd.DataFrame(columns = ['ClipName','ProjectID','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
             
         print('calculate mean file')
         for i,row in self.dt.iterrows():
-            location = row.Location
-            meanID = row.ProjectID
+            location = row.ClipName.replace('.mp4','')
+            projectID = row.ProjectID
 
             video_folder = os.path.join(self.tempDir,location)
             image_indices = []
@@ -77,7 +78,8 @@ class DP_worker():
             
             m_dt.loc[len(m_dt)] = [location,meanID] + mean.tolist() + std.tolist()
             
-        means = m_dt.groupby(['MeanID','Location']).mean().reset_index()
+        means = m_dt.groupby(['ProjectID']).agg({'MeanR':'mean','MeanG':'mean','MeanB':'mean','StdR':'mean','StdG':'mean','StdB':'mean'}).reset_index()
+        
         pdb.set_trace()
         with open(means_file,'w') as f:
             print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
