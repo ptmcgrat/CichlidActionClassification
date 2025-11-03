@@ -18,6 +18,7 @@ class DP_worker():
 
         self._convertVideos()
         self._calculateMeans()
+        self.split_data()
         self.prepare_json()
 
     def _convertVideos(self):
