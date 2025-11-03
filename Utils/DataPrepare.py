@@ -13,30 +13,34 @@ class DP_worker():
         self.manualLabelFile = args.ML_labels
         self.means = {} # Holds mean values for each video
 
+        self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
+
         self._convertVideos()
 
     def _convertVideos(self):
         print('convert video clips to images for faster loading')
-        pdb.set_trace()
-        for file_name in os.listdir(video_dir):
-            if not file_name.endswith('.mp4'):
+        all_videos = os.listdir(self.inputVideosDir)
+  
+        for lid,mp4_file in self.dt.ClipName:
+            pdb.set_trace()
+
+            if not mp4_file.endswith('.mp4'):
                 continue
-            location = file_name.split('.')[0]
-            video_file_path = os.path.join(video_dir,file_name)
-            target_folder = os.path.join(videos_temp,location)
-            if not os.path.exists(target_folder):
+
+            video_file_path = os.path.join(self.inputVideosDir,mp4_file)
+            outputDir = os.path.join(self.tempDir,mp4_file.replace('.mp4',''))
+
+            if not os.path.exists(outputDir):
                 # os.makedirs(target_folder)
-                frames_check = subprocess.run( ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=nb_frames', '-of', 'csv=p=0', video_file_path],stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                error_output = frames_check.stderr.lower()  # Capture error messages
-                if "moov atom not found" in error_output or "invalid data found when processing input" in error_output:
+                if not os.path.exists(video_file_path):
+                    print(f"Skipping {video_file_path}: File not found")
+                output = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=nb_frames', '-of', 'csv=p=0', video_file_path], capture_output = True, encoding = 'utf-8')
+                if "moov atom not found" in output.stderr or "invalid data found when processing input" in output.stderr:
                     print(f"Skipping {video_file_path}: Corrupt video (moov atom missing).")
                     continue
-            
-                # nb_frames = frames_check.stdout.strip()
-                # if nb_frames.isdigit() and int(nb_frames) > 0:
-                os.makedirs(target_folder)
-                cmd = ['ffmpeg','-i',video_file_path,target_folder+'/image_%05d.jpg']
-                subprocess.run(cmd)
+                os.makedirs(outputDir)
+                cmd = ['ffmpeg','-i',video_file_path,outputDir+'/image_%05d.jpg']
+                subprocess.run(cmd, capture_output = True)
 
     def prepare_data(self):
         
