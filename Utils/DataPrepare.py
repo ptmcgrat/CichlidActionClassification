@@ -21,7 +21,7 @@ class DP_worker():
         print('convert video clips to images for faster loading')
         all_videos = os.listdir(self.inputVideosDir)
   
-        for lid,mp4_file in self.dt.ClipName:
+        for mp4_file in self.dt.ClipName:
             pdb.set_trace()
 
             if not mp4_file.endswith('.mp4'):
