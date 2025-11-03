@@ -11,6 +11,7 @@ class DP_worker():
         self.resultsDir = args.Results_directory
         self.tempDir = args.Temporary_clips_directory
         self.manualLabelFile = args.ML_labels
+        self.purpose = args.Purpose
         self.means = {} # Holds mean values for each video
 
         self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
@@ -48,13 +49,9 @@ class DP_worker():
                     pdb.set_trace()
 
     def _calculateMeans(self):
-        
-        if self.args.Purpose == 'classify':
-            annotation_file = self.args.Videos_to_project_file
-        else:
-            annotation_file = self.args.ML_labels
+        annotation_file = self.manualLabelFile
 
-        pd.DataFrame(columns = ['Location','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
+        m_dt = pd.DataFrame(columns = ['Location','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
             
         pdb.set_trace()
         print('calculate mean file')
