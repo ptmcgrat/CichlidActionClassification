@@ -77,7 +77,7 @@ class DP_worker():
             
             m_dt.loc[len(m_dt)] = [location,meanID] + mean.tolist() + std.tolist()
             
-        means = dt.groupby(['MeanID','Location']).mean().reset_index()
+        means = m_dt.groupby(['MeanID','Location']).mean().reset_index()
         pdb.set_trace()
         with open(means_file,'w') as f:
             print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
