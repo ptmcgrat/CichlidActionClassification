@@ -54,7 +54,7 @@ class DP_worker():
         m_dt = pd.DataFrame(columns = ['ClipName','ProjectID','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
             
         print('calculate mean file')
-        for i,row in self.dt.iterrows():
+        for i,row in self.dt[self.dt.ClipAvailable == True].iterrows():
             location = row.ClipName.replace('.mp4','')
             projectID = row.ProjectID
 
