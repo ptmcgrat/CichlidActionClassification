@@ -84,15 +84,16 @@ class DP_worker():
             std = img.std(axis = (0,1))
             print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
             # pdb.set_trace()
-    dt = pd.read_csv(means_all_file,sep=',')
-    annotation_df = pd.read_csv(annotation_file,sep=',')
-    # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
-    dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
-    means = dt[['MeanID','MeanR','MeanG','MeanB','StdR', 'StdG', 'StdB']].groupby('MeanID').mean()
-    with open(means_file,'w') as f:
-        print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
-        for row in means.itertuples():
-            print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
+        
+        dt = pd.read_csv(means_all_file,sep=',')
+        annotation_df = pd.read_csv(annotation_file,sep=',')
+        # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
+        dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
+        means = dt[['MeanID','MeanR','MeanG','MeanB','StdR', 'StdG', 'StdB']].groupby('MeanID').mean()
+        with open(means_file,'w') as f:
+            print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
+            for row in means.itertuples():
+                print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
 
 
     def split_data(self):
