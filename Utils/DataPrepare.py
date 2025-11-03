@@ -62,8 +62,11 @@ class DP_worker():
             image_indices = []
             frames = []
 
-            frames = sorted([os.path.join(video_folder,x) for x in os.listdir(video_folder) if 'image' in x])
-
+            try:
+                frames = sorted([os.path.join(video_folder,x) for x in os.listdir(video_folder) if 'image' in x])
+            except FileNotFoundError:
+                print(video_folder + ' does not exist')
+                continue
             n_frames = len(frames)
             with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
                 dst_file.write(str(n_frames))
