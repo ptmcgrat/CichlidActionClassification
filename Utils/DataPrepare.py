@@ -53,13 +53,11 @@ class DP_worker():
 
         m_dt = pd.DataFrame(columns = ['Location','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
             
-        pdb.set_trace()
         print('calculate mean file')
         for location in self.dt.Location:
             video_folder = os.path.join(self.tempDir,location)
             image_indices = []
             frames = []
-            pdb.set_trace()
 
             for image_file_name in os.listdir(video_folder):
                 image_file_path = os.path.join(video_folder,image_file_name)
@@ -73,6 +71,7 @@ class DP_worker():
                 pdb.set_trace()
             #     continue
             n_frames = image_indices[0]
+            pdb.set_trace()
             with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
                 # pdb.set_trace()
                 dst_file.write(str(n_frames))
