@@ -24,7 +24,7 @@ class DP_worker():
         all_videos = os.listdir(self.inputVideosDir)
         self.dt['ClipAvailable'] = True
         
-        for mp4_file in self.dt.ClipNames:
+        for mp4_file in self.dt.ClipName:
             if not mp4_file.endswith('.mp4'):
                 continue
 
