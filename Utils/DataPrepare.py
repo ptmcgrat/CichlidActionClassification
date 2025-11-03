@@ -18,6 +18,7 @@ class DP_worker():
 
         self._convertVideos()
         self._calculateMeans()
+        self.prepare_json()
 
     def _convertVideos(self):
         print('convert video clips to images for faster loading')
@@ -86,34 +87,47 @@ class DP_worker():
         test_list = os.path.join(self.resultsDir,'test_list.txt')
         
         if self.purpose == 'classify':
-            annotation_df = pd.read_csv(self.args.Videos_to_project_file, sep=',')
             with open(val_list,'w') as val:
-                for index,row in annotation_df.iterrows():
-                    print(row.ClipName,file=val)
+                for mp4_file in self.dt.ClipName:
+                    print(mp4_file.replace('.mp4',''),file=val)
             return
-        test_animals = self.args.TEST_PROJECT.split(',')
-        annotation_df = pd.read_csv(self.args.ML_labels, sep=',')
-        if not os.path.exists(train_list):
+        else:
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
-                if self.args.Split_mode == 'random':
-                    for index,row in annotation_df.iterrows():
-                        #pdb.set_trace()
-                        #animal = row.MeanID.split(':')[0]
-                        #if animal in test_animals:
-                        #    print(row.ClipName+','+row.ManualLabel,file=test)
-                        #else:
-                        if np.random.uniform()<0.8:
-                            # pdb.set_trace()
-                            print(row.ClipName+','+row.ManualLabel,file=train)
-                        else:
-                            print(row.ClipName+','+row.ManualLabel,file=val)
-                        # pdb.set_trace()
+                for lid,row in self.dt.iterrows():
+                    if np.random.uniform()<0.8:
+                        print(row.ClipName.replace('.mp4','') + ',' + row.ManualLabel,file=train)
+                    else:
+                        print(row.ClipName.replace('.mp4','') + ',' + row.ManualLabel,file=val)
+
+    def convert_csv_to_dict(csv_path, subset):
+        keys = []
+        key_labels = []
+        classes = []
+        with open(csv_path,'r') as input:
+            for line in input:
+                basename,class_name = line.rstrip().split(',')
+                keys.append(basename)
+                key_labels.append(class_name)
+                if class_name not in classes:
+                    classes.append(class_name)
+        database = {}
+        # pdb.set_trace()
+        for i in range(len(keys)):
+            key = keys[i]
+            database[key] = {}
+            database[key]['subset'] = subset
+            label = key_labels[i]
+            database[key]['annotations'] = {'label': label}
+        return database,classes
+
 
     def prepare_json(self):
-        train_list = os.path.join(self.args.Results_directory,'train_list.txt')
-        val_list = os.path.join(self.args.Results_directory,'val_list.txt')
-        test_list = os.path.join(self.args.Results_directory,'test_list.txt')
-        source_json_path = os.path.join(self.args.Results_directory,'source.json')
+        train_list = os.path.join(self.resultsDir,'train_list.txt')
+        val_list = os.path.join(self.resultsDir,'val_list.txt')
+        test_list = os.path.join(self.resultsDir,'test_list.txt')
+
+        source_json_path = os.path.join(self.resultsDir,'source.json')
+        
         if self.args.Purpose == 'classify':
             with open(self.args.Trained_categories,'r') as input_f:
                 training_json = json.load(input_f) 
@@ -131,34 +145,10 @@ class DP_worker():
             with open(source_json_path, 'w') as dst_file:
                 json.dump(dst_data, dst_file)
             return
-        
-        if os.path.exists(source_json_path):
-            return
-        
 
-        def convert_csv_to_dict(csv_path, subset):
-            keys = []
-            key_labels = []
-            classes = []
-            with open(csv_path,'r') as input:
-                for line in input:
-                    basename,class_name = line.rstrip().split(',')
-                    keys.append(basename)
-                    key_labels.append(class_name)
-                    if class_name not in classes:
-                        classes.append(class_name)
-            database = {}
-            # pdb.set_trace()
-            for i in range(len(keys)):
-                key = keys[i]
-                database[key] = {}
-                database[key]['subset'] = subset
-                label = key_labels[i]
-                database[key]['annotations'] = {'label': label}
-            return database,classes
-        train_database,classes = convert_csv_to_dict(train_list, 'training')
-        val_database,_ = convert_csv_to_dict(val_list, 'validation')
-        test_database,_ = convert_csv_to_dict(test_list, 'testing')
+        train_database,classes = self.convert_csv_to_dict(train_list, 'training')
+        val_database,_ = self.convert_csv_to_dict(val_list, 'validation')
+        test_database,_ = self.convert_csv_to_dict(test_list, 'testing')
         assert len(classes)==10
         
         dst_data = {}
