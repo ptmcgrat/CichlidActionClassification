@@ -56,7 +56,7 @@ class DP_worker():
 
         pd.DataFrame(columns = ['Location','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
             
-        # pdb.set_trace()
+        pdb.set_trace()
         print('calculate mean file')
         for location in self.dt.Location:
             video_folder = os.path.join(self.tempDir,location)
