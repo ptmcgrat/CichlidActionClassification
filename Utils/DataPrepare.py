@@ -30,7 +30,8 @@ class DP_worker():
             outputDir = os.path.join(self.tempDir,mp4_file.replace('.mp4',''))
             
             if not os.path.exists(video_file_path):
-                    print(f"Skipping {video_file_path}: File not found")
+                print(f"Skipping {video_file_path}: File not found")
+                continue
                 
             if not os.path.exists(outputDir):
                 # os.makedirs(target_folder)
