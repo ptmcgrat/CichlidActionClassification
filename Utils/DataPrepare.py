@@ -72,8 +72,7 @@ class DP_worker():
             mean = img.mean(axis = (0,1))
             std = img.std(axis = (0,1))
             
-            pdb.set_trace()
-            m_dt.iloc[len(m_dt)] = [location,meanID] + mean.tolist() + std.tolist()
+            m_dt.loc[len(m_dt)] = [location,meanID] + mean.tolist() + std.tolist()
             
         means = dt.groupby(['MeanID','Location']).mean().reset_index()
         pdb.set_trace()
