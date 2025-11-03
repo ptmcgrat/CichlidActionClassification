@@ -51,10 +51,13 @@ class DP_worker():
     def _calculateMeans(self):
         annotation_file = self.manualLabelFile
 
-        m_dt = pd.DataFrame(columns = ['Location','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
+        m_dt = pd.DataFrame(columns = ['Location','MeanID','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
             
         print('calculate mean file')
-        for location in self.dt.Location:
+        for i,row in self.dt.iterrows():
+            location = row.Location
+            meanID = row.ProjectID
+
             video_folder = os.path.join(self.tempDir,location)
             image_indices = []
             frames = []
@@ -63,20 +66,17 @@ class DP_worker():
 
             n_frames = len(frames)
             with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
-                # pdb.set_trace()
                 dst_file.write(str(n_frames))
+            
             img = io.imread(frames[0])
             mean = img.mean(axis = (0,1))
             std = img.std(axis = (0,1))
+            
             pdb.set_trace()
-            print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
-            # pdb.set_trace()
-        
-        dt = pd.read_csv(means_all_file,sep=',')
-        annotation_df = pd.read_csv(annotation_file,sep=',')
-        # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
-        dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
-        means = dt[['MeanID','MeanR','MeanG','MeanB','StdR', 'StdG', 'StdB']].groupby('MeanID').mean()
+            m_dt.iloc[len(m_dt)] = [location,meanID] + mean.tolist() + std.tolist()
+            
+        means = dt.groupby(['MeanID','Location']).mean().reset_index()
+        pdb.set_trace()
         with open(means_file,'w') as f:
             print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
             for row in means.itertuples():
@@ -113,76 +113,6 @@ class DP_worker():
                         else:
                             print(row.ClipName+','+row.ManualLabel,file=val)
                         # pdb.set_trace()
-                elif self.args.Split_mode == 'mode1':
-                    category_count = defaultdict(list)
-                    for index, row in annotation_df.iterrows():
-                        animal = row.MeanID.split(':')[0]
-                        if animal in test_animals:
-                            print(row.ClipName+','+row.ManualLabel,file=test)
-                        else:
-                            label = row.ManualLabel
-                            location = row.ClipName
-                            category_count[label].append(location)
-                    for key, value in category_count.items():
-                        training_videos = np.random.choice(value,220, replace=False)
-                        for training_video in training_videos:
-                            print(training_video + ',' + key, file=train)
-                        validation_videos = [item for item in value if item not in training_videos]
-                        validation_videos = np.random.choice(validation_videos, 50, replace=False)
-                        for validation_video in validation_videos:
-                            print(validation_video + ',' + key, file=val)
-
-                elif self.args.Split_mode == 'mode2':
-                    all_samples = []
-                    for index, row in annotation_df.iterrows():
-                        animal = row.MeanID.split(':')[0]
-                        if animal in test_animals:
-                            print(row.ClipName + ',' + row.ManualLabel, file=test)
-                        else:
-                            label = row.ManualLabel
-                            location = row.ClipName
-                            all_samples.append((label,location))
-                    training_indices = np.random.choice(len(all_samples),2200,replace=False)
-                    training_videos = [all_samples[i] for i in training_indices]
-                    for training_video in training_videos:
-                        print(training_video[1] + ',' + training_video[0], file=train)
-                    validation_indices = []
-                    for i in range(len(all_samples)):
-                        if i not in training_indices:
-                            validation_indices.append(i)
-                    validation_indices = np.random.choice(validation_indices, 500, replace=False)
-                    validation_videos = [all_samples[i] for i in validation_indices]
-                    for validation_video in validation_videos:
-                        print(validation_video[1] + ',' + validation_video[0], file=val)
-                elif self.args.Split_mode == 'mode3':
-                    category_count = defaultdict(list)
-                    for index, row in annotation_df.iterrows():
-                        animal = row.MeanID.split(':')[0]
-                        if animal in test_animals:
-                            print(row.ClipName + ',' + row.ManualLabel, file=test)
-                        else:
-                            label = row.ManualLabel
-                            location = row.ClipName
-                            category_count[label].append(location)
-                    for key, value in category_count.items():
-                        # if less than 800 samples, 80% for training and rest for validation
-                        # otherwise use 640 for training and 160 for validation
-                        if len(value) >= 800:
-                            training_videos = np.random.choice(value, 640, replace=False)
-                            validation_videos = [item for item in value if item not in training_videos]
-                            validation_videos = np.random.choice(validation_videos, 160, replace=False)
-                        else:
-                            training_video_count = int(len(value)*0.8)
-                            training_videos = np.random.choice(value, training_video_count, replace=False)
-                            validation_videos = [item for item in value if item not in training_videos]
-                        for training_video in training_videos:
-                            print(training_video + ',' + key, file=train)
-                        for validation_video in validation_videos:
-                            print(validation_video + ',' + key, file=val)
-            
-
-
-
 
     def prepare_json(self):
         train_list = os.path.join(self.args.Results_directory,'train_list.txt')
@@ -209,6 +139,8 @@ class DP_worker():
         
         if os.path.exists(source_json_path):
             return
+        
+
         def convert_csv_to_dict(csv_path, subset):
             keys = []
             key_labels = []
