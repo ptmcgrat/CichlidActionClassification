@@ -16,11 +16,13 @@ class DP_worker():
         self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
 
         self._convertVideos()
+        self._calculateMeans()
 
     def _convertVideos(self):
         print('convert video clips to images for faster loading')
         all_videos = os.listdir(self.inputVideosDir)
-  
+        self.dt['Location'] = self.dt.ClipName.str.replace('.mp4','')
+        
         for mp4_file in self.dt.ClipName:
 
             if not mp4_file.endswith('.mp4'):
@@ -32,7 +34,7 @@ class DP_worker():
             if not os.path.exists(video_file_path):
                 print(f"Skipping {video_file_path}: File not found")
                 continue
-                
+
             if not os.path.exists(outputDir):
                 # os.makedirs(target_folder)
                 output = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=nb_frames', '-of', 'csv=p=0', video_file_path], capture_output = True, encoding = 'utf-8')
@@ -45,60 +47,51 @@ class DP_worker():
                 if output.returncode != 0:
                     pdb.set_trace()
 
-    def prepare_data(self):
+    def _calculateMeans(self):
         
-        video_dir = self.args.Input_videos_directory
-        means_all_file = os.path.join(self.args.Results_directory,'MeansAll.csv')
-        means_file = os.path.join(self.args.Results_directory,'Means.csv')
         if self.args.Purpose == 'classify':
             annotation_file = self.args.Videos_to_project_file
         else:
             annotation_file = self.args.ML_labels
-        videos_temp = self.args.Temporary_clips_directory
 
-        if not os.path.exists(videos_temp):
-            os.makedirs(videos_temp)
-
-        
+        pd.DataFrame(columns = ['Location','MeanR','MeanG','MeanB','StdR','StdG','StdB'])
             
         # pdb.set_trace()
         print('calculate mean file')
-        if not os.path.exists(means_file):
-            with open(means_all_file, 'w') as f:
-                print('Clip,MeanR,MeanG,MeanB,StdR,StdG,StdB', file = f)
-                for video in os.listdir(videos_temp):
-                    video_folder = os.path.join(videos_temp,video)
-                    image_indices = []
-                    frames = []
-                    for image_file_name in os.listdir(video_folder):
-                        image_file_path = os.path.join(video_folder,image_file_name)
-                        if 'image' not in image_file_name:
-                            continue
-                        image_indices.append(int(image_file_name[6:11]))
-                        frames.append(image_file_path)
-                    image_indices.sort(reverse=True)
-                    # print(video)
-                    if not image_indices:
-                        pdb.set_trace()
-                    #     continue
-                    n_frames = image_indices[0]
-                    with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
-                        # pdb.set_trace()
-                        dst_file.write(str(n_frames))
-                    img = io.imread(frames[0])
-                    mean = img.mean(axis = (0,1))
-                    std = img.std(axis = (0,1))
-                    print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
-                    # pdb.set_trace()
-            dt = pd.read_csv(means_all_file,sep=',')
-            annotation_df = pd.read_csv(annotation_file,sep=',')
-            # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
-            dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
-            means = dt[['MeanID','MeanR','MeanG','MeanB','StdR', 'StdG', 'StdB']].groupby('MeanID').mean()
-            with open(means_file,'w') as f:
-                print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
-                for row in means.itertuples():
-                    print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
+        for location in self.dt.Location:
+            video_folder = os.path.join(self.tempDir,location)
+            image_indices = []
+            frames = []
+            for image_file_name in os.listdir(video_folder):
+                image_file_path = os.path.join(video_folder,image_file_name)
+                if 'image' not in image_file_name:
+                    continue
+                image_indices.append(int(image_file_name[6:11]))
+                frames.append(image_file_path)
+            pdb.set_trace()
+            image_indices.sort(reverse=True)
+            # print(video)
+            if not image_indices:
+                pdb.set_trace()
+            #     continue
+            n_frames = image_indices[0]
+            with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
+                # pdb.set_trace()
+                dst_file.write(str(n_frames))
+            img = io.imread(frames[0])
+            mean = img.mean(axis = (0,1))
+            std = img.std(axis = (0,1))
+            print(video + ',' + ','.join([str(x) for x in mean]) + ',' + ','.join([str(x) for x in std]), file = f)
+            # pdb.set_trace()
+    dt = pd.read_csv(means_all_file,sep=',')
+    annotation_df = pd.read_csv(annotation_file,sep=',')
+    # dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName==row.Clip].MeanID.values[0], axis = 1)
+    dt['MeanID'] = dt.apply(lambda row: annotation_df.loc[annotation_df.ClipName == row.Clip, 'MeanID'].iloc[0] if not annotation_df.loc[annotation_df.ClipName == row.Clip].empty else None, axis=1)
+    means = dt[['MeanID','MeanR','MeanG','MeanB','StdR', 'StdG', 'StdB']].groupby('MeanID').mean()
+    with open(means_file,'w') as f:
+        print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
+        for row in means.itertuples():
+            print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
 
 
     def split_data(self):
