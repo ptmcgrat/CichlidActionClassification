@@ -62,13 +62,14 @@ class DP_worker():
             video_folder = os.path.join(self.tempDir,location)
             image_indices = []
             frames = []
+            pdb.set_trace()
+
             for image_file_name in os.listdir(video_folder):
                 image_file_path = os.path.join(video_folder,image_file_name)
                 if 'image' not in image_file_name:
                     continue
                 image_indices.append(int(image_file_name[6:11]))
                 frames.append(image_file_path)
-            pdb.set_trace()
             image_indices.sort(reverse=True)
             # print(video)
             if not image_indices:
