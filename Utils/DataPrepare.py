@@ -75,7 +75,7 @@ class DP_worker():
             mean = img.mean(axis = (0,1))
             std = img.std(axis = (0,1))
             
-            m_dt.loc[len(m_dt)] = [location,meanID] + mean.tolist() + std.tolist()
+            m_dt.loc[len(m_dt)] = [location,projectID] + mean.tolist() + std.tolist()
             
         means = m_dt.groupby(['ProjectID']).agg({'MeanR':'mean','MeanG':'mean','MeanB':'mean','StdR':'mean','StdG':'mean','StdB':'mean'}).reset_index()
         
