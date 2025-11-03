@@ -78,22 +78,14 @@ class DP_worker():
             m_dt.loc[len(m_dt)] = [location,projectID] + mean.tolist() + std.tolist()
             
         means = m_dt.groupby(['ProjectID']).agg({'MeanR':'mean','MeanG':'mean','MeanB':'mean','StdR':'mean','StdG':'mean','StdB':'mean'}).reset_index()
-        
-        pdb.set_trace()
-        with open(means_file,'w') as f:
-            print('meanID,redMean,greenMean,blueMean,redStd,greenStd,blueStd', file = f)
-            for row in means.itertuples():
-                print(row.Index + ',' + str(row.MeanR) + ',' + str(row.MeanG) + ',' + str(row.MeanB) + ',' + str(row.StdR) + ',' + str(row.StdG) + ',' + str(row.StdB), file = f)
-
+        means.to_csv(os.path.join(self.resultsDir,'means.csv'), index = False)
 
     def split_data(self):
-        train_list = os.path.join(self.args.Results_directory,'train_list.txt')
-        val_list = os.path.join(self.args.Results_directory,'val_list.txt')
-        test_list = os.path.join(self.args.Results_directory,'test_list.txt')
+        train_list = os.path.join(self.resultsDir,'train_list.txt')
+        val_list = os.path.join(self.resultsDir,'val_list.txt')
+        test_list = os.path.join(self.resultsDir,'test_list.txt')
         
-
-        
-        if self.args.Purpose == 'classify':
+        if self.purpose == 'classify':
             annotation_df = pd.read_csv(self.args.Videos_to_project_file, sep=',')
             with open(val_list,'w') as val:
                 for index,row in annotation_df.iterrows():
