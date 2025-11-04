@@ -1,4 +1,4 @@
-import argparse, subprocess, datetime, os, pdb, sys
+import argparse, os, pdb
 from Utils.CichlidActionRecognition import ML_model
 from Utils.DataPrepare import DP_worker
 
@@ -66,9 +66,6 @@ parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is sa
 parser.add_argument('--n_classes',default=10,type=int)
 parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
 parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
-
-# Parameters specific for finetuning for other animals
-parser.add_argument('--resume_path',default='/data/home/llong35/temp/test_aug_8_2_restricted_total_sampling/save_100.pth',type=str,help='Save data (.pth) of previous training')
 
 args = parser.parse_args()
 

@@ -3,7 +3,6 @@ import os, subprocess, json, pdb
 from skimage import io
 import pandas as pd
 import numpy as np
-from collections import defaultdict
 
 class DP_worker():
     def __init__(self, args):
@@ -166,7 +165,7 @@ class DP_worker():
         dst_data['database'].update(train_database)
         dst_data['database'].update(val_database)
         dst_data['database'].update(test_database)
-=
+        
         with open(source_json_path, 'w') as dst_file:
             json.dump(dst_data, dst_file)
             
