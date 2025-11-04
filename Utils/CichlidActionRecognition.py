@@ -1,16 +1,8 @@
-import os
-import sys
-import json
-import numpy as np
-import torch
-import torchvision
-from torch import nn
-from torch import optim
+import os,sys,json,torch,torchvision,pdb,time
+from torch import nn,optim
 from torch.optim import lr_scheduler
 from torch.autograd import Variable
-import pdb
 import pandas as pd
-import time
 
 from Utils.model import resnet18
 from Utils.utils import Logger,AverageMeter, calculate_accuracy
@@ -106,7 +98,7 @@ class ML_model():
                                     target_transform=target_transform, 
                                     annotationDict =source_annotation_dict,
                                     args = self.args)
-            
+            training_data[0]
             if len(training_data) != 0:
                 train_loader = torch.utils.data.DataLoader(training_data,
                                                         batch_size=opt.batch_size,
