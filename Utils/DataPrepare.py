@@ -34,7 +34,7 @@ class DP_worker():
             outputDir = os.path.join(self.tempDir,mp4_file.replace('.mp4',''))
             
             if not os.path.exists(video_file_path):
-                print(f"Skipping {video_file_path}: File not found")
+                #print(f"Skipping {video_file_path}: File not found")
                 self.dt.loc[self.dt.ClipName == mp4_file,'ClipAvailable'] = False
                 continue
 
@@ -43,12 +43,14 @@ class DP_worker():
                 output = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=nb_frames', '-of', 'csv=p=0', video_file_path], capture_output = True, encoding = 'utf-8')
                 if "moov atom not found" in output.stderr or "invalid data found when processing input" in output.stderr:
                     print(f"Skipping {video_file_path}: Corrupt video (moov atom missing).")
+                    self.dt.loc[self.dt.ClipName == mp4_file,'ClipAvailable'] = False
                     continue
                 os.makedirs(outputDir)
                 cmd = ['ffmpeg','-i',video_file_path,outputDir+'/image_%05d.jpg']
                 output = subprocess.run(cmd, capture_output = True)
                 if output.returncode != 0:
                     pdb.set_trace()
+        print(str(sum(self.dt.ClipAvailable == False)) + ' videos not available and will be excluded')
 
     def _calculateMeans(self):
         annotation_file = self.manualLabelFile
@@ -94,7 +96,7 @@ class DP_worker():
             return
         else:
             with open(train_list,'w') as train,open(val_list,'w') as val, open(test_list,'w') as test:
-                for lid,row in self.dt.iterrows():
+                for lid,row in self.dt[self.dt.ClipAvailable==True].iterrows():
                     if np.random.uniform()<0.8:
                         print(row.ClipName.replace('.mp4','') + ',' + row.ManualLabel,file=train)
                     else:
