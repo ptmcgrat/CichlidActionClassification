@@ -86,7 +86,7 @@ class DP_worker():
             m_dt.loc[len(m_dt)] = [location,projectID] + mean.tolist() + std.tolist()
             
         means = m_dt.groupby(['ProjectID']).agg({'MeanR':'mean','MeanG':'mean','MeanB':'mean','StdR':'mean','StdG':'mean','StdB':'mean'}).reset_index()
-        means.to_csv(os.path.join(self.resultsDir,'means.csv'), index = False)
+        means.to_csv(os.path.join(self.resultsDir,'Means.csv'), index = False)
 
     def _splitData(self):
         train_list = os.path.join(self.resultsDir,'train_list.txt')
@@ -165,7 +165,7 @@ class DP_worker():
         dst_data['database'].update(train_database)
         dst_data['database'].update(val_database)
         dst_data['database'].update(test_database)
-        
+
         with open(source_json_path, 'w') as dst_file:
             json.dump(dst_data, dst_file)
             
