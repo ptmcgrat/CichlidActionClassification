@@ -181,6 +181,7 @@ class cichlids(data.Dataset):
                  sample_duration=16,
                  get_loader=get_default_video_loader,
                  args = None):
+        
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration,args)
@@ -196,6 +197,7 @@ class cichlids(data.Dataset):
         self.args =args
         # pdb.set_trace()
         # pdb.set_trace()
+    
     def __getitem__(self, index):
         """
         Args:
@@ -205,9 +207,9 @@ class cichlids(data.Dataset):
         """
         path = self.data[index]['video']
         if self.args.Purpose == 'classify': 
-            clip_name = self.data[index]['video_id'] +'.mp4'
+            clip_name = self.data[index]['video_id']
         else:
-            clip_name =  "__".join(self.data[index]['video_id'].split("__")[-5:])
+            clip_name = self.data[index]['video_id']
         
         # pdb.set_trace()
         frame_indices = self.data[index]['frame_indices']
@@ -215,8 +217,8 @@ class cichlids(data.Dataset):
             frame_indices = self.temporal_transform(frame_indices)
         clip = self.loader(path, frame_indices)
         # pdb.set_trace()
+        pdb.set_trace()
         if self.spatial_transforms is not None:
-            pdb.set_trace()
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
