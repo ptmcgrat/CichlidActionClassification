@@ -3,7 +3,7 @@ from torch import nn,optim
 from torch.optim import lr_scheduler
 from torch.autograd import Variable
 import pandas as pd
-
+import numpy as np
 from Utils.model import resnet18
 from Utils.utils import Logger,AverageMeter, calculate_accuracy
 from Utils.transforms import (Compose, Normalize, Scale, CenterCrop, 
