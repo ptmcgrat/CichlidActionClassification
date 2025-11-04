@@ -5,64 +5,41 @@ from Utils.DataPrepare import DP_worker
 
 parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
 # Input data
-parser.add_argument('--Input_videos_directory',
-                    type = str, 
-                    required = True, 
+parser.add_argument('--Input_videos_directory', type = str, required = True,
                     help = 'Name of directory to hold all video clips')
                     
-parser.add_argument('--ML_labels',
-                    type = str, 
+parser.add_argument('--ML_labels', type = str, required = True,
                     help = 'csv file with labels given to each ML video, it should contain three columns: Location, Label and MeanID')
 
-parser.add_argument('--Temporary_clips_directory',
-                    type = str, 
-                    required = True, 
+parser.add_argument('--Temporary_clips_directory', type = str, required = True,
                     help = 'Location for temp files to be stored')
 
-parser.add_argument('--Results_directory',
-                    type = str,
+parser.add_argument('--Results_directory',type = str, required = True,
                     help = 'directory to store sample prepare logs')                    
 
-parser.add_argument('--Purpose',
-                    type = str, 
-                    default = 'train',
+parser.add_argument('--Log', type = str, required = True,
+                    help = 'Log file to keep track of versions + parameters used')
+
+parser.add_argument('--Purpose', type = str, default = 'train', 
                     help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
 
-parser.add_argument('--TEST_PROJECT',
-                    type = str,
-                    default = '',
+parser.add_argument('--TEST_PROJECT', type = str, default = '',
                     help = 'project to be tested on')
 
-parser.add_argument('--Split_mode',
-                    type = str,
-                    default = 'random',
+parser.add_argument('--Split_mode', type = str, default = 'random',
                     help = 'random|mode1|mode2|mode3')
-                    
-parser.add_argument('--Log', 
-					type = str, 
-					required = False, 
-					default=os.path.join(os.getenv("HOME"),'temp','test_JAN_24_log'),
-					help = 'Log file to keep track of versions + parameters used')
-					
-parser.add_argument('--n_threads',
-                    default=5,
-                    type=int,
+                    		
+parser.add_argument('--n_threads', default=5, type=int,
                     help='Number of threads for multi-thread loading')
                     
-parser.add_argument('--gpu',
-                    default='0',
-                    type=str,
+parser.add_argument('--gpu', default='0', type=str,
                     help='The index of GPU to use for training')
 
 # Parameters for the dataloader
-parser.add_argument('--sample_duration',
-                    default=96,
-                    type=int,
+parser.add_argument('--sample_duration', default=96, type=int,
                     help='Temporal duration of inputs')
                     
-parser.add_argument('--sample_size',
-                    default=120,
-                    type=int,
+parser.add_argument('--sample_size', default=120, type=int,
                     help='Height and width of inputs')
                     
 # Parameters for the optimizer
@@ -95,29 +72,13 @@ parser.add_argument('--resume_path',default='/data/home/llong35/temp/test_aug_8_
 
 args = parser.parse_args()
 
-
-def check_args(args):
-    if not os.path.exists(args.Results_directory):
-        os.makedirs(args.Results_directory)
-    if not os.path.exists(args.Temporary_clips_directory):
-        os.makedirs(args.Temporary_clips_directory)
-
-
-check_args(args)
-
-with open(args.Log, 'w') as f:
-	for key, value in vars(args).items():
-		print(key + ': ' + str(value), file = f)
-	print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
-	import pandas as pd
-	print('PandasVersion: ' + pd.__version__, file = f)
-	import numpy as np
-	print('NumpyVersion: ' + np.__version__, file = f)
-	import torch
-	print('pytorch: ' + torch.__version__, file = f)
+if not os.path.exists(args.Results_directory):
+    os.makedirs(args.Results_directory)
+if not os.path.exists(args.Temporary_clips_directory):
+    os.makedirs(args.Temporary_clips_directory)
 	
 os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu
 data_worker = DP_worker(args)
-data_worker.work()
+data_worker.processData()
 ML_model = ML_model(args)
 ML_model.work()
