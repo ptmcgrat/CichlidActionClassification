@@ -42,7 +42,7 @@ class ML_model():
         else:
             source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         #pdb.set_trace()
-        source_annotation_dict = dict(zip(source_annotateData['ClipName'],source_annotateData['ProjectID']))
+        source_annotation_dict = dict(zip(source_annotateData['ClipName'].str.replace('.mp4',''),source_annotateData['ProjectID']))
         
         
         # training data loader
