@@ -129,7 +129,7 @@ class DP_worker():
 
         source_json_path = os.path.join(self.resultsDir,'source.json')
         
-        if self.args.Purpose == 'classify':
+        if self.purpose == 'classify':
             with open(self.args.Trained_categories,'r') as input_f:
                 training_json = json.load(input_f) 
             dst_data = {}
