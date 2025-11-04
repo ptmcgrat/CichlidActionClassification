@@ -16,13 +16,18 @@ class DP_worker():
 
         self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
 
+       
+    def processData(self):
+        print('DP: Converting mp4 clips to jpg images for faster loading')
         self._convertVideos()
+        print('DP: Calculating RGB means/stds for normalizing videos')
         self._calculateMeans()
-        self.split_data()
-        self.prepare_json()
+        print('DP: Splitting data into train and validation sets')
+        self._splitData()
+        self._prepareJson()
+        print('DP: Completed')
 
     def _convertVideos(self):
-        print('convert video clips to images for faster loading')
         all_videos = os.listdir(self.inputVideosDir)
         self.dt['ClipAvailable'] = True
         
@@ -84,7 +89,7 @@ class DP_worker():
         means = m_dt.groupby(['ProjectID']).agg({'MeanR':'mean','MeanG':'mean','MeanB':'mean','StdR':'mean','StdG':'mean','StdB':'mean'}).reset_index()
         means.to_csv(os.path.join(self.resultsDir,'means.csv'), index = False)
 
-    def split_data(self):
+    def _splitData(self):
         train_list = os.path.join(self.resultsDir,'train_list.txt')
         val_list = os.path.join(self.resultsDir,'val_list.txt')
         test_list = os.path.join(self.resultsDir,'test_list.txt')
@@ -124,7 +129,7 @@ class DP_worker():
         return database,classes
 
 
-    def prepare_json(self):
+    def _prepareJson(self):
         train_list = os.path.join(self.resultsDir,'train_list.txt')
         val_list = os.path.join(self.resultsDir,'val_list.txt')
         test_list = os.path.join(self.resultsDir,'test_list.txt')
@@ -161,19 +166,10 @@ class DP_worker():
         dst_data['database'].update(train_database)
         dst_data['database'].update(val_database)
         dst_data['database'].update(test_database)
-        pdb.set_trace()
-
+=
         with open(source_json_path, 'w') as dst_file:
             json.dump(dst_data, dst_file)
             
-
-    def work(self):
-        self.prepare_data()
-        print('data conversion done, split data')
-        self.split_data()
-        print('data split done, prepare json')
-        self.prepare_json()
-        
     
         
         
