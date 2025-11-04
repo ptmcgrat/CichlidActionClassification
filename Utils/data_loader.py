@@ -217,6 +217,7 @@ class cichlids(data.Dataset):
             frame_indices = self.temporal_transform(frame_indices)
         clip = self.loader(path, frame_indices)
         # pdb.set_trace()
+        pdb.set_trace()
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
