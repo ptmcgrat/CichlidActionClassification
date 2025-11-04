@@ -100,7 +100,7 @@ class DP_worker():
                     else:
                         print(row.ClipName.replace('.mp4','') + ',' + row.ManualLabel,file=val)
 
-    def convert_csv_to_dict(csv_path, subset):
+    def convert_csv_to_dict(self,csv_path, subset):
         keys = []
         key_labels = []
         classes = []
