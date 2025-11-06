@@ -369,7 +369,7 @@ class ML_model():
 
         logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
-        return losses.avg,confusion_matrix,confidence_matrix, results_df
+        return losses.avg,confusion_matrix,confidence_for_each_validation, results_df
         
     def test_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('test at epoch {}'.format(epoch))
