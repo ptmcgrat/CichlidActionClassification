@@ -363,7 +363,7 @@ class ML_model():
         confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
         probability_matrix = {k: scipy.special.softmax(v).max() for k,v in confidence_for_each_validation.items()}
-        confidence_matrix = pd.DataFrame.from_dict(probability_matrix, columns = ['ClipName','Probability'])
+        confidence_matrix = pd.DataFrame.from_dict(probability_matrix, orient='index', columns = ['Probability'])
         results_df = pd.DataFrame(results)
         # confidence_matrix.to_csv('confidence_matrix.csv')
 
