@@ -206,11 +206,12 @@ class ML_model():
             for i in range(begin_epoch,opt.n_epochs + 1):
                 self.train_epoch(i, train_loader, model, criterion, optimizer, opt, train_logger, train_batch_logger)
 
-                validation_loss,confusion_matrix,_,results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+                validation_loss,confusion_matrix,p_dt,results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
                 
                 confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
                 confusion_matrix.to_csv(confusion_matrix_file)
                 validation_results_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_results.csv'.format(epoch=i))
+                s_dt = pd.read_csv(self.manualLabelFile, index_col = 0)
                 pdb.set_trace()
                 results_df.to_csv(validation_results_file)
 
@@ -362,7 +363,7 @@ class ML_model():
         confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
         probability_matrix = {k: scipy.special.softmax(v).max() for k,v in confidence_for_each_validation.items()}
-        confidence_matrix = pd.DataFrame.from_dict(probability_matrix, orient='index')
+        confidence_matrix = pd.DataFrame.from_dict(probability_matrix, orient='index', columns = ['ClipName','Probability'])
         results_df = pd.DataFrame(results)
         # confidence_matrix.to_csv('confidence_matrix.csv')
 
@@ -370,7 +371,7 @@ class ML_model():
 
         logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
-        return losses.avg,confusion_matrix,confidence_matrix, results_df
+        return losses.avg,confusion_matrix, confidence_matrix, results_df
         
     def test_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('test at epoch {}'.format(epoch))
