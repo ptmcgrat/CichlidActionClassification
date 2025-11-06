@@ -1,4 +1,4 @@
-import os,sys,json,torch,torchvision,pdb,time
+import os,sys,json,torch,torchvision,pdb,time, scipy
 from torch import nn,optim
 from torch.optim import lr_scheduler
 from torch.autograd import Variable
@@ -361,7 +361,8 @@ class ML_model():
             # print(confusion_matrix)
         confusion_matrix = pd.DataFrame(confusion_matrix)
             # confusion_matrix.to_csv(file)
-        confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
+        probability_matrix = {k, scipy.special.softmax(v).max() for k,v in confidence_for_each_validation.items}
+        confidence_matrix = pd.DataFrame.from_dict(probability_matrix, orient='index')
         results_df = pd.DataFrame(results)
         # confidence_matrix.to_csv('confidence_matrix.csv')
 
@@ -369,7 +370,7 @@ class ML_model():
 
         logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
-        return losses.avg,confusion_matrix,confidence_for_each_validation, results_df
+        return losses.avg,confusion_matrix,confidence_matrix, results_df
         
     def test_epoch(self, epoch, data_loader, model, criterion, opt, logger):
         print('test at epoch {}'.format(epoch))
