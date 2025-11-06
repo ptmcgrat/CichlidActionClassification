@@ -212,9 +212,14 @@ class ML_model():
                 confusion_matrix.to_csv(confusion_matrix_file)
                 validation_results_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_results.csv'.format(epoch=i))
                 s_dt = pd.read_csv(self.args.ML_labels, index_col = 0)
-                pdb.set_trace()
+                s_dt['Location'] = s_dt.ClipName.str.replace('.mp4','')]
+                g_dt = pd.merge(p_dt,s_dt, left_index=True, right_on = 'Location')
+                g_dt = g_dt[['Location','AnalysisID','Probability']]
                 results_df.to_csv(validation_results_file)
-
+                results_df['Match'] = results_df.TrueLabel == results_df.PredictedLabel
+                out_dt = pd.merge(g_dt,results_df, left_on = 'Location', right_on = 'ClipName')
+                pdb.set_trace()
+                out_dt.groupby('AnalysisID').agg({'Match':'mean'})
                 scheduler.step(validation_loss)
                 if i % 5 == 0 and len(test_data) != 0:
                     _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
