@@ -211,7 +211,7 @@ class ML_model():
                 confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
                 confusion_matrix.to_csv(confusion_matrix_file)
                 validation_results_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_results.csv'.format(epoch=i))
-                s_dt = pd.read_csv(self.manualLabelFile, index_col = 0)
+                s_dt = pd.read_csv(self.args.ML_labels, index_col = 0)
                 pdb.set_trace()
                 results_df.to_csv(validation_results_file)
 
