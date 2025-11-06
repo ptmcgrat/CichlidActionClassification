@@ -54,6 +54,7 @@ class DP_worker():
                 output = subprocess.run(cmd, capture_output = True)
                 if output.returncode != 0:
                     pdb.set_trace()
+        pdb.set_trace()
         print(str(sum(self.dt.ClipAvailable == False)) + ' videos not available and will be excluded')
 
     def _calculateMeans(self):
