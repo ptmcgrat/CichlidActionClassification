@@ -108,9 +108,9 @@ class ML_model():
                 train_logger = Logger(
                     os.path.join(opt.Results_directory, 'train.log'),
                     ['epoch', 'loss', 'acc', 'lr'])
-                #train_batch_logger = Logger(
-                #    os.path.join(opt.Results_directory, 'train_batch.log'),
-                #    ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
+                train_batch_logger = Logger(
+                    os.path.join(opt.Results_directory, 'train_batch.log'),
+                    ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
             
             else:
                 train_loader = None
@@ -266,7 +266,7 @@ class ML_model():
                 'lr': optimizer.param_groups[0]['lr']
             })
 
-            print('Epoch: [{0}][{1}/{2}]\t'
+            """print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
@@ -283,7 +283,7 @@ class ML_model():
                 'loss': losses.avg,
                 'acc': accuracies.avg,
                 'lr': optimizer.param_groups[0]['lr']
-            })
+            })"""
 
         if epoch % opt.checkpoint == 0:
             save_file_path = os.path.join(opt.Results_directory,
