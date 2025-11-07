@@ -218,7 +218,7 @@ class ML_model():
                 results_df.to_csv(validation_results_file)
                 results_df['Match'] = results_df.TrueLabel == results_df.PredictedLabel
                 out_dt = pd.merge(g_dt,results_df, left_on = 'Location', right_on = 'ClipName')
-                pdb.set_trace()
+                print('Epoch: ' + str(i))
                 print(out_dt.groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
                 print(out_dt[out_dt.Probability > 0.5].groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
                 scheduler.step(validation_loss)
