@@ -219,7 +219,8 @@ class ML_model():
                 results_df['Match'] = results_df.TrueLabel == results_df.PredictedLabel
                 out_dt = pd.merge(g_dt,results_df, left_on = 'Location', right_on = 'ClipName')
                 pdb.set_trace()
-                out_dt.groupby('AnalysisID').agg({'Match':'mean','Match':'count'})
+                print(out_dt.groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
+                print(out_dt[out_dt.Probability > 0.5].groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
                 scheduler.step(validation_loss)
                 if i % 5 == 0 and len(test_data) != 0:
                     _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
@@ -351,7 +352,7 @@ class ML_model():
 
                 
 
-                print('Epoch: [{0}][{1}/{2}]\t'
+                """print('Epoch: [{0}][{1}/{2}]\t'
                       'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                       'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                       'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
@@ -362,7 +363,7 @@ class ML_model():
                     batch_time=batch_time,
                     data_time=data_time,
                     loss=losses,
-                    acc=accuracies))
+                    acc=accuracies))"""
             #########  temp line, needs to be removed##################################
             # print(confusion_matrix)
         confusion_matrix = pd.DataFrame(confusion_matrix)
