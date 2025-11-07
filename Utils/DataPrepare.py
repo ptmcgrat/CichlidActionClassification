@@ -54,7 +54,7 @@ class DP_worker():
                 output = subprocess.run(cmd, capture_output = True)
                 if output.returncode != 0:
                     pdb.set_trace()
-        print(dt.groupby(['AnalysisID','ClipAvailable']).count())
+        print(self.dt.groupby(['AnalysisID','ClipAvailable']).count())
 
     def _calculateMeans(self):
         annotation_file = self.manualLabelFile

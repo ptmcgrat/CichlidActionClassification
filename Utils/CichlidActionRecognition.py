@@ -108,9 +108,9 @@ class ML_model():
                 train_logger = Logger(
                     os.path.join(opt.Results_directory, 'train.log'),
                     ['epoch', 'loss', 'acc', 'lr'])
-                train_batch_logger = Logger(
-                    os.path.join(opt.Results_directory, 'train_batch.log'),
-                    ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
+                #train_batch_logger = Logger(
+                #    os.path.join(opt.Results_directory, 'train_batch.log'),
+                #    ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
             
             else:
                 train_loader = None
@@ -219,7 +219,7 @@ class ML_model():
                 results_df['Match'] = results_df.TrueLabel == results_df.PredictedLabel
                 out_dt = pd.merge(g_dt,results_df, left_on = 'Location', right_on = 'ClipName')
                 pdb.set_trace()
-                out_dt.groupby('AnalysisID').agg({'Match':'mean'})
+                out_dt.groupby('AnalysisID').agg({'Match':'mean','Match':'count'})
                 scheduler.step(validation_loss)
                 if i % 5 == 0 and len(test_data) != 0:
                     _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
