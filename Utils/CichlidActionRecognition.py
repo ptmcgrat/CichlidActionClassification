@@ -222,7 +222,7 @@ class ML_model():
                 acc_dt = out_dt.groupby('AnalysisID').agg({'Match':'mean','Location':'count'})
                 print(acc_dt)
                 #print(out_dt[out_dt.Probability > 0.8].groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
-                acc_dt.to_csv(self.args.Results_directory,'epoch_{epoch}_accuracy.csv'.format(epoch=i))
+                acc_dt.to_csv(self.args.Results_directory + 'epoch_' + str(epoch) + '_accuracy.csv')
 
                 scheduler.step(validation_loss)
                 if i % 5 == 0 and len(test_data) != 0:
