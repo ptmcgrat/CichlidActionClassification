@@ -12,9 +12,7 @@ class DP_worker():
         self.manualLabelFile = args.ML_labels
         self.purpose = args.Purpose
         self.means = {} # Holds mean values for each video
-
         self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
-
        
     def processData(self):
         print('DP: Converting mp4 clips to jpg images for faster loading')
@@ -54,7 +52,7 @@ class DP_worker():
                 output = subprocess.run(cmd, capture_output = True)
                 if output.returncode != 0:
                     pdb.set_trace()
-        data_summary = self.dt.groupby(['AnalysisID','ClipAvailable']).count()
+        data_summary = self.dt.groupby(['AnalysisID','ClipAvailable']).count()['ClipName']
         print(data_summary)
         data_summary.to_csv(self.resultsDir + 'DataSummaryByAnalysisID.csv')
 

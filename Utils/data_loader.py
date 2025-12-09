@@ -93,7 +93,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     video_count = 0
     n_frames_count = 0
     for i in range(len(video_names)):
-        if i % 1000 == 0:
+        if i % 10000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
         
         

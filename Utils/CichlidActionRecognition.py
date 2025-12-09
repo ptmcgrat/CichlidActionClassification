@@ -23,7 +23,7 @@ class ML_model():
 
     def work(self):
         opt = self.args
-        log_file = os.path.join(opt.Results_directory,'log')
+        log_file = os.path.join(opt.Results_directory,'commands.log')
         with open(log_file, 'w') as output:
             json.dump(vars(opt), output)
         model = resnet18(
@@ -219,8 +219,11 @@ class ML_model():
                 results_df['Match'] = results_df.TrueLabel == results_df.PredictedLabel
                 out_dt = pd.merge(g_dt,results_df, left_on = 'Location', right_on = 'ClipName')
                 print('Epoch: ' + str(i))
-                print(out_dt.groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
-                print(out_dt[out_dt.Probability > 0.8].groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
+                acc_dt = out_dt.groupby('AnalysisID').agg({'Match':'mean','Location':'count'})
+                print(acc_dt)
+                #print(out_dt[out_dt.Probability > 0.8].groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
+                acc_dt.to_csv(self.args.Results_directory,'epoch_{epoch}_accuracy.csv'.format(epoch=i))
+
                 scheduler.step(validation_loss)
                 if i % 5 == 0 and len(test_data) != 0:
                     _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
