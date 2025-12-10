@@ -1,4 +1,4 @@
-import argparse, os, pdb
+import argparse, os, pdb, subprocess
 from Utils.CichlidActionRecognition import ML_model
 from Utils.DataPrepare import DP_worker
 
@@ -73,7 +73,9 @@ if not os.path.exists(args.Results_directory):
     os.makedirs(args.Results_directory)
 if not os.path.exists(args.Temporary_clips_directory):
     os.makedirs(args.Temporary_clips_directory)
-	
+
+subprocess.run(['conda','list'], stdout = open(args.Log,'w'))
+
 os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu
 data_worker = DP_worker(args)
 data_worker.processData()
