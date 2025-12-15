@@ -12,7 +12,7 @@ class DP_worker():
         self.manualLabelFile = args.ML_labels
         self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
 
-        #self.purpose = args.Purpose
+        self.purpose = args.Purpose
         self.means = {} # Holds mean values for each video
        
     def processData(self):
