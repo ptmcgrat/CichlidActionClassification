@@ -57,7 +57,7 @@ with open(args.Training_options,'r') as input_f:
             vars(args)[key]= key=='True'
         else:
             pass
-vars(args)['Results_directory']= args.Temporary_output_directory
+
 def check_args(args):
     if not os.path.exists(args.Results_directory):
         os.makedirs(args.Results_directory)
