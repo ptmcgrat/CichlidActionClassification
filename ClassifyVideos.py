@@ -23,7 +23,7 @@ parser.add_argument('--Training_options', type = str, required = True,
                     help = 'log file in training')
 parser.add_argument('--Output_file', required = True, type = str, 
                     help = 'csv file that keeps the confidence and label for each video clip')
-parser.add_argument('--Purpose', type = str, default = 'Classify',
+parser.add_argument('--Purpose', type = str, default = 'classify',
                     help = 'Leave this alone')
 
 parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
