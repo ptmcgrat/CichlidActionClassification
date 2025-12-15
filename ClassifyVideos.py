@@ -46,7 +46,7 @@ args = parser.parse_args()
 with open(args.Training_options,'r') as input_f:
     data = json.load(input_f)
 
-    for key,value in data.items()
+    for key,value in data.items():
         if key in ['sample_duration','sample_size','lr_patience','n_classes']:
             vars(args)[key]=int(value)
         elif key in ['optimizer','resnet_shortcut']:
