@@ -11,6 +11,7 @@ class DP_worker():
         self.tempDir = args.Temporary_clips_directory
         self.manualLabelFile = args.ML_labels
         self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
+        self.args = args
 
         self.purpose = args.Purpose
         self.means = {} # Holds mean values for each video
