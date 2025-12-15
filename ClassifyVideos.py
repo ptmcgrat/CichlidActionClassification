@@ -43,6 +43,8 @@ parser.add_argument('--resnet_shortcut',default='B',help='Shortcut type of resne
 args = parser.parse_args()
 # Parameters to load from previous training_log
 
+pdb.set_trace()
+
 with open(args.Training_options,'r') as input_f:
     for line in input_f:
         # pdb.set_trace()
