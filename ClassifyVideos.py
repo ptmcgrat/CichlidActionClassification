@@ -1,4 +1,4 @@
-import argparse, subprocess, datetime, os, pdb, sys
+import argparse, subprocess, datetime, os, pdb, sys, json
 from Utils.CichlidActionRecognition import ML_model
 from Utils.DataPrepare import DP_worker
 
@@ -43,12 +43,10 @@ parser.add_argument('--resnet_shortcut',default='B',help='Shortcut type of resne
 args = parser.parse_args()
 # Parameters to load from previous training_log
 
-pdb.set_trace()
-
 with open(args.Training_options,'r') as input_f:
-    for line in input_f:
-        # pdb.set_trace()
-        key,value = line.rstrip().split(': ')
+    data = json.load(input_f)
+
+    for key,value in data.items()
         if key in ['sample_duration','sample_size','lr_patience','n_classes']:
             vars(args)[key]=int(value)
         elif key in ['optimizer','resnet_shortcut']:
