@@ -38,7 +38,7 @@ class ML_model():
         criterion = nn.CrossEntropyLoss()
         criterion = criterion.cuda()
         if opt.Purpose =='classify':
-            source_annotateData = pd.read_csv(opt.Videos_to_project_file, sep = ',', header = 0)
+            source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         else:
             source_annotateData = pd.read_csv(opt.ML_labels, sep = ',', header = 0)
         #pdb.set_trace()

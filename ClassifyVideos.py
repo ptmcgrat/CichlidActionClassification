@@ -23,6 +23,8 @@ parser.add_argument('--Training_options', type = str, required = True,
                     help = 'log file in training')
 parser.add_argument('--Output_file', required = True, type = str, 
                     help = 'csv file that keeps the confidence and label for each video clip')
+parser.add_argument('--Purpose', type = str, default = 'Classify',
+                    help = 'Leave this alone')
 
 parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
 parser.add_argument('--n_threads', default=5, type=int, help='Number of threads for multi-thread loading')
@@ -69,6 +71,6 @@ def check_args(args):
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_card
 check_args(args)
 data_worker = DP_worker(args)
-data_worker.work()
+data_worker.processData()
 ML_model = ML_model(args)
 ML_model.work()
