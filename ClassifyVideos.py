@@ -5,14 +5,16 @@ from Utils.DataPrepare import DP_worker
 
 parser = argparse.ArgumentParser(description='This script takes a model, and apply this model to new video clips')
 # Input data
+parser.add_argument('--ML_labels', type = str, required = True,
+                    help = 'csv file with labels given to each ML video, it should contain three columns: Location, Label and MeanID')
 parser.add_argument('--Input_videos_directory', type = str, required = True,
                     help = 'Name of directory to hold all video clips')                    
 parser.add_argument('--Temporary_clips_directory', type = str, required = True,
                     help = 'Location for temp files to be stored')
 parser.add_argument('--Results_directory',type = str, required = True,
                     help = 'directory to store sample prepare logs')                    
-parser.add_argument('--Videos_to_project_file', type = str, required = True,
-                    help = 'project each video belongs to')
+#parser.add_argument('--Videos_to_project_file', type = str, required = True,
+#                    help = 'project each video belongs to')
 parser.add_argument('--Trained_model', type=str, required = True,
                     help='Save data (.pth) of previous training')
 parser.add_argument('--Trained_categories', type = str, required = True,

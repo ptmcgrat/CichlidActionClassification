@@ -10,9 +10,10 @@ class DP_worker():
         self.resultsDir = args.Results_directory
         self.tempDir = args.Temporary_clips_directory
         self.manualLabelFile = args.ML_labels
-        self.purpose = args.Purpose
-        self.means = {} # Holds mean values for each video
         self.dt = pd.read_csv(self.manualLabelFile, index_col = 0)
+
+        #self.purpose = args.Purpose
+        self.means = {} # Holds mean values for each video
        
     def processData(self):
         print('DP: Converting mp4 clips to jpg images for faster loading')
