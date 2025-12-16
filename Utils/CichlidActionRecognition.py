@@ -195,7 +195,7 @@ class ML_model():
             _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
             with open(self.source_json_file,'r') as input_f:
                 source_json = json.load(input_f)
-            confidence_matrix['Prediction'] = results_df['PredictedLabel'].apply(lambda x: source_json['labels'])
+            confidence_matrix['Prediction'] = results_df['PredictedLabel'].apply(lambda x: source_json['labels'][x])
             pdb.set_trace()
 
             confidence_matrix['Prediction'] = pd.Categorical(results_df['PredictedLabel'], categories=source_json['labels'], ordered=True).codes
