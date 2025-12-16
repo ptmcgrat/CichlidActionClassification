@@ -195,9 +195,7 @@ class ML_model():
             _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
             with open(self.source_json_file,'r') as input_f:
                 source_json = json.load(input_f)
-            pdb.set_trace()
-            confidence_matrix.columns = source_json['labels']
-            confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
+            confidence_matrix['Prediction'] = results_df.apply(lambda x: source_json['labels'][x])
             confidence_matrix.to_csv(self.args.Output_file)
             # pdb.set_trace()
             return
