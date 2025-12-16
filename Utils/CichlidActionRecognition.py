@@ -201,7 +201,7 @@ class ML_model():
             confidence_matrix['Prediction'] = pd.Series(np.array(source_json['labels'])[results_df.PredictedLabel.values])
 
             #confidence_matrix['Prediction'] = pd.Categorical(results_df['PredictedLabel'], categories=source_json['labels'], ordered=True).codes
-            confidence_matrix.to_csv(self.args.Output_file)
+            confidence_matrix.to_csv(self.args.Output_file, index=False)
             # pdb.set_trace()
             return
         print('run')
