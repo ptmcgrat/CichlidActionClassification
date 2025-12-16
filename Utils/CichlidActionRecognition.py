@@ -196,8 +196,8 @@ class ML_model():
             with open(self.source_json_file,'r') as input_f:
                 source_json = json.load(input_f)
             #confidence_matrix['Prediction'] = results_df['PredictedLabel'].apply(lambda x: source_json['labels'][x])
+            results_matrix = results_matrix.set_index('ClipName')
             confidence_matrix['Prediction'] = pd.Series(np.array(source_json['labels'])[results_df.PredictedLabel.values])
-            pdb.set_trace()
 
             #confidence_matrix['Prediction'] = pd.Categorical(results_df['PredictedLabel'], categories=source_json['labels'], ordered=True).codes
             confidence_matrix.to_csv(self.args.Output_file)
