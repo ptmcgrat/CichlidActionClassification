@@ -68,6 +68,6 @@ data_worker.convertVideos(args.DataSummaryLog)
 data_worker.calculateMeans()
 data_worker.prepareJson('train', args.JSONLog, args.n_classes)
 
-ML_model = ML_model()
+ML_model = ML_model('train', args.JSONLog, args.sample_duration, args.sample_size)
 ML_model.createDatabase(args.JSONLog, args.Temp_directory)
 ML_model.work()
