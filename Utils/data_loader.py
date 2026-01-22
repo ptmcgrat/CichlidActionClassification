@@ -12,7 +12,7 @@ class cichlids(data.Dataset):
     def __init__(self, clip_directory, json_file, dataset_type):
         self.clip_directory = clip_directory
         self.json_file = json_file
-        assert dataset_type is in ['train', 'validation']
+        assert dataset_type in ['train', 'validation']
         self.dataset_type = dataset_type
 
         self._read_database()
