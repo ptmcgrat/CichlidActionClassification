@@ -15,7 +15,7 @@ class cichlids(data.Dataset):
         assert dataset_type in ['train', 'validation']
         self.dataset_type = dataset_type
 
-        self._read_database()
+        self.readDatabase()
 
     def readDatabase(self):
         with open(self.json_file,'r') as input_f:
