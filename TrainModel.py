@@ -66,7 +66,7 @@ if not os.path.exists(args.Temp_directory):
 data_worker = DP_worker(args.Clips_directory, args.Temp_directory, args.ML_labels)
 data_worker.convertVideos(args.DataSummaryLog)
 data_worker.calculateMeans()
-dataworker.prepareJson('train', args.JSONLog, args.n_classes)
+data_worker.prepareJson('train', args.JSONLog, args.n_classes)
 
 ML_model = ML_model()
 ML_model.createDatabase(args.JSONLog, args.Temp_directory)
