@@ -21,7 +21,7 @@ class ML_model():
         self.sample_duration = sample_duration
     
     def createDataLoaders(self, batch_size, n_threads):
-        if self.purpose == 'Train'
+        if self.purpose == 'Train':
             training_data = cichlids(self.tempClipsDir, self.sourceJSON, 'train')
             training_data.readDatabase()
             training_data.createTransforms(self.sample_length, self.sample_duration)
