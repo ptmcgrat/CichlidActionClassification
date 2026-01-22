@@ -69,5 +69,5 @@ data_worker.calculateMeans()
 data_worker.prepareJson('Train', args.JSONLog, args.n_classes)
 
 ML_model = ML_model('Train', args.JSONLog, args.Temp_directory, args.sample_duration, args.sample_size)
-ML_model.createDatabase(args.batch_size, args.n_threads)
+ML_model.createDataLoaders(args.batch_size, args.n_threads)
 ML_model.train_model(args.n_classes, args.dampening, args.learning_rate, args.momentum, args.weight_decay, args.nesterov, args.lr_patience, args.n_epochs)
