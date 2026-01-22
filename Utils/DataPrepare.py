@@ -120,7 +120,10 @@ class DP_worker():
         dst_data['database'] = clip_data
         dst_data['means'] = self.means_dict
 
-        assert len(dst_data['labels'])==n_classes
+        try:
+            assert len(dst_data['labels'])==n_classes
+        except AssertionError:
+            pdb.set_trace()
 
         with open(json_file, 'w') as dst_file:
             json.dump(dst_data, dst_file)
