@@ -61,10 +61,9 @@ with open(args.CommandsLog, 'w') as output:
 
 os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu
 
-if not os.path.exists(args.Temporary_clips_directory):
-    os.makedirs(args.Temporary_clips_directory)
+if not os.path.exists(args.Temp_directory):
+    os.makedirs(args.Temp_directory)
 
-input_videos, temp_directory, manual_label_file
 data_worker = DP_worker(args.Clips_directory, args.Temp_directory, args.ML_labels)
 data_worker.convertVideos()
 data_worker.calculateMeans()
