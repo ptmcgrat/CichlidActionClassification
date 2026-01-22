@@ -28,7 +28,7 @@ class DP_worker():
         
         for mp4_file in self.dt.ClipName:
             # Ensure labeled clip is an mp4 file
-            assert mp4_file.endswith('.mp4'):
+            assert mp4_file.endswith('.mp4')
                 
             # Define input and output paths
             video_file_path = os.path.join(self.inputVideosDir, mp4_file)
