@@ -87,7 +87,7 @@ class DP_worker():
 
     def prepareJson(self, purpose, json_file, n_classes):
         
-        assert purpose is in ['classify','train']
+        assert purpose in ['classify','train']
 
         dst_data = {}
 
