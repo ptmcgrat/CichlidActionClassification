@@ -57,7 +57,7 @@ args = parser.parse_args()
 subprocess.run(['conda','list'], stdout = open(args.CondaLog,'w'))
 
 with open(args.CommandsLog, 'w') as output:
-    json.dump(vars(opt), output)
+    json.dump(vars(args), output)
 
 os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu
 
