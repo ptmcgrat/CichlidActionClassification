@@ -17,8 +17,8 @@ parser.add_argument('--JSONLog', type = str, required = True,
                     help = 'Logfile to keep track of data splits and label names')
 parser.add_argument('--CondaLog', type = str, required = True,
                     help = 'Logfile to keep track of conda and cuda versions')
-parser.add_argument('--AnnotatedDataLog', type = str, required = True,
-                    help = 'Logfile to keep track of annotated data')
+#parser.add_argument('--AnnotatedDataLog', type = str, required = True,
+#                    help = 'Logfile to keep track of annotated data')
 
 
 parser.add_argument('--n_threads', default=5, type=int,
