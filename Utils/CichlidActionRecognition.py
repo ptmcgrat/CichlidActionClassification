@@ -106,11 +106,6 @@ class ML_model():
         criterion = criterion.cuda()
                                   
 
-            checkpoint = torch.load(opt.Trained_model)
-            begin_epoch = checkpoint['epoch']
-            model.load_state_dict(checkpoint['state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer'])
-
         if opt.Purpose in ['finetune','classify']:
             checkpoint = torch.load(opt.Trained_model)
             begin_epoch = checkpoint['epoch']
