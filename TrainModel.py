@@ -67,7 +67,6 @@ data_worker = DP_worker(args.Clips_directory, args.Temp_directory, args.ML_label
 data_worker.convertVideos(args.DataSummaryLog)
 data_worker.calculateMeans()
 data_worker.prepareJson('train', args.JSONLog, args.n_classes)
-train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
 
 ML_model = ML_model('train', args.JSONLog, args.Temp_directory, args.sample_duration, args.sample_size)
 ML_model.createDatabase(args.batch_size, args.n_threads)
