@@ -17,9 +17,8 @@ parser.add_argument('--JSONLog', type = str, required = True,
                     help = 'Logfile to keep track of data splits and label names')
 parser.add_argument('--CondaLog', type = str, required = True,
                     help = 'Logfile to keep track of conda and cuda versions')
-#parser.add_argument('--AnnotatedDataLog', type = str, required = True,
-#                    help = 'Logfile to keep track of annotated data')
-
+parser.add_argument('--DataSummaryLog', type = str, required = True,
+                    help = 'Logfile to keep track of annotated data')
 
 parser.add_argument('--n_threads', default=5, type=int,
                     help='Number of threads for multi-thread loading')                    
@@ -65,7 +64,7 @@ if not os.path.exists(args.Temp_directory):
     os.makedirs(args.Temp_directory)
 
 data_worker = DP_worker(args.Clips_directory, args.Temp_directory, args.ML_labels)
-data_worker.convertVideos()
+data_worker.convertVideos(args.DataSummaryLog)
 data_worker.calculateMeans()
 dataworker.prepareJson('train', args.JSONLog, args.n_classes)
 

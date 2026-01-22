@@ -22,7 +22,7 @@ class DP_worker():
         self._prepareJson()
         print('DP: Completed')
 
-    def convertVideos(self):
+    def convertVideos(self, dataSummaryLog):
         all_videos = os.listdir(self.inputVideosDir)
         self.dt['ClipAvailable'] = True
         
@@ -52,7 +52,7 @@ class DP_worker():
 
         data_summary = self.dt.groupby(['AnalysisID','ClipAvailable']).count()['ClipName']
         print(data_summary)
-        data_summary.to_csv(self.dataSummaryLog)
+        data_summary.to_csv(dataSummaryLog)
 
     def calculateMeans(self):
 
