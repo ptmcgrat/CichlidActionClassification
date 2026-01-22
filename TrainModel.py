@@ -3,24 +3,24 @@ from Utils.CichlidActionRecognition import ML_model
 from Utils.DataPrepare import DP_worker
 
 
-parser = argparse.ArgumentParser(description='This script takes video clips and annotations, either train a model from scratch or finetune a model to work on the new animals not annotated')
+parser = argparse.ArgumentParser(description='This script trains a 3D Resnet from scratch using labeled videos')
 # Input data
-parser.add_argument('--Input_videos_directory', type = str, required = True,
-                    help = 'Name of directory to hold all video clips')                    
+parser.add_argument('--Clips_directory', type = str, required = True,
+                    help = 'Name of directory that holds the mp4 clips')                    
 parser.add_argument('--ML_labels', type = str, required = True,
-                    help = 'csv file with labels given to each ML video, it should contain three columns: Location, Label and MeanID')
-parser.add_argument('--Temporary_clips_directory', type = str, required = True,
+                    help = 'csv file with labels for each ML video, it should contain three columns: ClipName, ManualLabel and ProjectID')
+parser.add_argument('--Temp_directory', type = str, required = True,
                     help = 'Location for temp files to be stored')
-parser.add_argument('--Results_directory',type = str, required = True,
-                    help = 'directory to store sample prepare logs')                    
-parser.add_argument('--Log', type = str, required = True,
-                    help = 'Log file to keep track of versions + parameters used')
-parser.add_argument('--Purpose', type = str, default = 'train', 
-                    help = '(train|finetune), How to use this script? train from scrath or finetune to work on different animals')
-parser.add_argument('--TEST_PROJECT', type = str, default = '',
-                    help = 'project to be tested on')
-parser.add_argument('--Split_mode', type = str, default = 'random',
-                    help = 'random|mode1|mode2|mode3')                    		
+parser.add_argument('--CommandsLog', type = str, required = True,
+                    help = 'Logfile to keep track of commands')
+parser.add_argument('--JSONLog', type = str, required = True,
+                    help = 'Logfile to keep track of data splits and label names')
+parser.add_argument('--CondaLog', type = str, required = True,
+                    help = 'Logfile to keep track of conda and cuda versions')
+parser.add_argument('--AnnotatedDataLog', type = str, required = True,
+                    help = 'Logfile to keep track of annotated data')
+
+
 parser.add_argument('--n_threads', default=5, type=int,
                     help='Number of threads for multi-thread loading')                    
 parser.add_argument('--gpu', default='0', type=str, help='The index of GPU to use for training')
@@ -54,15 +54,22 @@ parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epoc
 
 args = parser.parse_args()
 
-if not os.path.exists(args.Results_directory):
-    os.makedirs(args.Results_directory)
+subprocess.run(['conda','list'], stdout = open(args.CondaLog,'w'))
+
+with open(args.CommandsLog, 'w') as output:
+    json.dump(vars(opt), output)
+
+os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu
+
 if not os.path.exists(args.Temporary_clips_directory):
     os.makedirs(args.Temporary_clips_directory)
 
-subprocess.run(['conda','list'], stdout = open(args.Log,'w'))
+input_videos, temp_directory, manual_label_file
+data_worker = DP_worker(args.Clips_directory, args.Temp_directory, args.ML_labels)
+data_worker.convertVideos()
+data_worker.calculateMeans()
+dataworker.prepareJson('train',args.JSONLog, args.n_classes)
 
-os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu
-data_worker = DP_worker(args)
-data_worker.processData()
-ML_model = ML_model(args)
+ML_model = ML_model()
+ML_model.createDatabase(args.JSONLog, args.Temp_directory)
 ML_model.work()
