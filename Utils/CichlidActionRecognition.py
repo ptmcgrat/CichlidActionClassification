@@ -124,7 +124,7 @@ class ML_model():
         # pdb.set_trace()
         return
     
-    def train_epoch(self, epoch, data_loader, model, criterion, optimizer, epoch_logger, checkpoint):
+    def train_epoch(self, epoch, data_loader, model, criterion, optimizer, epoch_logger):
         print('train at epoch {}'.format(epoch))
         model.train()
 
