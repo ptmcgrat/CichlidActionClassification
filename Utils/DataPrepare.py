@@ -98,6 +98,7 @@ class DP_worker():
         else:
             dst_data['labels'] = list(set(self.dt.ManualLabel))
 
+        pdb.set_trace()
         for lid,row in self.dt[self.dt.ClipAvailable==True].iterrows():
             clip_name = row.ClipName.replace('.mp4','')
             clip_data={}
