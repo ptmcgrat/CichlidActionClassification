@@ -3,7 +3,7 @@ import math
 import numbers
 import collections
 import numpy as np
-import torch
+import torch, torchvision
 import pdb
 from PIL import Image, ImageOps
 try:
@@ -71,7 +71,8 @@ class ToTensor(object):
         elif pic.mode == 'I;16':
             img = torch.from_numpy(np.array(pic, np.int16, copy=False))
         else:
-            img = torch.ByteTensor(torch.ByteStorage.from_buffer(pic.tobytes()))
+            img = torchvision.PILtoTensor()
+            #img = torch.ByteTensor(torch.ByteStorage.from_buffer(pic.tobytes()))
         # PIL image mode: 1, L, P, I, F, RGB, YCbCr, RGBA, CMYK
         if pic.mode == 'YCbCr':
             nchannel = 3
