@@ -98,10 +98,9 @@ class DP_worker():
         else:
             dst_data['labels'] = list(set(self.dt.ManualLabel))
 
-        pdb.set_trace()
+        clip_data={}
         for lid,row in self.dt[self.dt.ClipAvailable==True].iterrows():
             clip_name = row.ClipName.replace('.mp4','')
-            clip_data={}
             clip_data[clip_name] = {}
             if purpose == 'classify':
                 clip_data[clip_name]['subset'] = 'validation'
