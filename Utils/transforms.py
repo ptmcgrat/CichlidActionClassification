@@ -72,7 +72,7 @@ class ToTensor(object):
             img = torch.from_numpy(np.array(pic, np.int16, copy=False))
         else:
             #img = torchvision.transforms.PILToTensor()(pic)
-            numpy_array = np.array(pic)
+            #numpy_array = np.array(pic)
             img = torch.from_numpy(np.array(pic, np.int16, copy=False))
 
             #img = torch.ByteTensor(torch.ByteStorage.from_buffer(pic.tobytes()))
