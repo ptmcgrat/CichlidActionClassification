@@ -80,7 +80,7 @@ class cichlids(data.Dataset):
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
         target = self.labels_to_idx[self.clip_dict[clipname]['annotations']['label']]
-        return clip, target,path
+        return clip, target, clipname
 
     def __len__(self):
         return len(self.clips)
