@@ -71,7 +71,7 @@ class ToTensor(object):
         elif pic.mode == 'I;16':
             img = torch.from_numpy(np.array(pic, np.int16, copy=False))
         else:
-            img = torchvision.transforms.PILToTensor(pic)
+            img = torchvision.transforms.PILToTensor()(pic)
             #numpy_array = np.array(pic)
             #img = torch.from_numpy(np.array(pic, np.int16, copy=False))
 
