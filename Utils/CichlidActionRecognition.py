@@ -39,7 +39,7 @@ class ML_model():
         self.val_logger = Logger(os.path.join(self.resultsDirectory, 'val.log'),
                     ['epoch', 'loss', 'acc', 'lr'])
         
-    def train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
+    def train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs, checkpoint):
         self.n_classes = n_classes
         model = resnet18(
                 num_classes=n_classes,
