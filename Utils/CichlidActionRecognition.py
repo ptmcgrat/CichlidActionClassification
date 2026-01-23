@@ -69,7 +69,7 @@ class ML_model():
             ['epoch', 'loss', 'acc', 'lr'])
 
         for i in range(begin_epoch,n_epochs + 1):
-            self.train_epoch(i, train_loader, model, criterion, optimizer, train_logger)
+            self.train_epoch(i, self.train_loader, model, criterion, optimizer, self.train_logger)
 
             validation_loss,confusion_matrix,p_dt,results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
             
@@ -90,8 +90,8 @@ class ML_model():
             acc_dt.to_csv(self.args.Results_directory + 'epoch_' + str(i) + '_accuracy.csv')
 
             scheduler.step(validation_loss)
-            if i % 5 == 0 and len(test_data) != 0:
-                _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
+            if i % 5 == 0 and len(val_data) != 0:
+                _ = self.val_epoch(i, self.val_loader, model, criterion, self.val_logger)
 
     def make_predictions(self, trained_model, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
             
