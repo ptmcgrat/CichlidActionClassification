@@ -72,17 +72,14 @@ class cichlids(data.Dataset):
             n_frames = int(f.read())
         frame_indices = [x+1 for x in range(n_frames)]
         if self.temporal_transform is not None:
-            try:
-                frame_indices = self.temporal_transform(frame_indices)
-            except ValueError:
-                print()
+            frame_indices = self.temporal_transform(frame_indices)
         clip = self.video_loader(file_location, frame_indices)
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.clip_dict[clipname]['projectID']].randomize_parameters()
             clip = [self.spatial_transforms[self.clip_dict[clipname]['projectID']](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
-        target = self.labels_to_idx[self.data_dict[clipname]['annotations']['label']]
+        target = self.labels_to_idx[self.clip_dict[clipname]['annotations']['label']]
         return clip, target,path
 
     def __len__(self):
