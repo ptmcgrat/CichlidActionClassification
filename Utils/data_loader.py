@@ -27,8 +27,6 @@ class cichlids(data.Dataset):
         self.means = data_dict['means']
 
     def createTransforms(self, sample_size, sample_duration):    
-        print(sample_size)
-        print(sample_duration)
         self.spatial_transforms = {}
 
         if self.dataset_type == 'train':
