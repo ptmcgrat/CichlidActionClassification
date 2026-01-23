@@ -39,7 +39,7 @@ class ML_model():
         self.val_logger = Logger(os.path.join(self.resultsDirectory, 'val.log'),
                     ['epoch', 'loss', 'acc'])
         
-    def train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs, checkpoint):
+    def train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs, checkpoint, ML_labels):
         self.n_classes = n_classes
         model = resnet18(
                 num_classes=n_classes,
@@ -73,10 +73,10 @@ class ML_model():
 
             validation_loss,confusion_matrix,p_dt,results_df = self.val_epoch(i, self.val_loader, model, criterion, self.val_logger)
             
-            confusion_matrix_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
+            confusion_matrix_file = os.path.join(self.resultsDirectory,'epoch_{epoch}_confusion_matrix.csv'.format(epoch=i))
             confusion_matrix.to_csv(confusion_matrix_file)
-            validation_results_file = os.path.join(self.args.Results_directory,'epoch_{epoch}_results.csv'.format(epoch=i))
-            s_dt = pd.read_csv(self.args.ML_labels, index_col = 0)
+            validation_results_file = os.path.join(self.resultsDirectory,'epoch_{epoch}_results.csv'.format(epoch=i))
+            s_dt = pd.read_csv(ML_labels, index_col = 0)
             s_dt['Location'] = s_dt.ClipName.str.replace('.mp4','')
             g_dt = pd.merge(p_dt,s_dt, left_index=True, right_on = 'Location')
             g_dt = g_dt[['Location','AnalysisID','Probability']]
@@ -87,7 +87,7 @@ class ML_model():
             acc_dt = out_dt.groupby('AnalysisID').agg({'Match':'mean','Location':'count'})
             print(acc_dt)
             #print(out_dt[out_dt.Probability > 0.8].groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
-            acc_dt.to_csv(self.args.Results_directory + 'epoch_' + str(i) + '_accuracy.csv')
+            acc_dt.to_csv(self.resultsDirectory + 'epoch_' + str(i) + '_accuracy.csv')
 
             scheduler.step(validation_loss)
             if i % 5 == 0 and len(val_data) != 0:
