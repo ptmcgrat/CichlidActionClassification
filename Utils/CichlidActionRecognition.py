@@ -11,11 +11,12 @@ from Utils.data_loader import cichlids
 
 
 class ML_model():
-    def __init__(self, purpose, json_datafile, temp_clips_directory, sample_length, sample_duration):
+    def __init__(self, purpose, json_datafile, temp_clips_directory, results_directory, sample_length, sample_duration):
         self.purpose = purpose
         assert purpose in ['Train','Classify']
         self.sourceJSON = json_datafile
         self.tempClipsDir = temp_clips_directory
+        self.resultsDirectory = results_directory
         #prepare the data is the data is not prepared
         self.sample_length = sample_length
         self.sample_duration = sample_duration
@@ -33,10 +34,11 @@ class ML_model():
         validation_data.createTransforms(self.sample_length, self.sample_duration)
         self.val_loader = torch.utils.data.DataLoader(validation_data,
             batch_size=batch_size,shuffle=False,num_workers=n_threads, pin_memory=True)
-        self.val_logger = Logger(os.path.join(opt.Results_directory, 'train.log'),
+        self.val_logger = Logger(os.path.join(self.resultsDirectory, 'train.log'),
                     ['epoch', 'loss', 'acc', 'lr'])
         
     def train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
+        self.n_classes = n_classes
         model = resnet18(
                 num_classes=n_classes,
                 sample_size=self.sample_length,
@@ -63,10 +65,10 @@ class ML_model():
             optimizer, 'min', patience=lr_patience)
 
         begin_epoch = 0
-        train_logger = Logger(os.path.join(opt.Results_directory, 'train.log'),
+        train_logger = Logger(os.path.join(self.resultsDirectory, 'train.log'),
             ['epoch', 'loss', 'acc', 'lr'])
 
-        for i in range(begin_epoch,opt.n_epochs + 1):
+        for i in range(begin_epoch,n_epochs + 1):
             self.train_epoch(i, train_loader, model, criterion, optimizer, train_logger)
 
             validation_loss,confusion_matrix,p_dt,results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
@@ -91,13 +93,13 @@ class ML_model():
             if i % 5 == 0 and len(test_data) != 0:
                 _ = self.val_epoch(i, test_loader, model, criterion, opt, test_logger)
 
-    def make_predictions(self, trained_model):
+    def make_predictions(self, trained_model, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
             
         model = resnet18(
-                num_classes=opt.n_classes,
-                shortcut_type=opt.resnet_shortcut,
-                sample_size=opt.sample_size,
-                sample_duration=opt.sample_duration)
+                num_classes=n_classes,
+                sample_size=self.sample_size,
+                sample_duration=self.sample_duration)
+
 
         model = model.cuda()
         model = nn.DataParallel(model, device_ids=None)
@@ -106,24 +108,21 @@ class ML_model():
         criterion = criterion.cuda()
                                   
 
-        if opt.Purpose in ['finetune','classify']:
-            checkpoint = torch.load(opt.Trained_model)
-            begin_epoch = checkpoint['epoch']
-            model.load_state_dict(checkpoint['state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer'])
-        else:
-            begin_epoch = 0
-        if opt.Purpose == 'classify':
-            _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
-            with open(self.source_json_file,'r') as input_f:
-                source_json = json.load(input_f)
-            confidence_matrix.columns = source_json['labels']
-            confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
-            confidence_matrix.to_csv(self.args.Output_file)
-            # pdb.set_trace()
-            return
+        checkpoint = torch.load(trained_model)
+        begin_epoch = checkpoint['epoch']
+        model.load_state_dict(checkpoint['state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+
+        _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+        with open(self.source_json_file,'r') as input_f:
+            source_json = json.load(input_f)
+        confidence_matrix.columns = source_json['labels']
+        confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
+        confidence_matrix.to_csv(self.args.Output_file)
+        # pdb.set_trace()
+        return
     
-    def train_epoch(self, epoch, data_loader, model, criterion, optimizer, opt, epoch_logger, batch_logger):
+    def train_epoch(self, epoch, data_loader, model, criterion, optimizer, epoch_logger, checkpoint):
         print('train at epoch {}'.format(epoch))
         model.train()
 
@@ -154,14 +153,14 @@ class ML_model():
             batch_time.update(time.time() - end_time)
             end_time = time.time()
 
-            batch_logger.log({
+            """batch_logger.log({
                 'epoch': epoch,
                 'batch': i + 1,
                 'iter': (epoch - 1) * len(data_loader) + (i + 1),
                 'loss': losses.val,
                 'acc': accuracies.val,
                 'lr': optimizer.param_groups[0]['lr']
-            })
+            })"""
 
             """print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
@@ -174,16 +173,16 @@ class ML_model():
                 batch_time=batch_time,
                 data_time=data_time,
                 loss=losses,
-                acc=accuracies))
+                acc=accuracies))"""
         epoch_logger.log({
                 'epoch': epoch,
                 'loss': losses.avg,
                 'acc': accuracies.avg,
                 'lr': optimizer.param_groups[0]['lr']
-            })"""
+            })
 
-        if epoch % opt.checkpoint == 0:
-            save_file_path = os.path.join(opt.Results_directory,
+        if epoch % checkpoint == 0:
+            save_file_path = os.path.join(self.resultsDirectory,
                                           'save_{}.pth'.format(epoch))
             states = {
                 'epoch': epoch + 1,
@@ -192,7 +191,7 @@ class ML_model():
             }
             torch.save(states, save_file_path)
 
-    def val_epoch(self, epoch, data_loader, model, criterion, opt, logger):
+    def val_epoch(self, epoch, data_loader, model, criterion, logger):
         print('validation at epoch {}'.format(epoch))
 
         model.eval()
@@ -203,7 +202,7 @@ class ML_model():
         accuracies = AverageMeter()
 
         end_time = time.time()
-        confusion_matrix = np.zeros((opt.n_classes,opt.n_classes))
+        confusion_matrix = np.zeros((self.n_classes,self.n_classes))
         confidence_for_each_validation = {}
         ###########################################################################
         results =[]

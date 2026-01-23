@@ -11,6 +11,8 @@ parser.add_argument('--ML_labels', type = str, required = True,
                     help = 'csv file with labels for each ML video, it should contain three columns: ClipName, ManualLabel and ProjectID')
 parser.add_argument('--Temp_directory', type = str, required = True,
                     help = 'Location for temp files to be stored')
+parser.add_argument('--Results_directory', type = str, required = True,
+                    help = 'Location for final files to be stored')
 parser.add_argument('--CommandsLog', type = str, required = True,
                     help = 'Logfile to keep track of commands')
 parser.add_argument('--JSONLog', type = str, required = True,
@@ -68,6 +70,6 @@ data_worker.convertVideos(args.DataSummaryLog)
 data_worker.calculateMeans()
 data_worker.prepareJson('Train', args.JSONLog, args.n_classes)
 
-ML_model = ML_model('Train', args.JSONLog, args.Temp_directory, args.sample_duration, args.sample_size)
+ML_model = ML_model('Train', args.JSONLog, args.Temp_directory, args.Results_directory, args.sample_duration, args.sample_size)
 ML_model.createDataLoaders(args.batch_size, args.n_threads)
 ML_model.train_model(args.n_classes, args.dampening, args.learning_rate, args.momentum, args.weight_decay, args.nesterov, args.lr_patience, args.n_epochs)
