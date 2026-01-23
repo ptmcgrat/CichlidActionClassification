@@ -71,7 +71,7 @@ class ML_model():
             ['epoch', 'loss', 'acc', 'lr'])
 
         for i in range(begin_epoch,n_epochs + 1):
-            self.train_epoch(i, self.train_loader, model, criterion, optimizer, self.train_logger)
+            self.train_epoch(i, self.train_loader, model, criterion, optimizer, self.train_logger, checkpoint)
 
             validation_loss,confusion_matrix,p_dt,results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
             
@@ -124,7 +124,7 @@ class ML_model():
         # pdb.set_trace()
         return
     
-    def train_epoch(self, epoch, data_loader, model, criterion, optimizer, epoch_logger):
+    def train_epoch(self, epoch, data_loader, model, criterion, optimizer, epoch_logger, checkpoint):
         print('train at epoch {}'.format(epoch))
         model.train()
 
