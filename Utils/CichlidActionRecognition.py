@@ -25,7 +25,6 @@ class ML_model():
             training_data = cichlids(self.tempClipsDir, self.sourceJSON, 'train')
             training_data.readDatabase()
             training_data.createTransforms(self.sample_length, self.sample_duration)
-            pdb.set_trace()
             self.train_loader = torch.utils.data.DataLoader(training_data,
                 batch_size=batch_size,shuffle=True,num_workers=n_threads, pin_memory=True)
         
