@@ -37,7 +37,7 @@ class ML_model():
         self.val_loader = torch.utils.data.DataLoader(validation_data,
             batch_size=batch_size,shuffle=False,num_workers=n_threads, pin_memory=True)
         self.val_logger = Logger(os.path.join(self.resultsDirectory, 'val.log'),
-                    ['epoch', 'loss', 'acc', 'lr'])
+                    ['epoch', 'loss', 'acc'])
         
     def train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs, checkpoint):
         self.n_classes = n_classes
@@ -67,9 +67,7 @@ class ML_model():
             optimizer, 'min', patience=lr_patience)
 
         begin_epoch = 0
-        train_logger = Logger(os.path.join(self.resultsDirectory, 'train.log'),
-            ['epoch', 'loss', 'acc', 'lr'])
-
+        
         for i in range(begin_epoch,n_epochs + 1):
             self.train_epoch(i, self.train_loader, model, criterion, optimizer, self.train_logger, checkpoint)
 
