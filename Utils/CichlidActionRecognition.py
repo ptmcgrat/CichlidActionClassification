@@ -28,13 +28,15 @@ class ML_model():
             training_data.createTransforms(self.sample_length, self.sample_duration)
             self.train_loader = torch.utils.data.DataLoader(training_data,
                 batch_size=batch_size,shuffle=True,num_workers=n_threads, pin_memory=True)
-        
+            self.train_logger = Logger(os.path.join(self.resultsDirectory, 'train.log'),
+                    ['epoch', 'loss', 'acc', 'lr'])
+
         validation_data = cichlids(self.tempClipsDir, self.sourceJSON, 'validation')
         validation_data.readDatabase()
         validation_data.createTransforms(self.sample_length, self.sample_duration)
         self.val_loader = torch.utils.data.DataLoader(validation_data,
             batch_size=batch_size,shuffle=False,num_workers=n_threads, pin_memory=True)
-        self.val_logger = Logger(os.path.join(self.resultsDirectory, 'train.log'),
+        self.val_logger = Logger(os.path.join(self.resultsDirectory, 'val.log'),
                     ['epoch', 'loss', 'acc', 'lr'])
         
     def train_model(self, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
