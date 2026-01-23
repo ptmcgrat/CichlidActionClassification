@@ -20,7 +20,7 @@ class cichlids(data.Dataset):
     def readDatabase(self):
         with open(self.json_file,'r') as input_f:
             data_dict = json.load(input_f)
-            
+
         self.labels = data_dict['labels']
         self.labels_to_idx = {x:i for x,i in zip(self.labels,range(len(self.labels)))}
         self.clip_dict = {k:v for k,v in data_dict['database'].items() if v['subset'] == self.dataset_type}
@@ -43,7 +43,7 @@ class cichlids(data.Dataset):
             if self.dataset_type == 'train':
                 self.spatial_transforms[pid] = Compose([crop_method, RandomVerticalFlip(),RandomHorizontalFlip(), ToTensor(1), norm_method])
             else:
-                self.spatial_transforms[tokens[0]] = Compose([crop_method, ToTensor(1), norm_method])
+                self.spatial_transforms[pid] = Compose([crop_method, ToTensor(1), norm_method])
 
     def video_loader(self, video_dir_path, frame_indices):
         video = []
