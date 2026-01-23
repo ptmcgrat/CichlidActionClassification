@@ -90,8 +90,8 @@ class ML_model():
             acc_dt.to_csv(self.resultsDirectory + 'epoch_' + str(i) + '_accuracy.csv')
 
             scheduler.step(validation_loss)
-            if i % 5 == 0 and len(val_data) != 0:
-                _ = self.val_epoch(i, self.val_loader, model, criterion, self.val_logger)
+            #if i % 5 == 0:
+            #    _ = self.val_epoch(i, self.val_loader, model, criterion, self.val_logger)
 
     def make_predictions(self, trained_model, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
             
