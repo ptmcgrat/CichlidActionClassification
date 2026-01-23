@@ -27,6 +27,8 @@ class cichlids(data.Dataset):
         self.means = data_dict['means']
 
     def createTransforms(self, sample_size, sample_duration):    
+        print(sample_size)
+        print(sample_duration)
         self.spatial_transforms = {}
 
         if self.dataset_type == 'train':
@@ -71,9 +73,9 @@ class cichlids(data.Dataset):
         frame_indices = [x+1 for x in range(n_frames)]
         if self.temporal_transform is not None:
             try:
-                frame_indices = self.temporal_transform(len(frame_indices))
+                frame_indices = self.temporal_transform(frame_indices)
             except ValueError:
-                print(frame_indices)
+                print()
         clip = self.video_loader(file_location, frame_indices)
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.clip_dict[clipname]['projectID']].randomize_parameters()
