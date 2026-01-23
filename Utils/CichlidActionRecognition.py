@@ -30,7 +30,7 @@ class ML_model():
         
         validation_data = cichlids(self.tempClipsDir, self.sourceJSON, 'validation')
         validation_data.readDatabase()
-        validation_data.createTransforms(sample_length, sample_duration)
+        validation_data.createTransforms(self.sample_length, self.sample_duration)
         self.val_loader = torch.utils.data.DataLoader(validation_data,
             batch_size=batch_size,shuffle=False,num_workers=n_threads, pin_memory=True)
         self.val_logger = Logger(os.path.join(opt.Results_directory, 'train.log'),
