@@ -20,7 +20,6 @@ class cichlids(data.Dataset):
     def readDatabase(self):
         with open(self.json_file,'r') as input_f:
             data_dict = json.load(input_f)
-        pdb.set_trace()
         self.labels = data_dict['labels']
         self.labels_to_idx = {x:i for x,i in zip(self.labels,range(len(self.labels)))}
         self.clip_dict = {k:v for k,v in data_dict['database'].items() if v['subset'] == self.dataset_type}
