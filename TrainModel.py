@@ -49,7 +49,7 @@ parser.set_defaults(no_hflip=False)
 parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is saved at every this epochs.')
 
 # Parameters specific for training from scratch
-parser.add_argument('--n_classes',default=10,type=int)
+parser.add_argument('--n_classes',default=9,type=int)
 parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
 parser.add_argument('--n_epochs',default=100,type=int,help='Number of total epochs to run')
 
