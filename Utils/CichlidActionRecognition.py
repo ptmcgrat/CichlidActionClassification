@@ -86,6 +86,8 @@ class ML_model():
             print('Epoch: ' + str(i))
             acc_dt = out_dt.groupby('AnalysisID').agg({'Match':'mean','Location':'count'})
             print(acc_dt)
+            acc_dt = out_dt.groupby(['AnalysisID','ProjectID']).agg({'Match':'mean','Location':'count'})
+
             #print(out_dt[out_dt.Probability > 0.8].groupby('AnalysisID').agg({'Match':'mean','Location':'count'}))
             acc_dt.to_csv(self.resultsDirectory + 'epoch_' + str(i) + '_accuracy.csv')
 

@@ -6,7 +6,7 @@ from Utils.DataPrepare import DP_worker
 parser = argparse.ArgumentParser(description='This script takes a model, and apply this model to new video clips')
 # Input data
 parser.add_argument('--ML_labels', type = str, required = True,
-                    help = 'csv file with labels given to each ML video, it should contain three columns: Location, Label and MeanID')
+                    help = 'csv file with labels given to each ML video, it should contain three columns: ClipName, Label and ProjectID')
 parser.add_argument('--Input_videos_directory', type = str, required = True,
                     help = 'Name of directory to hold all video clips')                    
 parser.add_argument('--Temporary_clips_directory', type = str, required = True,
