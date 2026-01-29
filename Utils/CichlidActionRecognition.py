@@ -64,7 +64,7 @@ class ML_model():
             nesterov=nesterov)
         
         scheduler = lr_scheduler.ReduceLROnPlateau(
-            optimizer, 'min', patience=lr_patience)
+            optimizer, 'min', patience=lr_patience, factor = .5)
 
         begin_epoch = 0
         
