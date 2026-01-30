@@ -70,6 +70,6 @@ data_worker.convertVideos(args.DataSummaryLog)
 data_worker.calculateMeans()
 data_worker.prepareJson('Train', args.JSONLog, args.n_classes)
 
-ML_model = ML_model('Train', args.JSONLog, args.Temp_directory, args.Results_directory, args.sample_size, args.sample_duration, )
+ML_model = ML_model('Train', args.JSONLog, args.Temp_directory, args.Results_directory, args.sample_size, args.sample_duration)
 ML_model.createDataLoaders(args.batch_size, args.n_threads)
 ML_model.train_model(args.n_classes, args.dampening, args.learning_rate, args.momentum, args.weight_decay, args.nesterov, args.lr_patience, args.n_epochs, args.checkpoint, args.ML_labels)

@@ -96,7 +96,7 @@ class ML_model():
             #if i % 5 == 0:
             #    _ = self.val_epoch(i, self.val_loader, model, criterion, self.val_logger)
 
-    def make_predictions(self, trained_model, n_classes, dampening, learning_rate, momentum, weight_decay, nesterov, lr_patience, n_epochs):
+    def make_predictions(self, trained_model, n_classes, output_file):
             
         model = resnet18(
                 num_classes=n_classes,
@@ -116,12 +116,12 @@ class ML_model():
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
 
-        _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(i, val_loader, model, criterion, opt, val_logger)
+        _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(0, self.val_loader, model, criterion, self.val_logger)
         with open(self.source_json_file,'r') as input_f:
             source_json = json.load(input_f)
         confidence_matrix.columns = source_json['labels']
         confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
-        confidence_matrix.to_csv(self.args.Output_file)
+        confidence_matrix.to_csv(output_file)
         # pdb.set_trace()
         return
     

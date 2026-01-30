@@ -52,7 +52,8 @@ class DP_worker():
 
         data_summary = self.dt.groupby(['AnalysisID','ClipAvailable']).count()['ClipName']
         print(data_summary)
-        data_summary.to_csv(dataSummaryLog)
+        if dataSummaryLog is not None:
+            data_summary.to_csv(dataSummaryLog)
 
     def calculateMeans(self):
 
