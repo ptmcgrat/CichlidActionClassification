@@ -97,7 +97,7 @@ class ML_model():
             #    _ = self.val_epoch(i, self.val_loader, model, criterion, self.val_logger)
 
     def make_predictions(self, trained_model, n_classes, output_file):
-            
+        self.n_classes = n_classes  
         model = resnet18(
                 num_classes=n_classes,
                 sample_size=self.sample_length,
