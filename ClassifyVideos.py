@@ -39,7 +39,7 @@ parser.add_argument('--sample_size', default=120, type=int, help='Height and wid
 args = parser.parse_args()
 # Parameters to load from previous training_log
 
-with open(args.Training_options,'r') as input_f:
+with open(args.CommandsLog,'r') as input_f:
     data = json.load(input_f)
 
     for key,value in data.items():
