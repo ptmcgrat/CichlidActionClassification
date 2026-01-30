@@ -73,7 +73,6 @@ class DP_worker():
             except FileNotFoundError:
                 print(video_folder + ' does not exist')
                 pdb.set_trace()
-                self.dt.loc[self.dt.ClipName == row.ClipName,'ClipAvailable'] = True
                 continue
             with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
                 dst_file.write(str(len(frames)))
@@ -81,8 +80,9 @@ class DP_worker():
                 img = io.imread(frames[0])
             except IndexError:
                 print('Problem with ' + row.ClipName)
-                continue
                 pdb.set_trace()
+                self.dt.loc[self.dt.ClipName == row.ClipName,'ClipAvailable'] = True
+
             mean = img.mean(axis = (0,1))
             std = img.std(axis = (0,1))
             
