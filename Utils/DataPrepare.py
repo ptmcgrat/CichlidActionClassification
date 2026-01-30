@@ -92,7 +92,7 @@ class DP_worker():
 
         dst_data = {}
 
-        if purpose == 'classify':
+        if purpose == 'Classify':
             with open(json_file,'r') as input_f:
                 training_json = json.load(input_f) 
             dst_data['labels'] = training_json['labels']
@@ -103,7 +103,7 @@ class DP_worker():
         for lid,row in self.dt[self.dt.ClipAvailable==True].iterrows():
             clip_name = row.ClipName.replace('.mp4','')
             clip_data[clip_name] = {}
-            if purpose == 'classify':
+            if purpose == 'Classify':
                 clip_data[clip_name]['subset'] = 'validation'
                 clip_data[clip_name]['annotations'] = {'label': dst_data['labels'][0]}
 
