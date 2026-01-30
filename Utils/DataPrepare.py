@@ -72,6 +72,8 @@ class DP_worker():
                 frames = sorted([os.path.join(video_folder,x) for x in os.listdir(video_folder) if 'image' in x])
             except FileNotFoundError:
                 print(video_folder + ' does not exist')
+                pdb.set_trace()
+                self.dt.loc[self.dt.ClipName == row.ClipName,'ClipAvailable'] = True
                 continue
             with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
                 dst_file.write(str(len(frames)))
