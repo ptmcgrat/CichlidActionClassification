@@ -46,7 +46,7 @@ parser.add_argument('--no_vflip',action='store_true',help='If true vertical flip
 parser.set_defaults(no_hflip=False)
 
 # Parameters for general training
-parser.add_argument('--checkpoint',default=10,type=int,help='Trained model is saved at every this epochs.')
+parser.add_argument('--checkpoint',default=5,type=int,help='Trained model is saved at every this epochs.')
 
 # Parameters specific for training from scratch
 parser.add_argument('--n_classes',default=9,type=int)
