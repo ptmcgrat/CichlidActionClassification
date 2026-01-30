@@ -80,9 +80,8 @@ class DP_worker():
                 img = io.imread(frames[0])
             except IndexError:
                 print('Problem with ' + row.ClipName)
-                pdb.set_trace()
-                self.dt.loc[self.dt.ClipName == row.ClipName,'ClipAvailable'] = True
-
+                self.dt.loc[self.dt.ClipName == row.ClipName,'ClipAvailable'] = False
+                continue
             mean = img.mean(axis = (0,1))
             std = img.std(axis = (0,1))
             
