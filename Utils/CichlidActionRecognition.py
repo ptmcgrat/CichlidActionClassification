@@ -121,7 +121,6 @@ class ML_model():
             source_json = json.load(input_f)
         results_df['Prediction'] = results_df.PredictedLabel.map({k:v for k,v in enumerate(source_json['labels'])})
         out_dt = pd.merge(p_dt, results_df, left_index=True, right_on = 'ClipName')[['ClipName','Prediction','Probability']]
-        pdb.set_trace()
         out_dt.to_csv(output_file)
         # pdb.set_trace()
         return
