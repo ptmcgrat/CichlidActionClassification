@@ -78,6 +78,8 @@ class DP_worker():
             try:
                 img = io.imread(frames[0])
             except IndexError:
+                print('Problem with ' + row.ClipName)
+                continue
                 pdb.set_trace()
             mean = img.mean(axis = (0,1))
             std = img.std(axis = (0,1))
