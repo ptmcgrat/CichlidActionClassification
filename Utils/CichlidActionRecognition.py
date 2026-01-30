@@ -114,7 +114,7 @@ class ML_model():
         checkpoint = torch.load(trained_model)
         begin_epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['state_dict'])
-        optimizer.load_state_dict(checkpoint['optimizer'])
+        #optimizer.load_state_dict(checkpoint['optimizer'])
 
         _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(0, self.val_loader, model, criterion, self.val_logger)
         with open(self.source_json_file,'r') as input_f:
