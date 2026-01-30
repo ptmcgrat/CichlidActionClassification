@@ -74,6 +74,10 @@ class DP_worker():
                 print(video_folder + ' does not exist')
                 pdb.set_trace()
                 continue
+            if len(frames) != 120:
+                print('Problem with ' + row.ClipName)
+                self.dt.loc[self.dt.ClipName == row.ClipName,'ClipAvailable'] = False
+                continue
             with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
                 dst_file.write(str(len(frames)))
             try:
