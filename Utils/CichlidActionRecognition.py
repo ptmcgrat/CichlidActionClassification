@@ -116,7 +116,7 @@ class ML_model():
         model.load_state_dict(checkpoint['state_dict'])
         #optimizer.load_state_dict(checkpoint['optimizer'])
 
-        _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(0, self.val_loader, model, criterion, self.val_logger)
+        validation_loss,confusion_matrix, p_dt,results_df = self.val_epoch(0, self.val_loader, model, criterion, self.val_logger)
         with open(self.sourceJSON,'r') as input_f:
             source_json = json.load(input_f)
         pdb.set_trace()
