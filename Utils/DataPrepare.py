@@ -75,8 +75,10 @@ class DP_worker():
                 continue
             with open(os.path.join(video_folder, 'n_frames'), 'w') as dst_file:
                 dst_file.write(str(len(frames)))
-            
-            img = io.imread(frames[0])
+            try:
+                img = io.imread(frames[0])
+            except IndexError:
+                pdb.set_trace()
             mean = img.mean(axis = (0,1))
             std = img.std(axis = (0,1))
             
