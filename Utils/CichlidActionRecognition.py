@@ -100,7 +100,7 @@ class ML_model():
             
         model = resnet18(
                 num_classes=n_classes,
-                sample_size=self.sample_size,
+                sample_size=self.sample_length,
                 sample_duration=self.sample_duration)
 
 
