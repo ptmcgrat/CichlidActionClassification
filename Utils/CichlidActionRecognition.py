@@ -116,13 +116,13 @@ class ML_model():
         model.load_state_dict(checkpoint['state_dict'])
         #optimizer.load_state_dict(checkpoint['optimizer'])
 
-        validation_loss,confusion_matrix, p_dt,results_df = self.val_epoch(0, self.val_loader, model, criterion, self.val_logger)
+        validation_loss, confusion_matrix, p_dt,results_df = self.val_epoch(0, self.val_loader, model, criterion, self.val_logger)
         with open(self.sourceJSON,'r') as input_f:
             source_json = json.load(input_f)
+        results_df['Prediction'] = results_df.PredictedLabel.map({k:v for k,v in enumerate(source_json['labels'])})
+        out_dt = pd.merge(p_dt, results_df, left_index=True, right_on = 'ClipName')[['ClipName','Prediction','Probability']]
         pdb.set_trace()
-        confidence_matrix.columns = source_json['labels']
-        confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
-        confidence_matrix.to_csv(output_file)
+        out_dt.to_csv(output_file)
         # pdb.set_trace()
         return
     
