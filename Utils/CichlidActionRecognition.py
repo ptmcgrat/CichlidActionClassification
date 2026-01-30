@@ -117,7 +117,7 @@ class ML_model():
         #optimizer.load_state_dict(checkpoint['optimizer'])
 
         _,confusion_matrix,confidence_matrix, results_df = self.val_epoch(0, self.val_loader, model, criterion, self.val_logger)
-        with open(self.source_json_file,'r') as input_f:
+        with open(self.sourceJSON,'r') as input_f:
             source_json = json.load(input_f)
         confidence_matrix.columns = source_json['labels']
         confidence_matrix['predicted_label'] = confidence_matrix.idxmax(axis="columns")
