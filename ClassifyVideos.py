@@ -27,7 +27,7 @@ parser.add_argument('--Output_file', required = True, type = str,
 parser.add_argument('--Purpose', type = str, default = 'Classify',
                     help = 'Leave this alone')
 
-parser.add_argument('--batch_size', default=13, type=int, help='Batch Size')
+parser.add_argument('--batch_size', default=26, type=int, help='Batch Size')
 parser.add_argument('--n_threads', default=5, type=int, help='Number of threads for multi-thread loading')
 parser.add_argument('--gpu_card', default='0', type=str, help='gpu card to use')
 # Parameters for the dataloader
